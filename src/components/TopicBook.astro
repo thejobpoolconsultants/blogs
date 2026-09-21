@@ -1,0 +1,300 @@
+---
+import type { topics } from '../data/topics';
+import {
+  sectionsFor,
+  conceptId,
+  topicReading,
+  topicMenuLabels,
+  researchAttribution,
+} from '../data/topic-books';
+import { topicFlows } from '../data/topic-flows';
+import { learningPaths } from '../data/learning-paths';
+import { editorialQuotes, topicInsightIds } from '../data/editorial-quotes';
+import { publishedArticles } from '../utils/content';
+import { url } from '../utils/urls';
+import TopicInsight from './TopicInsight.astro';
+import ArticleList from './ArticleList.astro';
+import ConceptFlow from './ConceptFlow.astro';
+import ResearchCoverage from './ResearchCoverage.astro';
+import BuildMethod from './BuildMethod.astro';
+import '../styles/topic-books.css';
+interface Props {
+  topic: (typeof topics)[number];
+}
+const { topic } = Astro.props;
+const sections = sectionsFor(topic.id);
+const articles = await publishedArticles();
+const ownArticles = articles.filter(
+  (article) => article.data.topic === topic.id,
+);
+const reading = (topicReading[topic.id] || []).flatMap((item) => {
+  const article = articles.find(
+    (article) => article.data.slug === item.article,
+  );
+  return article ? [{ ...item, article }] : [];
+});
+const paths = learningPaths.filter((path) => path.topics.includes(topic.id));
+const insight = topicInsightIds[topic.id];
+const overviewHeadlines: Record<string, string> = {
+  nlp: editorialQuotes.representation.lines.join(' '),
+  'agentic-ai': editorialQuotes.agentHeadline.lines.join(' '),
+};
+const menuLabel = topicMenuLabels[topic.id] || topic.title;
+---
+
+<div
+  class="topic-book"
+  data-topic-book
+  data-topic={topic.id}
+  data-pagefind-body
+>
+  <aside class="book-sidebar" data-pagefind-ignore>
+    <details class="book-menu" open>
+      <summary>
+        {menuLabel} sections <span aria-hidden="true">⌄</span>
+      </summary>
+      <div class="book-navigation">
+        <p class="book-nav-title meta">{topic.title}</p>
+        <nav aria-label={topic.title + ' sections'}>
+          <a
+            class="book-section-link"
+            href="#overview"
+            data-section="overview"
+            aria-current="location"
+          >
+            Overview
+          </a>
+          <ol class="book-sections">
+            {sections.map((section, index) => (
+              <li>
+                <a
+                  class="book-section-link"
+                  href={'#' + section.id}
+                  data-section={section.id}
+                >
+                  <span class="number">
+                    {String(index + 1).padStart(2, '0')}
+                  </span>
+                  <span>{section.title}</span>
+                </a>
+                {section.concepts.length > 0 && (
+                  <ul class="book-concept-nav" data-concepts={section.id}>
+                    {section.concepts.map((concept) => (
+                      <li>
+                        <a href={'#' + conceptId(section.id, concept)}>
+                          {concept}
+                        </a>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </li>
+            ))}
+          </ol>
+        </nav>
+        <a
+          class="book-path-link text-link"
+          href={url(paths[0] ? 'learn/' + paths[0].id + '/' : 'learn/')}
+        >
+          {paths[0] ? 'View learning path' : 'Explore learning paths'}{' '}
+          <span aria-hidden="true">↗</span>
+        </a>
+      </div>
+    </details>
+  </aside>
+  <div class="book-content">
+    <div class="book-heading">
+      <p class="eyebrow">{topic.group} / Knowledge book</p>
+      <h1 data-pagefind-meta="title">{topic.title}</h1>
+      {topic.id === 'research' && (
+        <p class="research-attribution">{researchAttribution}</p>
+      )}
+    </div>
+    <section
+      class="book-panel"
+      id="overview"
+      data-book-panel
+      aria-labelledby="overview-title"
+    >
+      <h2 id="overview-title" class="book-panel-title" tabindex="-1">
+        {overviewHeadlines[topic.id] || 'Overview'}
+      </h2>
+      <p class="lead">{topic.description}</p>
+      {topic.id !== 'research' && insight && (
+        <TopicInsight
+          quote={editorialQuotes[insight]}
+          topic={topic.title}
+          supporting={
+            topic.id === 'nlp'
+              ? 'Meaning here is represented through learned relationships, evaluated on specific language tasks.'
+              : topic.id === 'generative-ai'
+                ? 'Grounding still needs evaluation: relevant evidence can be retrieved and used incorrectly.'
+                : undefined
+          }
+        />
+      )}
+      <p class="book-status meta">
+        {sections.length} ordered sections · {ownArticles.length} published{' '}
+        {ownArticles.length === 1 ? 'article' : 'articles'} in this topic
+      </p>
+      <div class="book-actions">
+        <a class="button book-start" href="#start-here">
+          Start here <span aria-hidden="true">→</span>
+        </a>
+        <a
+          class="text-link"
+          href={url(paths[0] ? 'learn/' + paths[0].id + '/' : 'learn/')}
+        >
+          {paths[0] ? 'View learning path' : 'Explore learning paths'}{' '}
+          <span aria-hidden="true">↗</span>
+        </a>
+      </div>
+      {topicFlows[topic.id] && (
+        <ConceptFlow
+          steps={topicFlows[topic.id]}
+          caption="A conceptual learning progression. These methods coexist; later ideas do not make earlier ones obsolete."
+        />
+      )}
+      <div class="book-reading">
+        <h3>Published in this topic</h3>
+        <ArticleList
+          articles={ownArticles}
+          empty="Articles for this topic are planned. The section menu outlines the intended learning sequence."
+        />
+      </div>
+      {topic.id === 'research' && <ResearchCoverage />}
+      {topic.id === 'build' && <BuildMethod />}
+      <p class="book-coverage-note">
+        This collection grows section by section. Concepts describe the intended
+        coverage; related reading may introduce only part of a section.
+      </p>
+    </section>
+    {sections.map((section, index) => {
+      const related = reading.filter((item) =>
+        item.sections.includes(section.id),
+      );
+      return (
+        <section
+          class="book-panel"
+          id={section.id}
+          data-book-panel
+          aria-labelledby={section.id + '-title'}
+        >
+          <p class="meta book-section-number">
+            Section {String(index + 1).padStart(2, '0')} of {sections.length}
+          </p>
+          <h2 id={section.id + '-title'} class="book-panel-title" tabindex="-1">
+            {section.title}
+          </h2>
+          {section.id === 'start-here' && (
+            <p class="lead">
+              Follow the numbered sections in order, or choose the subject you
+              need. Published articles are linked where they support the
+              section.
+            </p>
+          )}
+          {topic.id === 'research' && section.id === 'start-here' && (
+            <p class="book-coverage-note">
+              Read each article’s primary sources, evidence, and limitations.
+              Engineering interpretations and proposed experiments are labeled
+              separately.{' '}
+              <a class="text-link" href={url('about/')}>
+                Read our editorial values ↗
+              </a>
+            </p>
+          )}
+          {topic.id === 'build' && section.id === 'start-here' && (
+            <BuildMethod />
+          )}
+          {section.concepts.length > 0 && (
+            <div class="book-concepts">
+              <h3>Concepts in this section</h3>
+              <p class="muted">
+                Follow the related reading where available. Dedicated guides for
+                the remaining concepts are planned.
+              </p>
+              <ul>
+                {section.concepts.map((concept) => {
+                  const matches = related.filter((item) =>
+                    item.concepts?.includes(concept),
+                  );
+                  return (
+                    <li id={conceptId(section.id, concept)} tabindex="-1">
+                      <strong>{concept}</strong>
+                      {matches.length > 0 ? (
+                        <span class="concept-reading">
+                          <span class="meta">Related reading</span>
+                          {matches.map((item) => (
+                            <a
+                              class="text-link"
+                              href={url(
+                                'articles/' + item.article.data.slug + '/',
+                              )}
+                            >
+                              {item.article.data.title}{' '}
+                              <span aria-hidden="true">↗</span>
+                            </a>
+                          ))}
+                        </span>
+                      ) : (
+                        <span class="concept-planned">Guide planned</span>
+                      )}
+                    </li>
+                  );
+                })}
+              </ul>
+            </div>
+          )}
+          <div class="book-reading">
+            <h3>Related reading</h3>
+            <ArticleList
+              articles={related.map((item) => item.article)}
+              empty="No published reading is assigned to this section yet. Its place in the learning sequence is reserved as the collection grows."
+            />
+          </div>
+          <nav
+            class="book-pagination"
+            aria-label={section.title + ' sequence'}
+            data-pagefind-ignore
+          >
+            <a href={'#' + (sections[index - 1]?.id || 'overview')}>
+              <span class="meta">← Previous</span>
+              <span>{sections[index - 1]?.title || 'Overview'}</span>
+            </a>
+            {sections[index + 1] ? (
+              <a href={'#' + sections[index + 1].id}>
+                <span class="meta">Next →</span>
+                <span>{sections[index + 1].title}</span>
+              </a>
+            ) : (
+              <a href={url(paths[0] ? 'learn/' + paths[0].id + '/' : 'learn/')}>
+                <span class="meta">Keep learning ↗</span>
+                <span>{paths[0]?.title || 'Explore learning paths'}</span>
+              </a>
+            )}
+          </nav>
+        </section>
+      );
+    })}
+    {paths.length > 0 && (
+      <nav
+        class="book-learning"
+        aria-label="Related learning paths"
+        data-pagefind-ignore
+      >
+        <h2>Continue with a learning path</h2>
+        {paths.map((path) => (
+          <a class="text-link" href={url('learn/' + path.id + '/')}>
+            {path.title} <span aria-hidden="true">↗</span>
+          </a>
+        ))}
+      </nav>
+    )}
+  </div>
+</div>
+<script>
+  import { initTopicBook } from '../scripts/topic-book';
+  document
+    .querySelectorAll<HTMLElement>('[data-topic-book]')
+    .forEach(initTopicBook);
+</script>

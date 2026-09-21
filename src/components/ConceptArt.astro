@@ -1,0 +1,216 @@
+---
+interface Props {
+  topic?: string;
+  slug?: string;
+}
+const { topic = 'artificial-intelligence', slug = '' } = Astro.props;
+const kind =
+  topic === 'research'
+    ? 'attention'
+    : topic === 'artificial-intelligence'
+      ? 'context'
+      : topic;
+---
+
+<svg class="concept-art" viewBox="0 0 400 180" fill="none" aria-hidden="true">
+  <g stroke="currentColor" stroke-width="1">
+    {kind === 'machine-learning' ? (
+      <>
+        <path d="M60 135H345M70 145V32" opacity=".25" />
+        <path
+          d="M85 125C130 130 143 90 182 82S240 65 320 35"
+          stroke-width="1.6"
+        />
+        {[
+          [95, 115],
+          [125, 120],
+          [147, 87],
+          [170, 102],
+          [211, 72],
+          [240, 54],
+          [280, 56],
+          [307, 33],
+        ].map(([x, y]) => (
+          <circle cx={x} cy={y} r="3" />
+        ))}
+        <path d="M175 102V84M170 84h10" class="art-gold" />
+        <text x="76" y="160">
+          EXAMPLES → PATTERN → TEST
+        </text>
+      </>
+    ) : kind === 'deep-learning' ? (
+      <>
+        {[0, 1, 2].map((layer) =>
+          [0, 1, 2].map((i) =>
+            [0, 1, 2].map((j) => (
+              <path
+                d={`M${76 + layer * 82} ${52 + i * 35}L${158 + layer * 82} ${52 + j * 35}`}
+                opacity=".2"
+              />
+            )),
+          ),
+        )}
+        {[0, 1, 2, 3].map((layer) =>
+          [0, 1, 2].map((i) => (
+            <circle
+              cx={76 + layer * 82}
+              cy={52 + i * 35}
+              r={layer === 3 ? 7 : 5}
+              class={layer === 3 ? 'art-gold' : ''}
+              fill="var(--surface)"
+            />
+          )),
+        )}
+        <text x="76" y="158">
+          LAYERS → REPRESENTATIONS
+        </text>
+      </>
+    ) : kind === 'nlp' ? (
+      <>
+        {['The', 'model', 'reads'].map((word, i) => (
+          <>
+            <rect x={48 + i * 104} y="38" width="86" height="32" rx="4" />
+            <text x={91 + i * 104} y="58" text-anchor="middle">
+              {word}
+            </text>
+            <path d={`M${91 + i * 104} 70V92`} opacity=".5" />
+            {[0, 1, 2, 3, 4].map((j) => (
+              <rect
+                x={61 + i * 104 + j * 13}
+                y="94"
+                width="8"
+                height={20 + ((i + j) % 3) * 9}
+                opacity={0.3 + j * 0.12}
+                fill="currentColor"
+                stroke="none"
+              />
+            ))}
+          </>
+        ))}
+        <text x="58" y="157">
+          TOKENS → CONTEXTUAL VECTORS
+        </text>
+      </>
+    ) : kind === 'attention' ? (
+      <>
+        {[0, 1, 2, 3, 4].map((i) =>
+          [0, 1, 2, 3, 4].map((j) => (
+            <rect
+              x={135 + i * 26}
+              y={22 + j * 26}
+              width="21"
+              height="21"
+              rx="2"
+              fill={i === j ? 'var(--editorial-gold)' : 'currentColor'}
+              stroke="none"
+              opacity={i === j ? 0.85 : 0.12 + ((i * 3 + j) % 5) * 0.09}
+            />
+          )),
+        )}
+        <text x="105" y="80" transform="rotate(-90 105 80)">
+          QUERY
+        </text>
+        <text x="166" y="169">
+          KEY / WEIGHT
+        </text>
+      </>
+    ) : ['generative-ai', 'architectures', 'build'].includes(kind) ? (
+      <>
+        {[0, 1, 2].map((i) => (
+          <rect
+            x={40 + i * 7}
+            y={48 + i * 7}
+            width="48"
+            height="63"
+            rx="3"
+            opacity={0.3 + i * 0.25}
+          />
+        ))}
+        <path d="M104 90h42M214 90h42M320 90h26" />
+        <path d="m139 86 7 4-7 4m110-8 7 4-7 4" />
+        <rect x="147" width="66" height="60" rx="5" y="60" />
+        <text x="180" y="86" text-anchor="middle">
+          {kind === 'build' ? 'RANK' : 'CONTEXT'}
+        </text>
+        <text x="180" y="103" text-anchor="middle">
+          {kind === 'build' ? 'BASELINE' : 'EVIDENCE'}
+        </text>
+        <rect x="257" y="60" width="63" height="60" rx="5" class="art-gold" />
+        <path d="M270 78h35m-35 10h27m-27 10h31" class="art-gold" />
+        <text x="55" y="155">
+          {kind === 'architectures'
+            ? 'RETRIEVE / AUTHORIZE / GENERATE'
+            : kind === 'build'
+              ? 'SMALL BASELINE. MEASURABLE RESULTS.'
+              : 'RETRIEVAL → EVIDENCE → ANSWER'}
+        </text>
+      </>
+    ) : kind === 'agentic-ai' ? (
+      <>
+        <path
+          d="M130 48H272Q310 48 310 90T272 132H130Q90 132 90 90T130 48Z"
+          opacity=".55"
+        />
+        <path d="m270 43 8 5-8 5m-137 74-8 5 8 5" />
+        <rect x="143" y="68" width="114" height="44" rx="6" class="art-gold" />
+        <text x="200" y="94" text-anchor="middle">
+          DECIDE / ACT
+        </text>
+        <circle cx="120" cy="48" r="5" fill="var(--surface)" />
+        <circle cx="280" cy="132" r="5" fill="var(--surface)" />
+        <text x="97" y="25">
+          INTENT
+        </text>
+        <text x="247" y="160">
+          FEEDBACK
+        </text>
+      </>
+    ) : kind === 'computer-vision' ? (
+      <>
+        {[0, 1, 2, 3, 4, 5].map((i) =>
+          [0, 1, 2, 3].map((j) => (
+            <rect
+              x={90 + i * 30}
+              y={30 + j * 30}
+              width="25"
+              height="25"
+              fill="currentColor"
+              opacity={0.1 + ((i + j) % 4) * 0.12}
+              stroke="none"
+            />
+          )),
+        )}
+        <rect
+          x="149"
+          y="59"
+          width="88"
+          height="61"
+          class="art-gold"
+          stroke-width="2"
+        />
+        <text x="98" y="167">
+          PIXELS → FEATURES → OBJECTS
+        </text>
+      </>
+    ) : (
+      <>
+        {[0, 1, 2].map((i) => (
+          <rect
+            x={72 + i * 35}
+            y={30 + i * 12}
+            width="183"
+            height="90"
+            rx="5"
+            opacity={0.25 + i * 0.3}
+          />
+        ))}
+        <path d="M166 78h97m-97 13h70m-70 13h82" class="art-gold" />
+        <text x="96" y="166">
+          {slug.includes('context') || kind === 'context'
+            ? 'INSTRUCTIONS / EVIDENCE / STATE'
+            : 'INFORMATION → UNDERSTANDING'}
+        </text>
+      </>
+    )}
+  </g>
+</svg>

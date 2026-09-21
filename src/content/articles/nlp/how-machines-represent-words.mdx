@@ -1,0 +1,126 @@
+---
+slug: 'how-machines-represent-words'
+topic: 'nlp'
+title: 'Before generation, there was representation.'
+description: 'From term counts to embeddings: the choices that determine what a language system can compare.'
+subtopics: ['text normalization', 'TF-IDF', 'embeddings']
+tags: ['Embeddings', 'Information Retrieval', 'Fundamentals']
+series: 'nlp-to-llms'
+type: 'explainer'
+publishedAt: '2026-09-20'
+updatedAt: '2026-09-20'
+status: 'published'
+difficulty: 'beginner'
+authors: ['thejobpoolconsultants']
+audience: ['Students and practicing engineers']
+seriesOrder: 1
+sources:
+  [
+    {
+      'title': 'Peters et al. (2018): Deep contextualized word representations',
+      'url': 'https://arxiv.org/abs/1802.05365',
+      'role': 'primary',
+      'kind': 'paper',
+      'supports': 'Context-dependent word representations; the article does not claim to reproduce the reported evaluations.',
+    },
+    {
+      'title': 'Manning, Raghavan and Schütze: term frequency and weighting',
+      'url': 'https://nlp.stanford.edu/IR-book/html/htmledition/term-frequency-and-weighting-1.html',
+      'role': 'supporting',
+      'kind': 'textbook',
+      'supports': 'Lexical term weighting background; not evidence that this teaching retriever is effective.',
+    },
+    {
+      'title': 'Manning, Raghavan and Schütze: inverse document frequency',
+      'url': 'https://nlp.stanford.edu/IR-book/html/htmledition/inverse-document-frequency-1.html',
+      'role': 'supporting',
+      'kind': 'textbook',
+      'supports': 'How document frequency changes term weighting in lexical retrieval.',
+    },
+  ]
+relatedArticles: ['how-rag-actually-works']
+prerequisites: ['Curiosity and basic technical literacy']
+learningOutcomes:
+  [
+    'From term counts to embeddings: the choices that determine what a language system can compare.',
+  ]
+---
+
+import ResearchStatement from '../../../components/ResearchStatement.astro';
+import ConceptFlow from '../../../components/ConceptFlow.astro';
+import MentalModel from '../../../components/MentalModel.astro';
+
+<MentalModel>
+  <p>
+    In an embedding-based language model, a vocabulary identifier selects a
+    learned vector. Contextual models transform that representation using the
+    surrounding tokens. The same token can therefore play different roles in
+    different sentences.
+  </p>
+</MentalModel>
+
+## A search problem before a language problem
+
+A reader asks for “ways to reduce inference expense.” Your document is titled “Lowering model serving costs.” An exact word match may miss a useful result.
+
+Before a system can compare a query and a document, it needs a representation of each. Different representations preserve different information.
+
+## Start with counts
+
+A bag-of-words representation records terms and their frequencies. It can be sparse and interpretable: one dimension corresponds to one vocabulary term. But word order is mostly lost.
+
+TF-IDF combines term frequency with [inverse document frequency](https://nlp.stanford.edu/IR-book/html/htmledition/inverse-document-frequency-1.html), reducing the weight of terms that occur in many documents. The Stanford [information retrieval text](https://nlp.stanford.edu/IR-book/html/htmledition/term-frequency-and-weighting-1.html) explains term weighting. These lexical methods remain useful when exact identifiers, names, or specialist terms matter.
+
+<ConceptFlow
+  steps={[
+    'Text',
+    'Tokenization',
+    'Representation',
+    'Similarity',
+    'Ranked results',
+  ]}
+  caption="Representation determines what the ranking function can see. Tokenization is a design choice, not merely cleanup."
+/>
+
+## Dense vectors change the comparison
+
+An embedding maps an input into a vector. The training objective influences which inputs end up close under a chosen similarity measure. Related phrases may then match even without sharing the same words.
+
+That similarity is not human understanding. An embedding can confuse related but contradictory statements, miss a critical number, or behave poorly in a domain unlike its training data.
+
+## Context changes the task
+
+<ResearchStatement
+  kind="source"
+  source="https://arxiv.org/abs/1802.05365"
+  sourceLabel="Peters et al. (2018), Deep contextualized word representations"
+>
+  <p>
+    A static word vector assigns the same representation to a word across uses.
+    Peters and colleagues describe representations that depend on the
+    surrounding linguistic context. This article explains that distinction; it
+    does not reproduce their evaluations.
+  </p>
+</ResearchStatement>
+
+<ResearchStatement kind="example">
+  <p>
+    Think about “bank” in a financial sentence and beside a river. This invented
+    contrast illustrates why context may matter; it is not a reported model
+    prediction.
+  </p>
+</ResearchStatement>
+
+Document retrieval adds further choices: whether to represent a sentence, paragraph, section, or entire document; how to preserve headings; and what metadata to retain. A vector detached from its source is difficult to inspect or cite.
+
+## Evaluate with questions from the actual task
+
+Create a small set of realistic queries and label relevant documents. Include paraphrases, abbreviations, rare identifiers, and queries for which the collection has no answer.
+
+Compare lexical retrieval, vector retrieval, and a hybrid approach. Do not infer quality from a few satisfying demos. Examine missing results as well as high-ranked irrelevant ones.
+
+## Try the contrast
+
+Write two short documents that use different words to express the same idea. Then write two that share many words but disagree. Predict how a term-based and an embedding-based retriever might rank each.
+
+**Next question:** once you retrieve the right material, how do you get a language model to use it faithfully? Retrieval-augmented generation connects those steps, but introduces its own failure modes.

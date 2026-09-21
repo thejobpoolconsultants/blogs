@@ -1,0 +1,52 @@
+/* Main application values: see docs/design/01-brand-alignment-audit.md. */
+:root {
+  color-scheme: light;
+  --background-primary: #f8f7f2;
+  --background-secondary: #f1f0e9;
+  --surface-primary: #fefdf9;
+  --surface-muted: #eef0f4;
+  --text-primary: #182033;
+  --text-secondary: #596579;
+  --text-muted: #5f6c80;
+  --border-subtle: #e1e3e8;
+  --border-default: #c6ccd6;
+  --brand-navy: #18264f;
+  --brand-midnight: #0b1020;
+  --editorial-gold: #826734;
+  --gold-on-dark: #d0b171;
+  --intelligence: #126c82;
+  --evaluation: #28796c;
+  --failure: #9b4047;
+  --focus-ring: #30456f;
+  --font-display: 'Space Grotesk Variable', sans-serif;
+  --font-editorial: 'Cormorant Garamond', Georgia, serif;
+  --radius: 8px;
+  --radius-panel: 16px;
+  --motion-ui: 220ms;
+  --ease-out: cubic-bezier(0.2, 0.7, 0.2, 1);
+  --paper: var(--background-primary);
+  --surface: var(--surface-primary);
+  --ink: var(--text-primary);
+  --muted: var(--text-secondary);
+  --line: var(--border-subtle);
+  --accent: var(--intelligence);
+  --wash: var(--surface-muted);
+  --dark: var(--brand-midnight);
+}
+:root[data-theme='dark'] {
+  color-scheme: dark;
+  --background-primary: #0b1020;
+  --background-secondary: #0e1528;
+  --surface-primary: #111a2e;
+  --surface-muted: #10182a;
+  --text-primary: #f3f0e8;
+  --text-secondary: #c3cad7;
+  --text-muted: #99a4b7;
+  --border-subtle: #26334d;
+  --border-default: #465674;
+  --editorial-gold: #d0b171;
+  --intelligence: #79c9de;
+  --evaluation: #80bcaf;
+  --failure: #d27a82;
+  --focus-ring: #8ea2da;
+}

@@ -1,0 +1,372 @@
+---
+import '../styles/global.css';
+import '../styles/editorial.css';
+import '../styles/brand-assets.css';
+import { brand } from '../data/brand-assets';
+import { editorialQuotes } from '../data/editorial-quotes';
+import Brand from '../components/Brand.astro';
+import { url, absoluteUrl, siteConfig } from '../utils/urls';
+import { topics } from '../data/topics';
+interface Props {
+  title?: string;
+  description?: string;
+  image?: string;
+  noindex?: boolean;
+  article?: boolean;
+}
+const {
+  title = 'Understand intelligence. Build what’s next.',
+  description = siteConfig.description,
+  image = brand.assets.social.src,
+  noindex = false,
+  article = false,
+} = Astro.props;
+const canonical = new URL(
+  Astro.url.pathname.endsWith('/404/') ? url('404.html') : Astro.url.pathname,
+  siteConfig.origin,
+).href;
+const nav = [
+  ['AI', 'artificial-intelligence'],
+  ['Machine Learning', 'machine-learning'],
+  ['Deep Learning', 'deep-learning'],
+  ['NLP', 'nlp'],
+  ['Generative AI', 'generative-ai'],
+  ['Agents', 'agentic-ai'],
+  ['Research', 'research'],
+  ['Build', 'build'],
+];
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title} | {siteConfig.name}</title>
+    <meta name="description" content={description} />
+    <meta
+      name="robots"
+      content={noindex ? 'noindex, follow' : 'index, follow'}
+    />
+    <link rel="canonical" href={canonical} />
+    <link rel="icon" type="image/svg+xml" href={url(brand.favicon)} />
+    <link
+      rel="alternate"
+      type="application/rss+xml"
+      title={siteConfig.name}
+      href={url('rss.xml')}
+    />
+    <meta property="og:title" content={title} />
+    <meta property="og:site_name" content={siteConfig.name} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content={article ? 'article' : 'website'} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={absoluteUrl(image)} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content={siteConfig.name + ' — ' + title} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={absoluteUrl(image)} />
+    <script is:inline>
+      (() => {
+        document.documentElement.classList.add('js');
+        try {
+          const saved = localStorage.getItem('publication-theme');
+          document.documentElement.dataset.theme =
+            saved === 'light' || saved === 'dark'
+              ? saved
+              : matchMedia('(prefers-color-scheme: dark)').matches
+                ? 'dark'
+                : 'light';
+        } catch {
+          document.documentElement.dataset.theme = matchMedia(
+            '(prefers-color-scheme: dark)',
+          ).matches
+            ? 'dark'
+            : 'light';
+        }
+      })();
+    </script>
+    <script
+      type="application/ld+json"
+      set:html={JSON.stringify({
+        '@context': 'https://schema.org',
+        '@graph': [
+          {
+            '@type': 'Organization',
+            '@id': absoluteUrl('#organization'),
+            name: siteConfig.name,
+            url: absoluteUrl(),
+            logo: absoluteUrl(brand.assets.logo.src),
+          },
+          {
+            '@type': 'WebSite',
+            name: siteConfig.name,
+            url: absoluteUrl(),
+            publisher: { '@id': absoluteUrl('#organization') },
+          },
+        ],
+      }).replace(/</g, '\\u003c')}
+    ></script>
+    <slot name="head" />
+  </head>
+  <body>
+    <a class="skip" href="#main">
+      Skip to content
+    </a>
+    <header data-pagefind-ignore>
+      <div class="container masthead">
+        <Brand />
+        <div class="header-tools">
+          <a href={url('learn/')}>Learning paths ↗</a>
+          <a href={siteConfig.mainSite} class="platform-link">
+            Main website ↗
+          </a>
+          <a
+            class="search-link"
+            href={url('search/')}
+            aria-label="Search the library"
+          >
+            <svg
+              class="search-icon"
+              viewBox="0 0 24 24"
+              width="18"
+              height="18"
+              aria-hidden="true"
+            >
+              <circle
+                cx="10"
+                cy="10"
+                r="6"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.5"
+              />
+              <path d="m15 15 5 5" stroke="currentColor" stroke-width="1.5" />
+            </svg>
+            Search <kbd aria-hidden="true">/</kbd>
+          </a>
+          <button
+            class="theme-toggle"
+            id="theme-toggle"
+            aria-label="Switch color theme"
+            aria-pressed="false"
+          >
+            <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
+              <circle
+                cx="12"
+                cy="12"
+                r="7"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.5"
+              />
+              <path d="M12 5a7 7 0 0 1 0 14Z" fill="currentColor" />
+            </svg>
+            <span>Theme</span>
+          </button>
+        </div>
+      </div>
+      <div class="navline">
+        <nav class="container desktop-nav" aria-label="Primary">
+          {nav.map(([label, id]) => (
+            <a
+              href={url('topics/' + id + '/')}
+              aria-current={
+                Astro.url.pathname === url('topics/' + id + '/')
+                  ? 'page'
+                  : undefined
+              }
+            >
+              {label}
+            </a>
+          ))}
+          <a href={url('topics/')}>
+            All topics <span aria-hidden="true">↗</span>
+          </a>
+        </nav>
+        <details class="container mobile-menu">
+          <summary>
+            Explore the publication <span aria-hidden="true">+</span>
+          </summary>
+          <button
+            class="menu-scrim"
+            aria-label="Dismiss navigation"
+            tabindex="-1"
+          ></button>
+          <nav aria-label="Mobile">
+            <div class="drawer-heading">
+              <span class="meta">The knowledge index</span>
+              <button class="menu-close" aria-label="Close navigation">
+                ×
+              </button>
+            </div>
+            <div class="drawer-brand">
+              <img
+                src={url(brand.assets.emblem.small.src)}
+                width={brand.assets.emblem.small.width}
+                height={brand.assets.emblem.small.height}
+                alt=""
+              />
+              <div>
+                <strong>{brand.name}</strong>
+                <small>{brand.descriptor}</small>
+              </div>
+            </div>
+            {topics.map((t) => (
+              <a href={url('topics/' + t.id + '/')}>{t.title}</a>
+            ))}
+            <a href={url('learn/')}>Learning paths</a>
+            <a href={url('series/')}>Series</a>
+            <a href={siteConfig.mainSite}>Main website ↗</a>
+            <a href={url('about/')}>About</a>
+          </nav>
+        </details>
+      </div>
+    </header>
+    <main id="main" class="container" tabindex="-1">
+      <slot />
+    </main>
+    <footer class="container footer" data-pagefind-ignore>
+      <div class="footer-top">
+        <div>
+          <Brand variant="footer" />
+          <p>
+            Understand intelligence. Build what’s next.
+            <br />
+            Ideas worth understanding. Systems worth building.
+          </p>
+        </div>
+        <nav aria-label="Explore">
+          <h2>Explore</h2>
+          <a href={url('topics/')}>All topics</a>
+          <a href={url('series/')}>Series & collections</a>
+          <a href={url('ai-evolution/')}>The evolution of AI</a>
+          <a href={url('landscape/')}>AI landscape</a>
+          <a href={url('tags/')}>Browse by tag</a>
+        </nav>
+        <nav aria-label="Publication">
+          <h2>Publication</h2>
+          <a href={url('about/')}>About & editorial values</a>
+          <a href={url('learn/')}>Learning paths</a>
+          <a href={url('authors/thejobpoolconsultants/')}>Contributors</a>
+          <a href={siteConfig.mainSite}>Main website ↗</a>
+          <a href="https://github.com/thejobpoolconsultants/blogs">
+            Source on GitHub ↗
+          </a>
+        </nav>
+      </div>
+      <div class="footer-bottom">
+        <span>© {new Date().getUTCFullYear()} TheJobPoolConsultants</span>
+        <span>{editorialQuotes.footer.lines.join(' ')}</span>
+      </div>
+    </footer>
+    <script>
+      const menu = document.querySelector<HTMLDetailsElement>('.mobile-menu')!;
+      const closeMenu = () => {
+        menu.open = false;
+        menu.querySelector('summary')?.focus();
+      };
+      menu
+        .querySelectorAll('.menu-close, .menu-scrim')
+        .forEach((button) => button.addEventListener('click', closeMenu));
+      menu.addEventListener('toggle', () => {
+        document.body.classList.toggle('menu-open', menu.open);
+        document
+          .querySelectorAll<HTMLElement>('main, footer, .masthead')
+          .forEach((region) => {
+            region.inert = menu.open;
+          });
+        if (menu.open)
+          menu.querySelector<HTMLButtonElement>('.menu-close')?.focus();
+      });
+      menu.addEventListener('keydown', (event) => {
+        if (event.key !== 'Tab' || !menu.open) return;
+        const stops = [
+          ...menu.querySelectorAll<HTMLElement>('.menu-close, nav a'),
+        ];
+        const first = stops[0],
+          last = stops.at(-1)!;
+        if (event.shiftKey && document.activeElement === first) {
+          event.preventDefault();
+          last.focus();
+        }
+        if (!event.shiftKey && document.activeElement === last) {
+          event.preventDefault();
+          first.focus();
+        }
+      });
+      matchMedia('(min-width: 801px)').addEventListener('change', (event) => {
+        if (event.matches) menu.open = false;
+      });
+      document.addEventListener('keydown', (event) => {
+        const target = event.target as HTMLElement;
+        if (
+          event.key !== '/' ||
+          event.ctrlKey ||
+          event.metaKey ||
+          event.altKey ||
+          target.closest('input, textarea, select, [contenteditable]') ||
+          menu.open
+        )
+          return;
+        event.preventDefault();
+        const input = document.querySelector<HTMLInputElement>('#query');
+        if (input) input.focus();
+        else
+          window.location.assign(
+            document.querySelector<HTMLAnchorElement>('.search-link')!.href,
+          );
+      });
+      const toggle = document.querySelector<HTMLButtonElement>('#theme-toggle');
+      function syncTheme() {
+        const dark = document.documentElement.dataset.theme === 'dark';
+        toggle?.setAttribute('aria-pressed', String(dark));
+        toggle?.setAttribute(
+          'aria-label',
+          dark ? 'Switch to light theme' : 'Switch to dark theme',
+        );
+      }
+      syncTheme();
+      toggle?.addEventListener('click', () => {
+        const theme =
+          document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark';
+        document.documentElement.dataset.theme = theme;
+        try {
+          localStorage.setItem('publication-theme', theme);
+        } catch {
+          /* Theme still works without storage. */
+        }
+        syncTheme();
+      });
+      matchMedia('(prefers-color-scheme: dark)').addEventListener(
+        'change',
+        (event) => {
+          let saved = null;
+          try {
+            saved = localStorage.getItem('publication-theme');
+          } catch {
+            /* Use system preference. */
+          }
+          if (!saved) {
+            document.documentElement.dataset.theme = event.matches
+              ? 'dark'
+              : 'light';
+            syncTheme();
+          }
+        },
+      );
+      document
+        .querySelector<HTMLDetailsElement>('.mobile-menu')
+        ?.addEventListener('keydown', (event) => {
+          if (event.key === 'Escape') {
+            const menu = event.currentTarget as HTMLDetailsElement;
+            menu.open = false;
+            menu.querySelector('summary')?.focus();
+          }
+        });
+    </script>
+  </body>
+</html>

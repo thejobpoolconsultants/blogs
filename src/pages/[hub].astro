@@ -1,0 +1,74 @@
+---
+import ResearchCoverage from '../components/ResearchCoverage.astro';
+import { researchEditorial } from '../data/research-editorial';
+import TopicInsight from '../components/TopicInsight.astro';
+import { editorialQuotes, topicInsightIds } from '../data/editorial-quotes';
+import ResearchFeature from '../components/ResearchFeature.astro';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import ArticleList from '../components/ArticleList.astro';
+import { topicById } from '../data/topics';
+import { publishedArticles } from '../utils/content';
+import { url } from '../utils/urls';
+export function getStaticPaths() {
+  return ['research', 'architectures', 'build', 'careers'].map((hub) => ({
+    params: { hub },
+    props: { hub },
+  }));
+}
+const { hub } = Astro.props;
+const topic = topicById(hub);
+const insightId = topicInsightIds[hub];
+const articles = (await publishedArticles()).filter(
+  (a) => a.data.topic === hub,
+);
+---
+
+<BaseLayout title={topic.title} description={topic.description}>
+  <div class="page-hero">
+    <p class="eyebrow">Explore / {topic.title}</p>
+    <h1>{topic.title}</h1>
+    <p class="lead">
+      {hub === 'research' ? researchEditorial.headline : topic.description}
+    </p>
+    {hub === 'research' && (
+      <p class="lead research-intro">{researchEditorial.introduction}</p>
+    )}
+    {hub !== 'research' && insightId && (
+      <TopicInsight quote={editorialQuotes[insightId]} topic={topic.title} />
+    )}
+  </div>
+  {hub === 'research' ? (
+    <>
+      <ResearchFeature />
+      <ResearchCoverage />
+      <div class="research-index">
+        <h2>Follow the research into practice.</h2>
+        <div class="pills">
+          <a class="pill" href={url('articles/attention-paper-to-product/')}>
+            Foundational papers
+          </a>
+          <a class="pill" href={url('articles/attention-paper-to-product/')}>
+            Paper → product
+          </a>
+          <a class="pill" href={url('articles/production-rag-architecture/')}>
+            Architecture analysis
+          </a>
+          <a class="pill" href={url('articles/build-a-retrieval-baseline/')}>
+            Practice exercises
+          </a>
+        </div>
+      </div>
+    </>
+  ) : (
+    <ArticleList articles={articles} />
+  )}
+  <section class="section">
+    <a class="text-link" href={url('topics/' + hub + '/')}>
+      Explore the full topic map →
+    </a>
+    <br />
+    <a class="text-link" href={url('learn/')}>
+      Find a learning path →
+    </a>
+  </section>
+</BaseLayout>

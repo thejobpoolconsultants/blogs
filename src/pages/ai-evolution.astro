@@ -1,0 +1,80 @@
+---
+import EditorialStatement from '../components/EditorialStatement.astro';
+import { editorialQuotes } from '../data/editorial-quotes';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { url } from '../utils/urls';
+const stages = [
+  ['Statistics', 'data-science', 'Reason about evidence and uncertainty.'],
+  [
+    'Machine Learning',
+    'machine-learning',
+    'Fit patterns and test generalization.',
+  ],
+  ['Deep Learning', 'deep-learning', 'Learn layered representations.'],
+  ['Language & Vision', 'nlp', 'Represent text, images, and sequences.'],
+  ['Transformers', 'deep-learning', 'Mix information through attention.'],
+  [
+    'Foundation Models',
+    'generative-ai',
+    'Adapt pretrained representations and capabilities.',
+  ],
+  ['Generative AI', 'generative-ai', 'Generate text and other outputs.'],
+  [
+    'Retrieval-Augmented Generation',
+    'generative-ai',
+    'Connect generation to selected external evidence.',
+  ],
+  [
+    'Agents',
+    'agentic-ai',
+    'Connect model decisions to tools and observations.',
+  ],
+  [
+    'Multi-Agent Systems',
+    'agentic-ai',
+    'Coordinate specialized processes when the task justifies it.',
+  ],
+  [
+    'Autonomous AI Systems',
+    'architectures',
+    'Define scope, permissions, monitoring, and stopping conditions.',
+  ],
+];
+---
+
+<BaseLayout
+  title="From algorithms to agents"
+  description="A conceptual journey through the ideas connecting statistics, ML, deep learning, generative AI, and agents."
+>
+  <div class="page-hero">
+    <p class="eyebrow">The evolution of ideas</p>
+    <h1>
+      From algorithms
+      <br />
+      to agents.
+    </h1>
+    <EditorialStatement
+      quote={editorialQuotes.evolution}
+      variant="inline"
+      as="p"
+      label=""
+    />
+    <p class="lead">
+      A conceptual learning map, not a strict historical timeline. These fields
+      overlap and coexist. Newer approaches do not make earlier ones obsolete.
+    </p>
+  </div>
+  <ol class="path-steps">
+    {stages.map(([title, id, description]) => (
+      <li>
+        <div>
+          <h2>{title}</h2>
+          <p>{description}</p>
+          <a class="text-link" href={url('topics/' + id + '/')}>
+            Explore the field →
+          </a>
+        </div>
+      </li>
+    ))}
+  </ol>
+</BaseLayout>

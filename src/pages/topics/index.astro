@@ -1,0 +1,59 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { topics } from '../../data/topics';
+import { sectionsFor } from '../../data/topic-books';
+import { url } from '../../utils/urls';
+import '../../styles/topic-books.css';
+const groups = [
+  'Foundations',
+  'Language & perception',
+  'Generative systems',
+  'Autonomous systems',
+  'Production',
+  'Research & design',
+  'Practice',
+];
+---
+
+<BaseLayout
+  title="Explore intelligence"
+  description="Choose one of 15 topics and follow an ordered sequence of concepts, published articles, and learning paths."
+>
+  <div class="page-hero directory-hero">
+    <p class="eyebrow">The knowledge library / 15 topics</p>
+    <h1>Find your starting point.</h1>
+    <p class="lead">
+      Choose a field. Follow its learning sequence, one section at a time.
+    </p>
+  </div>
+  <div class="topic-directory">
+    {groups.map((group, index) => (
+      <section class="directory-group" aria-labelledby={'group-' + index}>
+        <h2 id={'group-' + index}>
+          <span class="meta">{String(index + 1).padStart(2, '0')}</span>
+          {group}
+        </h2>
+        <ul>
+          {topics
+            .filter((topic) => topic.group === group)
+            .map((topic) => (
+              <li>
+                <a href={url('topics/' + topic.id + '/')}>
+                  <span>
+                    <strong>{topic.title}</strong>
+                    <span class="directory-description">
+                      {topic.description}
+                    </span>
+                  </span>
+                  <span class="directory-count meta">
+                    {sectionsFor(topic.id).length} sections
+                  </span>
+                  <span aria-hidden="true">↗</span>
+                </a>
+              </li>
+            ))}
+        </ul>
+      </section>
+    ))}
+  </div>
+</BaseLayout>

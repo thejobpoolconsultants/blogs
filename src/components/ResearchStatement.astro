@@ -1,0 +1,74 @@
+---
+import { statementKinds } from '../data/research-editorial';
+interface Props {
+  kind: keyof typeof statementKinds;
+  source?: string;
+  sourceLabel?: string;
+  sourceKind?: 'paper' | 'docs' | 'textbook' | 'repository';
+}
+const { kind, source, sourceLabel, sourceKind = 'paper' } = Astro.props;
+if (kind === 'source' && (!source || !sourceLabel))
+  throw new Error(
+    'A source-backed summary requires a linked source and source label.',
+  );
+const label = statementKinds[kind].label;
+---
+
+<aside class="research-statement" data-provenance={kind} aria-label={label}>
+  <p class="meta provenance-label">{label}</p>
+  <div class="provenance-body">
+    <slot />
+  </div>
+  {source && (
+    <p class="provenance-source">
+      <span class="meta">
+        {kind === 'source'
+          ? sourceKind.toUpperCase()
+          : statementKinds[kind].marker}
+      </span>{' '}
+      · <a href={source}>{sourceLabel}</a>
+    </p>
+  )}
+  {kind === 'experiment' && (
+    <p class="provenance-status">
+      Proposed reader exercise; no results are claimed here.
+    </p>
+  )}
+</aside>
+
+<style>
+  .research-statement {
+    margin-block: 2rem;
+    padding-left: 1.2rem;
+    border-left: 2px solid var(--intelligence);
+  }
+  .provenance-label {
+    color: var(--intelligence);
+    margin: 0 0 0.75rem;
+    line-height: 1.7;
+  }
+  .research-statement[data-provenance='interpretation'],
+  .research-statement[data-provenance='perspective'],
+  .research-statement[data-provenance='experiment'] {
+    border-color: var(--editorial-gold);
+  }
+  .research-statement[data-provenance='interpretation'] .provenance-label,
+  .research-statement[data-provenance='perspective'] .provenance-label,
+  .research-statement[data-provenance='experiment'] .provenance-label {
+    color: var(--editorial-gold);
+  }
+  .provenance-body :global(> :first-child) {
+    margin-top: 0;
+  }
+  .provenance-body :global(> :last-child) {
+    margin-bottom: 0;
+  }
+  .provenance-source,
+  .provenance-status {
+    font-size: 0.85rem;
+    line-height: 1.7;
+    color: var(--muted);
+    margin: 1rem 0 0;
+    overflow-wrap: anywhere;
+  }
+</style>

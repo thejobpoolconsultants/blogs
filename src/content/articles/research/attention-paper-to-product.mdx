@@ -1,0 +1,145 @@
+---
+slug: 'attention-paper-to-product'
+topic: 'research'
+title: 'Attention changed how information moves.'
+description: 'Understand the Transformer’s central idea, what the original experiments reported, what they did not establish, and why the architecture still matters to engineers.'
+subtopics: ['foundational papers', 'transformer research']
+tags: ['Transformers', 'Neural Networks']
+series: 'paper-to-product'
+type: 'paper-to-product'
+difficulty: 'intermediate'
+publishedAt: '2026-09-20'
+updatedAt: '2026-09-20'
+status: 'published'
+authors: ['thejobpoolconsultants']
+audience: ['Students and practicing engineers']
+seriesOrder: 1
+sources:
+  [
+    {
+      'title': 'Vaswani et al. (2017): Attention Is All You Need',
+      'url': 'https://arxiv.org/abs/1706.03762',
+      'role': 'primary',
+      'kind': 'paper',
+      'supports': 'Transformer architecture (section 3), parallelization analysis (section 4), translation and constituency-parsing results (section 6).',
+    },
+  ]
+relatedArticles: ['build-a-retrieval-baseline']
+prerequisites: ['Curiosity and basic technical literacy']
+learningOutcomes:
+  [
+    'Read the Transformer’s central idea, the evidence behind it, and the limits of what the original experiments establish.',
+  ]
+---
+
+import ConceptFlow from '../../../components/ConceptFlow.astro';
+import ResearchStatement from '../../../components/ResearchStatement.astro';
+
+## The question
+
+How can a sequence model connect information across positions without processing the sequence through a recurrent hidden state?
+
+Vaswani and colleagues introduced the Transformer in [Attention Is All You Need](https://arxiv.org/abs/1706.03762), first submitted in June 2017. This article explains their work and distinguishes it from the teaching examples below.
+
+## The core idea
+
+Attention combines information from different positions with input-dependent weights. The original Transformer also includes positional information, feedforward layers, residual paths and normalization; its architecture is described in [section 3 of the paper](https://arxiv.org/html/1706.03762v7#S3).
+
+<ConceptFlow
+  steps={[
+    'Token representations',
+    'Attention across positions',
+    'Updated representations',
+    'Feedforward transformation',
+  ]}
+  caption="TheJobPoolConsultants teaching diagram of information mixing. Residual and normalization paths are omitted for clarity; this is not a paper figure or an experimental result."
+/>
+
+## What the paper reports
+
+<ResearchStatement
+  kind="source"
+  source="https://arxiv.org/html/1706.03762v7#S6"
+  sourceLabel="Vaswani et al., sections 4 and 6"
+>
+  <p>
+    The authors report translation results on WMT 2014 English–German and
+    English–French, and additional English constituency-parsing evaluations.
+    They compare translation quality and training cost with the models listed in
+    the paper. Section 4 analyzes the parallelization of self-attention relative
+    to recurrence.
+  </p>
+</ResearchStatement>
+
+## What the evidence supports
+
+The reported translation comparisons support the authors’ claims under the evaluated datasets and training configurations. Their [parsing experiments](https://arxiv.org/html/1706.03762v7#S6.SS3) examine an additional task. These are results reported by the original authors, not measurements performed by TheJobPoolConsultants.
+
+## What those results do not establish
+
+<ResearchStatement kind="limitation">
+  <p>
+    The evaluated tasks do not establish universal superiority across every
+    dataset, sequence length, compute budget or deployment constraint. The paper
+    also does not establish that an attention weight is a causal explanation of
+    an individual prediction. That is a limit on what can be concluded here, not
+    a separate experiment reported by this publication.
+  </p>
+</ResearchStatement>
+
+## Engineering interpretation
+
+<ResearchStatement kind="interpretation">
+  <p>
+    One engineering interpretation is to examine the paths through which a
+    representation can receive information. A direct attention connection offers
+    a different path from recurrent state propagation. The masks, input
+    selection and surrounding architecture still constrain what information can
+    be used.
+  </p>
+</ResearchStatement>
+
+The following is an engineering exercise, not a new experimental result.
+
+<ResearchStatement kind="example">
+  <p>
+    Imagine the sentence “The parcel beside the boxes arrived late.” Treat
+    “parcel” and “arrived” as positions you want to connect in a teaching
+    diagram. Draw a row for each token and the permitted connections between
+    rows. This invented sentence illustrates information paths; it is not an
+    observed attention map from a trained model.
+  </p>
+</ResearchStatement>
+
+Then consider a causal decoder: with shifted target inputs, masking prevents access to future target tokens. Drawing that boundary helps distinguish available information from information a model actually uses.
+
+## Paper → Product
+
+If you use a Transformer through an API, this mental model can guide design questions. What material is supplied in the context? Which interactions are permitted? What happens when needed evidence is missing or truncated?
+
+## Proposed experiment
+
+<ResearchStatement kind="experiment">
+  <p>
+    Design a question whose answer depends on one controlled passage. Keep the
+    model version, question and generation settings fixed. Move the passage
+    through the context and add controlled distractors. Include a version with
+    the evidence removed. Record answer support and variability over repeated
+    runs before drawing conclusions.
+  </p>
+  <p>This is a proposed experiment. No results are claimed here.</p>
+</ResearchStatement>
+
+## Open questions
+
+<ResearchStatement kind="perspective">
+  <p>
+    TheJobPoolConsultants uses this paper as a way to ask better engineering
+    questions. Does the application need retrieval representations, sequence
+    classification or generation? Which constraints matter for that task? A
+    useful architecture choice depends on that context, not on the name of the
+    model family.
+  </p>
+</ResearchStatement>
+
+Read the equations in the primary paper after tracing the information flow. This explanation is an entry point into the mathematics, not a replacement for it.

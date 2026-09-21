@@ -1,0 +1,107 @@
+---
+slug: 'agent-isnt-one-model'
+topic: 'agentic-ai'
+title: 'The agent isn’t one model anymore.'
+description: 'Models propose. Tools execute. State remembers. The surrounding system makes the loop useful and accountable.'
+subtopics: ['agent loop', 'tools', 'agent state', 'permissions', 'evaluation']
+tags: ['Agents', 'Architecture', 'Evaluation']
+series: 'agentic-ai-series'
+type: 'architecture'
+featured: true
+publishedAt: '2026-09-20'
+updatedAt: '2026-09-20'
+status: 'published'
+difficulty: 'beginner'
+authors: ['thejobpoolconsultants']
+audience: ['Students and practicing engineers']
+seriesOrder: 1
+sources:
+  [
+    {
+      'title': 'Anthropic: Building effective agents',
+      'url': 'https://www.anthropic.com/engineering/building-effective-agents',
+      'role': 'supporting',
+      'kind': 'docs',
+      'supports': 'The distinction between predefined workflows and model-directed agents; the diagram and inventory assistant are TheJobPoolConsultants examples.',
+    },
+  ]
+relatedArticles: ['production-rag-architecture']
+prerequisites: ['Curiosity and basic technical literacy']
+learningOutcomes:
+  [
+    'Models propose. Tools execute. State remembers. The surrounding system makes the loop useful and accountable.',
+  ]
+---
+
+import ResearchStatement from '../../../components/ResearchStatement.astro';
+import ArchitectureDiagram from '../../../components/ArchitectureDiagram.astro';
+import KeyIdea from '../../../components/KeyIdea.astro';
+
+<KeyIdea>
+  <p>
+    The model proposes an action. The surrounding system decides whether that
+    action is allowed, executes it, and records what happened.
+  </p>
+</KeyIdea>
+
+## What happens after the model responds?
+
+A chatbot can stop after producing text. A task-performing system may need to inspect a result, choose a tool, act, and decide whether to continue.
+
+Calling a model repeatedly is not enough. Someone must define available tools, validate arguments, retain state, enforce permissions, handle failure, and decide when the work is finished.
+
+## Start with the simplest useful control flow
+
+A fixed workflow gives software explicit control over the sequence. An agent can let a model choose some next steps at runtime. Both can use language models and tools. More autonomy is not automatically better.
+
+Anthropic's [engineering discussion](https://www.anthropic.com/engineering/building-effective-agents) distinguishes predefined workflows from systems where models dynamically direct tool use. The architecture below is an illustrative design, not a claim about the internals of any commercial assistant.
+
+## See the system
+
+<ArchitectureDiagram caption="An illustrative agent boundary: policy governs actions; orchestration connects model proposals, tool execution, state, and evaluation." />
+
+The model is one component. The harness—the software around it—owns the execution contract.
+
+A proposed tool call is data to validate. It is not permission to execute. A tool result is an observation to interpret. It is not a trusted instruction that can rewrite the system's rules.
+
+## Trace one request
+
+<ResearchStatement kind="example">
+  <p>
+    The read-only inventory assistant below is an illustrative design. It is not
+    a deployed system or an independently measured agent trajectory.
+  </p>
+</ResearchStatement>
+
+1. The user asks whether a part is available.
+2. The application attaches the user's authorized warehouse scope.
+3. The model proposes a lookup with a part identifier.
+4. The executor validates the tool name, argument shape, and access scope.
+5. The tool returns a structured observation with a timestamp.
+6. The system records the result and lets the model answer or request a permitted follow-up.
+
+If the tool fails, the assistant should distinguish a failed lookup from an empty inventory. Those are different facts.
+
+## State is part of correctness
+
+Keep a record of task status, observations, outstanding actions, and stopping conditions. Do not rely solely on a growing conversation string.
+
+For actions with side effects, use stable operation identifiers and carefully defined retry behavior. A timeout does not necessarily mean an action never occurred. Repeating it blindly can duplicate the effect.
+
+## Put limits around the loop
+
+Use a maximum number of steps, an execution budget, tool timeouts, and explicit failure states. Ask for human review when the task's consequences require it. Stop when success is established, evidence is insufficient, or the allowed work is exhausted.
+
+These controls should be enforced in application code. A prompt describing a budget is useful context, but it is not a hard execution limit.
+
+## Evaluate a trajectory, not only an answer
+
+Inspect whether the system selected an appropriate tool, used authorized arguments, recovered from failures, and stopped correctly. A plausible final paragraph can hide a failed or unnecessary action.
+
+Test invalid arguments, stale state, repeated tool calls, and untrusted text in observations. Record both success and the cost of getting there.
+
+## What comes next?
+
+Before adding multiple agents, identify the concrete bottleneck: context size, specialization, independent subtasks, or evaluation quality. Splitting a task also creates communication and coordination costs.
+
+**Build exercise:** draw the boundary between proposals and execution in an application you know. Label the exact component that can refuse an action.

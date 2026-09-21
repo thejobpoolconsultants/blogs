@@ -1,0 +1,86 @@
+---
+import { articleTypes, articleTypeLabel } from '../data/research-editorial';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { topics } from '../data/topics';
+import { url } from '../utils/urls';
+---
+
+<BaseLayout
+  title="Search the library"
+  description="Search article text, topics, tags, and series across the knowledge library."
+  noindex
+>
+  <div class="page-hero search-hero">
+    <p class="eyebrow">Follow the question</p>
+    <h1>
+      What are you
+      <br />
+      curious about?
+    </h1>
+    <p class="lead">
+      Search explanations, architecture, and ideas. Try “retrieval”,
+      “attention”, or “evaluation”.
+    </p>
+  </div>
+  <div class="search-wrap" id="search" data-index={url('pagefind/pagefind.js')}>
+    <form id="search-form" role="search">
+      <div class="search-command-bar">
+        <span class="meta">Knowledge index</span>
+        <span class="meta">
+          Press <kbd>/</kbd> to focus
+        </span>
+      </div>
+      <label for="query">Search the knowledge library</label>
+      <input
+        type="search"
+        id="query"
+        name="q"
+        autocomplete="off"
+        placeholder="An idea, a question, a topic…"
+      />
+      <div class="search-filters">
+        <label>
+          Topic
+          <select id="topic-filter">
+            <option value="">All topics</option>
+            {topics.map((t) => (
+              <option value={t.title}>{t.title}</option>
+            ))}
+          </select>
+        </label>
+        <label>
+          Article type
+          <select id="type-filter">
+            <option value="">All types</option>
+            {articleTypes.map((t) => (
+              <option value={t}>{articleTypeLabel(t)}</option>
+            ))}
+          </select>
+        </label>
+      </div>
+      <button class="button primary" type="submit">
+        Search →
+      </button>
+    </form>
+    <p
+      id="search-status"
+      role="status"
+      aria-live="polite"
+      style="margin-top:24px"
+    >
+      Enter a search term to begin.
+    </p>
+    <div id="search-results"></div>
+    <button id="load-more" class="button" hidden>
+      Show more results
+    </button>
+    <noscript>
+      <p>
+        Full-text search requires JavaScript. You can still{' '}
+        <a href={url('topics/')}>browse all topics</a> and{' '}
+        <a href={url('articles/')}>read every article</a>.
+      </p>
+    </noscript>
+  </div>
+  <script is:inline type="module" src={url('search.js')}></script>
+</BaseLayout>

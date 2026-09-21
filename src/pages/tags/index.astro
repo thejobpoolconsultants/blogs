@@ -1,0 +1,25 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { tags, tagSlug } from '../../data/tags';
+import { publishedArticles } from '../../utils/content';
+import { url } from '../../utils/urls';
+const articles = await publishedArticles();
+---
+
+<BaseLayout
+  title="Browse by tag"
+  description="Find related ideas across topics using a curated, consistent vocabulary."
+>
+  <div class="page-hero">
+    <p class="eyebrow">Across the boundaries</p>
+    <h1>Follow a concept.</h1>
+    <p class="lead">Tags connect ideas that belong to more than one field.</p>
+  </div>
+  <div class="pills">
+    {tags.map((tag) => (
+      <a class="pill" href={url('tags/' + tagSlug(tag) + '/')}>
+        {tag} · {articles.filter((a) => a.data.tags.includes(tag)).length}
+      </a>
+    ))}
+  </div>
+</BaseLayout>

@@ -1,0 +1,21 @@
+---
+import { researchEditorial } from '../data/research-editorial';
+---
+
+<section
+  class="section research-coverage"
+  aria-labelledby="research-coverage-title"
+>
+  <h2 id="research-coverage-title">How we cover research</h2>
+  <p>{researchEditorial.approach}</p>
+  <p>{researchEditorial.independence}</p>
+</section>
+<style>
+  .research-coverage {
+    max-width: 760px;
+  }
+  .research-coverage p {
+    color: var(--muted);
+    line-height: 1.8;
+  }
+</style>

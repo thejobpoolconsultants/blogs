@@ -1,0 +1,35 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import ArticleList from '../../components/ArticleList.astro';
+import { authors } from '../../data/authors';
+import { publishedArticles } from '../../utils/content';
+import { topicById } from '../../data/topics';
+export function getStaticPaths() {
+  return authors.map((author) => ({
+    params: { author: author.id },
+    props: { author },
+  }));
+}
+const { author } = Astro.props;
+const articles = (await publishedArticles()).filter((a) =>
+  a.data.authors.includes(author.id),
+);
+---
+
+<BaseLayout
+  title={author.name + ' — Contributor'}
+  description={author.description}
+>
+  <div class="page-hero">
+    <p class="eyebrow">Organization byline</p>
+    <h1>{author.name}</h1>
+    <p class="lead">{author.description}</p>
+    <p class="muted">
+      Areas:{' '}
+      {[...new Set(articles.map((a) => topicById(a.data.topic).title))].join(
+        ' · ',
+      )}
+    </p>
+  </div>
+  <ArticleList articles={articles} />
+</BaseLayout>

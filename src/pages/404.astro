@@ -1,0 +1,28 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { url } from '../utils/urls';
+---
+
+<BaseLayout
+  title="Page not found"
+  description="This page is not in the knowledge library. Search for a topic or return to the publication."
+  noindex
+>
+  <div class="page-hero">
+    <p class="eyebrow">404 / A missing connection</p>
+    <h1>
+      Let’s find another
+      <br />
+      way into the idea.
+    </h1>
+    <p class="lead">This address doesn’t point to an available page.</p>
+    <div class="hero-actions">
+      <a class="button primary" href={url('search/')}>
+        Search the library →
+      </a>
+      <a class="button" href={url()}>
+        Back to the publication
+      </a>
+    </div>
+  </div>
+</BaseLayout>

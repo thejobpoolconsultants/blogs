@@ -1,0 +1,37 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import { url } from '../utils/urls';
+import { topicById } from '../data/topics';
+import { readingTime } from '../utils/content';
+import { articleTypeLabel } from '../data/research-editorial';
+import ConceptArt from './ConceptArt.astro';
+interface Props {
+  article: CollectionEntry<'articles'>;
+  index?: number;
+  art?: boolean;
+}
+const { article: a, art = false } = Astro.props;
+---
+
+<article class="article-card">
+  {art && (
+    <a
+      class="card-art"
+      href={url('articles/' + a.data.slug + '/')}
+      tabindex="-1"
+      aria-hidden="true"
+    >
+      <ConceptArt topic={a.data.topic} slug={a.data.slug} />
+    </a>
+  )}
+  <div class="meta card-top">
+    {topicById(a.data.topic).title} / {articleTypeLabel(a.data.type)}
+  </div>
+  <h3>
+    <a href={url('articles/' + a.data.slug + '/')}>{a.data.title}</a>
+  </h3>
+  <p>{a.data.description}</p>
+  <div class="meta">
+    {a.data.difficulty} · Approx. {readingTime(a.body)} min read
+  </div>
+</article>

@@ -1,0 +1,26 @@
+---
+import { url } from '../utils/urls';
+import type { learningPaths } from '../data/learning-paths';
+interface Props {
+  path: (typeof learningPaths)[number];
+  index?: number;
+}
+const { path, index = 0 } = Astro.props;
+---
+
+<a class="path-card" href={url('learn/' + path.id + '/')}>
+  <span class="meta">
+    Path {String(index + 1).padStart(2, '0')} · {path.steps.length} stages
+  </span>
+  <h3>{path.title} ↗</h3>
+  <p>{path.description}</p>
+  <ol class="path-preview" aria-label="Learning sequence">
+    {path.steps.slice(0, 4).map((step) => (
+      <li>{step}</li>
+    ))}
+  </ol>
+  <span class="meta">
+    {path.steps.length > 4 ? `+ ${path.steps.length - 4} more stages · ` : ''}
+    View the path →
+  </span>
+</a>

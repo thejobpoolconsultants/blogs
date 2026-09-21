@@ -1,0 +1,40 @@
+---
+import { brand } from '../data/brand-assets';
+import { url } from '../utils/urls';
+interface Props {
+  kind: 'publication' | 'intelligence';
+}
+const { kind } = Astro.props;
+const asset =
+  kind === 'publication'
+    ? brand.assets.publicationBanner
+    : brand.assets.intelligenceBanner;
+const description =
+  kind === 'publication'
+    ? 'TheJobPoolConsultants Blogs Knowledge Hub: connected ideas across machine learning, language, and agents.'
+    : 'TheJobPoolConsultants: understand intelligence and build what’s next, from data and context to action and feedback.';
+---
+
+<figure class:list={['brand-banner', 'brand-banner-' + kind]}>
+  <a href={url('topics/')} aria-label="Explore the Knowledge Hub topics">
+    <picture>
+      <source
+        media="(max-width: 640px)"
+        srcset={url(asset.mobile.src)}
+        width={asset.mobile.width}
+        height={asset.mobile.height}
+        type="image/webp"
+      />
+      <img
+        src={url(asset.src)}
+        srcset={`${url(asset.medium.src)} ${asset.medium.width}w, ${url(asset.src)} ${asset.width}w`}
+        sizes="(max-width: 800px) calc(100vw - 40px), (max-width: 1440px) calc(100vw - 96px), 1320px"
+        width={asset.width}
+        height={asset.height}
+        alt={description}
+        loading="lazy"
+        decoding="async"
+      />
+    </picture>
+  </a>
+</figure>

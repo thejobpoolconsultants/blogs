@@ -1,0 +1,132 @@
+---
+slug: 'build-a-retrieval-baseline'
+topic: 'build'
+title: 'Build the baseline before the pipeline.'
+description: 'A dependency-free lexical retrieval experiment that makes tokenization, ranking, and limitations easy to inspect.'
+subtopics: ['tutorials', 'benchmark experiments']
+tags: ['Python', 'Information Retrieval', 'Evaluation']
+series: 'build-this'
+type: 'tutorial'
+publishedAt: '2026-09-20'
+updatedAt: '2026-09-20'
+status: 'published'
+difficulty: 'beginner'
+authors: ['thejobpoolconsultants']
+audience: ['Students and practicing engineers']
+seriesOrder: 1
+sources:
+  [
+    {
+      'title': 'Manning, Raghavan and Schütze: term frequency and weighting',
+      'url': 'https://nlp.stanford.edu/IR-book/html/htmledition/term-frequency-and-weighting-1.html',
+      'role': 'supporting',
+      'kind': 'textbook',
+      'supports': 'Lexical term weighting background; not evidence that this teaching retriever is effective.',
+    },
+  ]
+relatedArticles: ['context-is-a-design-decision']
+prerequisites: ['Curiosity and basic technical literacy']
+learningOutcomes:
+  [
+    'A dependency-free lexical retrieval experiment that makes tokenization, ranking, and limitations easy to inspect.',
+  ]
+---
+
+import ResearchStatement from '../../../components/ResearchStatement.astro';
+
+## Start with something you can inspect
+
+Before wiring together an embedding service, vector index, reranker, and model, build a tiny retriever. It will not be a semantic search system. Its job is to give you a transparent baseline and a place to test your evaluation questions.
+
+<ResearchStatement kind="example">
+  <p>
+    This example uses Python's standard library and set overlap. There is no
+    network call, account, or model dependency.
+  </p>
+</ResearchStatement>
+
+<div class="meta" data-build-kind="implementation">
+  Implementation
+</div>
+
+## Build it
+
+Save the code as `retrieve.py` and run `python retrieve.py`.
+
+```python
+import re
+
+DOCUMENTS = {
+    "retrieval": "Search retrieves relevant documents for a question.",
+    "training": "Training updates model parameters using examples.",
+    "agents": "Agents select tools and observe the results.",
+}
+
+def tokens(text):
+    return set(re.findall(r"[a-z0-9]+", text.lower()))
+
+def retrieve(query, documents, limit=3):
+    query_terms = tokens(query)
+    if not query_terms:
+        return []
+    ranked = []
+    for doc_id, text in documents.items():
+        terms = tokens(text)
+        union = query_terms | terms
+        score = len(query_terms & terms) / len(union)
+        if score > 0:
+            ranked.append((doc_id, score))
+    return sorted(ranked, key=lambda item: (-item[1], item[0]))[:limit]
+
+if __name__ == "__main__":
+    print(retrieve("model training", DOCUMENTS))
+    assert retrieve("", DOCUMENTS) == []
+    assert retrieve("volcano", DOCUMENTS) == []
+    assert retrieve("model training", DOCUMENTS)[0][0] == "training"
+```
+
+The last assertion checks an expected ranking. The empty-query and unknown-term checks ensure the function does not manufacture a match when there is no overlap.
+
+<div class="meta" data-build-kind="observation">
+  Observation / expected output
+</div>
+
+## Expected output
+
+With the supplied three documents, `model training` returns the `training` document with a score of `1 / 3`. Empty and unknown-term queries return an empty list. These are expected outputs for this teaching example, not a measured retrieval benchmark.
+
+## Understand the score
+
+The score is Jaccard similarity: shared unique terms divided by the union of unique terms. Repeated words do not increase the score. Document length affects the denominator. Results with a zero score are omitted.
+
+The ranking is deterministic because document identifiers break ties. This matters when comparing changes: unstable ordering can look like a retrieval improvement or regression.
+
+The [Stanford information retrieval text](https://nlp.stanford.edu/IR-book/html/htmledition/term-frequency-and-weighting-1.html) introduces richer term-weighting ideas. This example intentionally uses a simpler scoring rule so you can inspect every decision.
+
+<div class="meta" data-build-kind="limitation">
+  Limitation
+</div>
+
+## Make the failure visible
+
+Try “learning changes weights.” The training document expresses a related idea but uses different words. Now try a query containing only a common word such as “the.” It may return matches with little practical relevance.
+
+Our regular expression also assumes a restricted Latin-letter and number vocabulary. It is not suitable tokenization for every language. Document these limitations before presenting the demo as search.
+
+<div class="meta" data-build-kind="experiment">
+  Experiment / proposed reader exercise
+</div>
+
+## Evaluate before replacing
+
+This is a proposed reader experiment; no benchmark results are claimed here.
+
+Create ten task-relevant queries. For each, write which document identifiers should be returned and whether no result is the correct response. Measure how often a relevant document appears in the first few results.
+
+Then change exactly one thing: tokenization, scoring, or representation. Keep the questions fixed for that comparison. Also add separate new tests when you discover an unanticipated failure.
+
+## What comes next?
+
+A semantic retriever may recover paraphrases that this baseline misses. A hybrid method may preserve exact-term matches. Neither conclusion follows from the architecture name alone.
+
+Use the baseline to ask a concrete question: which failures does the added complexity repair, and which new failures does it introduce?

@@ -1,0 +1,27 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import { url } from '../utils/urls';
+interface Props {
+  articles: CollectionEntry<'articles'>[];
+  empty?: string;
+}
+const {
+  articles,
+  empty = 'This collection is growing. Explore its concepts below, or choose an available learning path.',
+} = Astro.props;
+---
+
+{articles.length ? (
+  articles.map((a, i) => (
+    <a class="article-row" href={url('articles/' + a.data.slug + '/')}>
+      <span class="number">{String(i + 1).padStart(2, '0')}</span>
+      <div>
+        <h3>{a.data.title}</h3>
+        <p>{a.data.description}</p>
+      </div>
+      <span aria-hidden="true">↗</span>
+    </a>
+  ))
+) : (
+  <p class="empty">{empty}</p>
+)}

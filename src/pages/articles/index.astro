@@ -1,0 +1,25 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import ArticleCard from '../../components/ArticleCard.astro';
+import { publishedArticles } from '../../utils/content';
+const articles = await publishedArticles();
+---
+
+<BaseLayout
+  title="All articles"
+  description="Explore evidence-led explanations, practical experiments, and architecture guides across artificial intelligence."
+>
+  <div class="page-hero">
+    <p class="eyebrow">The reading room</p>
+    <h1>Ideas to spend time with.</h1>
+    <p class="lead">
+      Evergreen explanations, research, and practical engineering.{' '}
+      {articles.length} articles to explore.
+    </p>
+  </div>
+  <div class="article-grid">
+    {articles.map((article, index) => (
+      <ArticleCard article={article} index={index} art />
+    ))}
+  </div>
+</BaseLayout>

@@ -1,0 +1,180 @@
+{
+  "originals": [
+    {
+      "oldName": "ChatGPT Image Sep 20, 2026, 05_37_18 PM (1).png",
+      "file": "archive/thejobpoolconsultants-publication-dark-editorial-mockup.png",
+      "width": 724,
+      "height": 2172,
+      "bytes": 2265092,
+      "sha256": "2df4412308cabbf0b922154e764de4b192ac1198367a07ca3994a9e875a733e5"
+    },
+    {
+      "oldName": "ChatGPT Image Sep 20, 2026, 05_37_19 PM (2).png",
+      "file": "archive/thejobpoolconsultants-publication-modular-navy-mockup.png",
+      "width": 761,
+      "height": 2067,
+      "bytes": 2286132,
+      "sha256": "8d3eefce0b156dc9f4b1da5d87ba9229cd8257f07521b3aaf54d95b91391157d"
+    },
+    {
+      "oldName": "ChatGPT Image Sep 20, 2026, 05_37_19 PM (3).png",
+      "file": "archive/thejobpoolconsultants-publication-ivory-mockup.png",
+      "width": 724,
+      "height": 2172,
+      "bytes": 2034232,
+      "sha256": "388214c79b42f618a726e759afa66cab13bd8d1da9a0a1714ebd35e8849a6aeb"
+    },
+    {
+      "oldName": "ChatGPT Image Sep 20, 2026, 05_37_19 PM (4).png",
+      "file": "archive/thejobpoolconsultants-publication-orbit-systems-mockup.png",
+      "width": 724,
+      "height": 2171,
+      "bytes": 2190954,
+      "sha256": "a520a4b462c6d1c268daa88e7478de6a98a7df59415efbfddbbace4576eaa4bb"
+    },
+    {
+      "oldName": "ChatGPT Image Sep 20, 2026, 05_37_19 PM (5).png",
+      "file": "archive/thejobpoolconsultants-publication-hybrid-mockup.png",
+      "width": 734,
+      "height": 2143,
+      "bytes": 2265090,
+      "sha256": "9ec8f8c5f744a98e4002e94edddba4aed450dbdd88f7a46657831dfbab813bc0"
+    },
+    {
+      "oldName": "ChatGPT Image Sep 20, 2026, 05_38_01 PM.png",
+      "file": "archive/thejobpoolconsultants-knowledge-hub-horizontal-logo.png",
+      "width": 1448,
+      "height": 1086,
+      "bytes": 595305,
+      "sha256": "2cde03c873f73c52863e94016330a7c6b4482f092eae194fbcac735e613c58f9"
+    },
+    {
+      "oldName": "ChatGPT Image Sep 20, 2026, 05_38_21 PM (1).png",
+      "file": "archive/thejobpoolconsultants-knowledge-hub-orbit-lockup.png",
+      "width": 2172,
+      "height": 724,
+      "bytes": 423981,
+      "sha256": "acbe4934de079567769903180989f8a484164485c3fe5a4128e1dcd82f80eaa2"
+    },
+    {
+      "oldName": "ChatGPT Image Sep 20, 2026, 05_38_22 PM (2).png",
+      "file": "archive/thejobpoolconsultants-knowledge-hub-emblem.png",
+      "width": 1254,
+      "height": 1254,
+      "bytes": 983882,
+      "sha256": "b30b36fb03f3ba53c92512b9f0c57a7787a468696dd3fa745d61c419a904f926"
+    },
+    {
+      "oldName": "ChatGPT Image Sep 20, 2026, 05_38_22 PM (3).png",
+      "file": "archive/thejobpoolconsultants-understand-intelligence-banner.png",
+      "width": 1672,
+      "height": 941,
+      "bytes": 1595779,
+      "sha256": "f81d78fb2d5ed9a77ea41508cb1ce4a33ca143022426bce56ef22104c5c2e5b4"
+    },
+    {
+      "oldName": "ChatGPT Image Sep 20, 2026, 05_38_22 PM (4).png",
+      "file": "archive/thejobpoolconsultants-blogs-knowledge-hub-banner.png",
+      "width": 2172,
+      "height": 724,
+      "bytes": 1395073,
+      "sha256": "ffbe8cf4880caf517fc5432b75532bd434b11d3229bfa36f3be4f25f18b402f6"
+    },
+    {
+      "oldName": "ChatGPT Image Sep 20, 2026, 05_38_35 PM.png",
+      "file": "archive/thejobpoolconsultants-blogs-knowledge-hub-crest.png",
+      "width": 1448,
+      "height": 1086,
+      "bytes": 866203,
+      "sha256": "f6dad4974f4aedec8ad08aa207af94dd891d10b0a4188c765f5466111646abe0"
+    },
+    {
+      "oldName": "JPC -Logo.png",
+      "file": "archive/thejobpoolconsultants-heritage-logo-checkerboard-reference.png",
+      "width": 507,
+      "height": 400,
+      "bytes": 234738,
+      "sha256": "b03356cbf18834a226cb0782bac10905f94bb25c0fbbfd50dfed4cd039d2f07b"
+    }
+  ],
+  "production": [
+    {
+      "file": "logos/thejobpoolconsultants-knowledge-hub-light.png",
+      "width": 768,
+      "height": 317,
+      "bytes": 242124
+    },
+    {
+      "file": "logos/thejobpoolconsultants-knowledge-hub-light-384.png",
+      "width": 384,
+      "height": 159,
+      "bytes": 68485
+    },
+    {
+      "file": "logos/thejobpoolconsultants-knowledge-hub-dark.png",
+      "width": 768,
+      "height": 317,
+      "bytes": 143916
+    },
+    {
+      "file": "logos/thejobpoolconsultants-knowledge-hub-dark-384.png",
+      "width": 384,
+      "height": 159,
+      "bytes": 45236
+    },
+    {
+      "file": "emblems/thejobpoolconsultants-knowledge-hub-emblem.png",
+      "width": 320,
+      "height": 315,
+      "bytes": 157622
+    },
+    {
+      "file": "emblems/thejobpoolconsultants-knowledge-hub-emblem-96.png",
+      "width": 96,
+      "height": 95,
+      "bytes": 19566
+    },
+    {
+      "file": "banners/thejobpoolconsultants-understand-intelligence-banner.webp",
+      "width": 1600,
+      "height": 900,
+      "bytes": 113532
+    },
+    {
+      "file": "banners/thejobpoolconsultants-understand-intelligence-banner-960.webp",
+      "width": 960,
+      "height": 540,
+      "bytes": 54880
+    },
+    {
+      "file": "banners/thejobpoolconsultants-understand-intelligence-banner-visual-mobile.webp",
+      "width": 768,
+      "height": 673,
+      "bytes": 58324
+    },
+    {
+      "file": "banners/thejobpoolconsultants-blogs-knowledge-hub-banner.webp",
+      "width": 1600,
+      "height": 533,
+      "bytes": 70520
+    },
+    {
+      "file": "banners/thejobpoolconsultants-blogs-knowledge-hub-banner-960.webp",
+      "width": 960,
+      "height": 320,
+      "bytes": 33180
+    },
+    {
+      "file": "banners/thejobpoolconsultants-blogs-knowledge-hub-banner-visual-mobile.webp",
+      "width": 768,
+      "height": 367,
+      "bytes": 32302
+    },
+    {
+      "file": "social/thejobpoolconsultants-knowledge-hub-social-card.png",
+      "width": 1200,
+      "height": 630,
+      "bytes": 920440
+    }
+  ]
+}

@@ -1,0 +1,92 @@
+---
+slug: 'what-machines-learn'
+topic: 'machine-learning'
+title: 'What does it actually mean for a machine to learn?'
+description: 'Start with the gap between memorizing examples and learning a pattern that survives new data.'
+subtopics: ['ML fundamentals', 'model selection', 'metrics']
+tags: ['Fundamentals', 'Evaluation']
+series: 'ml-first-principles'
+type: 'explainer'
+publishedAt: '2026-09-20'
+updatedAt: '2026-09-20'
+status: 'published'
+difficulty: 'beginner'
+authors: ['thejobpoolconsultants']
+audience: ['Students and practicing engineers']
+seriesOrder: 1
+sources:
+  [
+    {
+      'title': 'Scikit-learn: cross-validation and time-series splits',
+      'url': 'https://scikit-learn.org/stable/modules/cross_validation.html',
+      'role': 'supporting',
+      'kind': 'docs',
+      'supports': 'Validation/test separation, cross-validation and time-aware splitting; not measurements from the illustrative delivery-time example.',
+    },
+  ]
+relatedArticles: ['neural-networks-learn-representations']
+prerequisites: ['Curiosity and basic technical literacy']
+learningOutcomes:
+  [
+    'Start with the gap between memorizing examples and learning a pattern that survives new data.',
+  ]
+---
+
+import ResearchStatement from '../../../components/ResearchStatement.astro';
+import ConceptFlow from '../../../components/ConceptFlow.astro';
+import KeyIdea from '../../../components/KeyIdea.astro';
+
+<KeyIdea>
+  <p>
+    A low training error tells you how well a model fits examples it has already
+    seen. Evaluation asks whether that pattern holds for new examples.
+  </p>
+</KeyIdea>
+
+<ResearchStatement kind="example">
+  <p>
+    The delivery-time model below is an invented teaching example. No dataset
+    was collected and no model performance is reported.
+  </p>
+</ResearchStatement>
+
+## The question
+
+A model gets every training example right. Has it learned anything useful?
+
+Imagine estimating delivery time. Your training table contains distance, traffic, and the actual arrival time for each trip. A lookup table can remember every answer. But the next trip will not be identical to the last one. The useful question is whether the system can make a good prediction for a trip it has never seen.
+
+## Learning is an optimization problem
+
+Choose a family of functions, a way to measure error, and an algorithm that adjusts the function's parameters. Training uses examples to reduce that error. Inference applies the fitted function to a new input.
+
+For a simple linear model, predicted minutes might equal a learned constant plus a learned coefficient multiplied by distance. Training changes those two numbers. It does not install a general understanding of roads, weather, or human intentions.
+
+<ConceptFlow
+  steps={['Examples', 'Prediction', 'Measured error', 'Parameter update']}
+  caption="Training repeats this loop. Inference uses the resulting parameters without necessarily updating them."
+/>
+
+## The test is outside the training set
+
+Hold out examples before you fit preprocessing or the model. Use validation data to choose settings. Keep the final test set separate from those repeated decisions. Cross-validation can help estimate variability, but the split must reflect the application.
+
+For delivery times, a random split may be misleading if adjacent trips share traffic conditions. A time-based split asks a more realistic question: can a model trained on the past predict a later period? Scikit-learn documents these evaluation and model-selection distinctions in its [official guide](https://scikit-learn.org/stable/modules/cross_validation.html).
+
+## A concrete failure
+
+Suppose the table includes a field recorded only after the delivery finishes. A model might predict brilliantly by exploiting that field. This is leakage: information that would not exist when a real prediction is needed.
+
+Write down the prediction moment. For every input, ask whether it is available at that moment. Repeat the exercise for transformations, aggregations, and labels, not only raw columns.
+
+## Choose the error that matters
+
+Average error can conceal rare but expensive failures. In our example, an estimate that is consistently five minutes optimistic may frustrate customers more than one with the same average absolute error but no directional bias.
+
+Report a simple baseline, overall error, and errors for meaningful slices such as long-distance trips. Do not choose slices only after discovering where your model looks impressive.
+
+## What comes next?
+
+Before selecting a larger model, investigate the examples it gets wrong. Is the target noisy? Is an input unavailable? Has the environment changed? A useful learning system includes that investigation, not just the fitting step.
+
+**Try it:** design a delivery-time table with five inputs. Mark when each input becomes available. Then choose a train/test boundary and explain which future situation your test actually represents.

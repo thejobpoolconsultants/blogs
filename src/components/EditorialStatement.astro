@@ -1,0 +1,84 @@
+---
+import type { EditorialQuote } from '../data/editorial-quotes';
+interface Props {
+  quote: EditorialQuote;
+  label?: string;
+  as?: 'h2' | 'h3' | 'p';
+  variant?: 'feature' | 'inline';
+  href?: string;
+  linkLabel?: string;
+}
+const {
+  quote,
+  label = 'One big idea',
+  as: Tag = 'h2',
+  variant = 'feature',
+  href,
+  linkLabel = 'Read the idea',
+} = Astro.props;
+---
+
+<div
+  class:list={[
+    'editorial-statement',
+    `editorial-statement--${variant}`,
+    { 'quote-section': variant === 'feature' },
+  ]}
+>
+  {label && <p class="eyebrow statement-label">{label}</p>}
+  <Tag class="statement-copy">
+    {quote.lines.map((line, index) => (
+      <>
+        {index > 0 && ' '}
+        {index === quote.emphasisLine ? (
+          <em class="statement-line">{line}</em>
+        ) : (
+          <span class="statement-line">{line}</span>
+        )}
+      </>
+    ))}
+  </Tag>
+  {href && (
+    <a class="text-link" href={href}>
+      {linkLabel} <span aria-hidden="true">↗</span>
+    </a>
+  )}
+</div>
+
+<style>
+  .editorial-statement {
+    min-width: 0;
+  }
+  .statement-label {
+    color: var(--editorial-gold);
+  }
+  .editorial-statement--feature .statement-label {
+    color: var(--gold-on-dark);
+  }
+  .statement-line {
+    display: block;
+  }
+  .statement-copy {
+    text-wrap: balance;
+    overflow-wrap: break-word;
+  }
+  .editorial-statement--inline {
+    margin-block: 1.25rem;
+  }
+  .editorial-statement--inline .statement-copy {
+    max-width: 48ch;
+    margin: 0;
+    font: 400 clamp(1.1rem, 1.4vw, 1.3rem)/1.6 var(--font-sans);
+    letter-spacing: -0.015em;
+    color: inherit;
+  }
+  .editorial-statement--inline :is(h2, h3).statement-copy {
+    max-width: 30ch;
+    font: 500 clamp(1.65rem, 2.5vw, 2.4rem)/1.25 var(--font-display);
+    letter-spacing: -0.035em;
+  }
+  .editorial-statement--inline em {
+    color: var(--editorial-gold);
+    font-style: normal;
+  }
+</style>

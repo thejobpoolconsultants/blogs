@@ -1,0 +1,35 @@
+---
+import TopicInsight from '../../components/TopicInsight.astro';
+import { editorialQuotes, tagInsightIds } from '../../data/editorial-quotes';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import ArticleList from '../../components/ArticleList.astro';
+import { tags, tagSlug } from '../../data/tags';
+import { publishedArticles } from '../../utils/content';
+export function getStaticPaths() {
+  return tags.map((tag) => ({ params: { tag: tagSlug(tag) }, props: { tag } }));
+}
+const { tag } = Astro.props;
+const insightId = tagInsightIds[tag];
+const articles = (await publishedArticles()).filter((a) =>
+  a.data.tags.includes(tag),
+);
+---
+
+<BaseLayout
+  title={tag + ' articles'}
+  description={
+    'Explore ' +
+    tag +
+    ' through explanations, architecture, and practical examples.'
+  }
+>
+  <div class="page-hero">
+    <p class="eyebrow">Connected by a concept</p>
+    <h1>{tag}</h1>
+    <p class="lead">{articles.length} articles across the publication.</p>
+    {insightId && (
+      <TopicInsight quote={editorialQuotes[insightId]} topic={tag} />
+    )}
+  </div>
+  <ArticleList articles={articles} />
+</BaseLayout>

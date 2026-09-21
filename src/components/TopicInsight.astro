@@ -1,0 +1,42 @@
+---
+import type { EditorialQuote } from '../data/editorial-quotes';
+interface Props {
+  quote: EditorialQuote;
+  topic: string;
+  supporting?: string;
+}
+const { quote, topic, supporting } = Astro.props;
+---
+
+<div class="topic-insight">
+  <p class="meta insight-label">{topic} / Insight</p>
+  <p class="insight-copy">{quote.lines.join(' ')}</p>
+  {supporting && <p class="insight-support">{supporting}</p>}
+</div>
+
+<style>
+  .topic-insight {
+    margin-block: 1.75rem;
+    padding-left: 1.1rem;
+    border-left: 2px solid var(--editorial-gold);
+    max-width: 44rem;
+    min-width: 0;
+  }
+  .insight-label {
+    margin: 0 0 0.7rem;
+    color: var(--editorial-gold);
+  }
+  .insight-copy {
+    margin: 0;
+    font: 500 clamp(1.15rem, 1.7vw, 1.5rem)/1.5 var(--font-display);
+    letter-spacing: -0.025em;
+    color: var(--ink);
+    text-wrap: pretty;
+  }
+  .insight-support {
+    margin: 0.65rem 0 0;
+    font-size: 0.9rem;
+    line-height: 1.6;
+    color: var(--muted);
+  }
+</style>

@@ -1,0 +1,1451 @@
+{
+  "artificial-intelligence": [
+    {
+      "id": "start-here",
+      "title": "Start Here",
+      "concepts": [
+        "What is Artificial Intelligence?",
+        "AI vs Machine Learning vs Deep Learning",
+        "Narrow AI vs General AI",
+        "Intelligent systems",
+        "AI terminology"
+      ]
+    },
+    {
+      "id": "foundations",
+      "title": "Foundations",
+      "concepts": [
+        "Search",
+        "Optimization",
+        "Planning",
+        "Reasoning",
+        "Knowledge representation",
+        "Expert systems"
+      ]
+    },
+    {
+      "id": "learning-systems",
+      "title": "Learning Systems",
+      "concepts": [
+        "Machine Learning",
+        "Deep Learning",
+        "Reinforcement Learning",
+        "Self-supervised learning"
+      ]
+    },
+    {
+      "id": "language-perception",
+      "title": "Language & Perception",
+      "concepts": ["NLP", "Computer Vision", "Speech", "Multimodal AI"]
+    },
+    {
+      "id": "generative-systems",
+      "title": "Generative Systems",
+      "concepts": [
+        "Foundation models",
+        "LLMs",
+        "Image generation",
+        "Multimodal generation"
+      ]
+    },
+    {
+      "id": "agentic-systems",
+      "title": "Agentic Systems",
+      "concepts": [
+        "AI agents",
+        "Tools",
+        "Memory",
+        "Planning",
+        "Multi-agent systems"
+      ]
+    },
+    {
+      "id": "responsible-ai",
+      "title": "Responsible AI",
+      "concepts": [
+        "Safety",
+        "Fairness",
+        "Explainability",
+        "Privacy",
+        "Governance"
+      ]
+    },
+    {
+      "id": "ai-systems",
+      "title": "AI Systems",
+      "concepts": [
+        "Architecture",
+        "Evaluation",
+        "Observability",
+        "Production AI"
+      ]
+    }
+  ],
+  "machine-learning": [
+    {
+      "id": "start-here",
+      "title": "Start Here",
+      "concepts": [
+        "What is Machine Learning?",
+        "Training vs inference",
+        "Dataset basics",
+        "Features",
+        "Labels",
+        "Models"
+      ]
+    },
+    {
+      "id": "ml-fundamentals",
+      "title": "ML Fundamentals",
+      "concepts": [
+        "Generalization",
+        "Bias",
+        "Variance",
+        "Overfitting",
+        "Underfitting",
+        "Train / validation / test sets"
+      ]
+    },
+    {
+      "id": "supervised-learning",
+      "title": "Supervised Learning",
+      "concepts": [
+        "Regression",
+        "Classification",
+        "Linear regression",
+        "Logistic regression",
+        "Decision trees",
+        "Random forests",
+        "SVM",
+        "KNN",
+        "Naive Bayes"
+      ]
+    },
+    {
+      "id": "ensemble-learning",
+      "title": "Ensemble Learning",
+      "concepts": [
+        "Bagging",
+        "Boosting",
+        "Gradient boosting",
+        "XGBoost",
+        "LightGBM",
+        "CatBoost"
+      ]
+    },
+    {
+      "id": "unsupervised-learning",
+      "title": "Unsupervised Learning",
+      "concepts": [
+        "Clustering",
+        "K-Means",
+        "Hierarchical clustering",
+        "DBSCAN",
+        "Dimensionality reduction",
+        "PCA"
+      ]
+    },
+    {
+      "id": "feature-engineering",
+      "title": "Feature Engineering",
+      "concepts": [
+        "Missing values",
+        "Encoding",
+        "Scaling",
+        "Feature selection",
+        "Feature extraction",
+        "Leakage"
+      ]
+    },
+    {
+      "id": "evaluation",
+      "title": "Evaluation",
+      "concepts": [
+        "Accuracy",
+        "Precision",
+        "Recall",
+        "F1",
+        "ROC-AUC",
+        "PR-AUC",
+        "Confusion matrix",
+        "Calibration",
+        "Cross-validation"
+      ]
+    },
+    {
+      "id": "optimization",
+      "title": "Optimization",
+      "concepts": [
+        "Hyperparameters",
+        "Grid search",
+        "Random search",
+        "Bayesian optimization"
+      ]
+    },
+    {
+      "id": "advanced-ml",
+      "title": "Advanced ML",
+      "concepts": [
+        "Anomaly detection",
+        "Recommendation systems",
+        "Ranking",
+        "Time series",
+        "Forecasting"
+      ]
+    },
+    {
+      "id": "explainability",
+      "title": "Explainability",
+      "concepts": ["Feature importance", "SHAP", "LIME", "Interpretability"]
+    },
+    {
+      "id": "production-ml",
+      "title": "Production ML",
+      "concepts": ["Serving", "Monitoring", "Drift", "Retraining", "MLOps"]
+    }
+  ],
+  "deep-learning": [
+    {
+      "id": "start-here",
+      "title": "Start Here",
+      "concepts": [
+        "What is Deep Learning?",
+        "ML vs Deep Learning",
+        "Neural network intuition"
+      ]
+    },
+    {
+      "id": "neural-network-fundamentals",
+      "title": "Neural Network Fundamentals",
+      "concepts": [
+        "Neuron",
+        "Weights",
+        "Bias",
+        "Layers",
+        "Activation functions"
+      ]
+    },
+    {
+      "id": "training",
+      "title": "Training",
+      "concepts": [
+        "Loss functions",
+        "Gradient descent",
+        "Backpropagation",
+        "Optimizers",
+        "Learning rate"
+      ]
+    },
+    {
+      "id": "improving-training",
+      "title": "Improving Training",
+      "concepts": [
+        "Regularization",
+        "Dropout",
+        "Batch normalization",
+        "Weight initialization",
+        "Early stopping"
+      ]
+    },
+    {
+      "id": "cnns",
+      "title": "CNNs",
+      "concepts": [
+        "Convolution",
+        "Filters",
+        "Pooling",
+        "Image classification",
+        "Feature maps"
+      ]
+    },
+    {
+      "id": "sequence-models",
+      "title": "Sequence Models",
+      "concepts": ["RNN", "Vanishing gradients", "LSTM", "GRU"]
+    },
+    {
+      "id": "attention",
+      "title": "Attention",
+      "concepts": [
+        "Query",
+        "Key",
+        "Value",
+        "Self-attention",
+        "Multi-head attention"
+      ]
+    },
+    {
+      "id": "transformers",
+      "title": "Transformers",
+      "concepts": [
+        "Encoder",
+        "Decoder",
+        "Positional encoding",
+        "Transformer blocks"
+      ]
+    },
+    {
+      "id": "generative-deep-learning",
+      "title": "Generative Deep Learning",
+      "concepts": ["Autoencoders", "VAEs", "GANs", "Diffusion models"]
+    },
+    {
+      "id": "advanced-architectures",
+      "title": "Advanced Architectures",
+      "concepts": [
+        "Vision Transformers",
+        "Graph Neural Networks",
+        "Multimodal models"
+      ]
+    },
+    {
+      "id": "production-deep-learning",
+      "title": "Production Deep Learning",
+      "concepts": [
+        "GPU inference",
+        "Quantization",
+        "Batching",
+        "Serving",
+        "Optimization"
+      ]
+    }
+  ],
+  "nlp": [
+    {
+      "id": "start-here",
+      "title": "Start Here",
+      "concepts": ["What is NLP?", "Language as data", "NLP applications"]
+    },
+    {
+      "id": "text-processing",
+      "title": "Text Processing",
+      "concepts": [
+        "Cleaning",
+        "Tokenization",
+        "Stemming",
+        "Lemmatization",
+        "Stop words"
+      ]
+    },
+    {
+      "id": "classical-representation",
+      "title": "Classical Representation",
+      "concepts": ["Bag of Words", "N-grams", "TF-IDF"]
+    },
+    {
+      "id": "word-embeddings",
+      "title": "Word Embeddings",
+      "concepts": ["Word2Vec", "GloVe", "FastText", "Vector similarity"]
+    },
+    {
+      "id": "sequence-models",
+      "title": "Sequence Models",
+      "concepts": ["RNN", "LSTM", "GRU", "Seq2Seq"]
+    },
+    {
+      "id": "attention",
+      "title": "Attention",
+      "concepts": [
+        "Attention mechanism",
+        "Self-attention",
+        "Contextual representation"
+      ]
+    },
+    {
+      "id": "transformers",
+      "title": "Transformers",
+      "concepts": [
+        "Transformer architecture",
+        "Encoder",
+        "Decoder",
+        "Encoder-decoder"
+      ]
+    },
+    {
+      "id": "bert-encoder-models",
+      "title": "BERT & Encoder Models",
+      "concepts": [
+        "BERT",
+        "Masked language modeling",
+        "Classification",
+        "NER",
+        "Embeddings"
+      ]
+    },
+    {
+      "id": "language-models",
+      "title": "Language Models",
+      "concepts": [
+        "Autoregressive models",
+        "Next-token prediction",
+        "Decoder-only models",
+        "LLMs"
+      ]
+    },
+    {
+      "id": "nlp-tasks",
+      "title": "NLP Tasks",
+      "concepts": [
+        "Text classification",
+        "Sentiment",
+        "NER",
+        "Summarization",
+        "Translation",
+        "Question answering"
+      ]
+    },
+    {
+      "id": "search-retrieval",
+      "title": "Search & Retrieval",
+      "concepts": [
+        "Lexical search",
+        "Semantic search",
+        "Embeddings",
+        "Hybrid retrieval",
+        "Reranking"
+      ]
+    },
+    {
+      "id": "evaluation",
+      "title": "Evaluation",
+      "concepts": [
+        "Accuracy / F1",
+        "BLEU",
+        "ROUGE",
+        "Semantic metrics",
+        "Human evaluation"
+      ]
+    },
+    {
+      "id": "modern-nlp",
+      "title": "Modern NLP",
+      "concepts": [
+        "LLMs",
+        "RAG",
+        "Multilingual NLP",
+        "Multimodal language systems"
+      ]
+    }
+  ],
+  "generative-ai": [
+    {
+      "id": "start-here",
+      "title": "Start Here",
+      "concepts": [
+        "What is Generative AI?",
+        "Generative vs predictive AI",
+        "Foundation models"
+      ]
+    },
+    {
+      "id": "large-language-models",
+      "title": "Large Language Models",
+      "concepts": [
+        "Tokens",
+        "Next-token prediction",
+        "Pretraining",
+        "Inference",
+        "Context windows"
+      ]
+    },
+    {
+      "id": "prompting",
+      "title": "Prompting",
+      "concepts": [
+        "Prompt basics",
+        "Few-shot prompting",
+        "Structured prompting",
+        "System instructions"
+      ]
+    },
+    {
+      "id": "context-engineering",
+      "title": "Context Engineering",
+      "concepts": [
+        "Context selection",
+        "Context limits",
+        "Context compression",
+        "Context quality"
+      ]
+    },
+    {
+      "id": "embeddings",
+      "title": "Embeddings",
+      "concepts": [
+        "Embedding models",
+        "Vector similarity",
+        "Semantic representation"
+      ]
+    },
+    {
+      "id": "rag",
+      "title": "RAG",
+      "concepts": [
+        "Retrieval",
+        "Chunking",
+        "Embeddings",
+        "Vector search",
+        "Generation",
+        "Citations"
+      ]
+    },
+    {
+      "id": "advanced-rag",
+      "title": "Advanced RAG",
+      "concepts": [
+        "Hybrid search",
+        "Reranking",
+        "Query rewriting",
+        "GraphRAG",
+        "Agentic RAG"
+      ]
+    },
+    {
+      "id": "fine-tuning",
+      "title": "Fine-Tuning",
+      "concepts": ["SFT", "LoRA", "QLoRA", "PEFT", "When to fine-tune"]
+    },
+    {
+      "id": "reasoning",
+      "title": "Reasoning",
+      "concepts": [
+        "Reasoning models",
+        "Test-time compute",
+        "Structured reasoning",
+        "Verification"
+      ]
+    },
+    {
+      "id": "evaluation",
+      "title": "Evaluation",
+      "concepts": [
+        "Groundedness",
+        "Relevance",
+        "Faithfulness",
+        "Hallucination",
+        "LLM-as-judge",
+        "Human evaluation"
+      ]
+    },
+    {
+      "id": "safety",
+      "title": "Safety",
+      "concepts": ["Guardrails", "Prompt injection", "PII", "Content safety"]
+    },
+    {
+      "id": "production-genai",
+      "title": "Production GenAI",
+      "concepts": [
+        "Latency",
+        "Cost",
+        "Caching",
+        "Observability",
+        "Model routing"
+      ]
+    }
+  ],
+  "agentic-ai": [
+    {
+      "id": "start-here",
+      "title": "Start Here",
+      "concepts": ["What is an AI agent?", "Agent vs chatbot", "Agent loop"]
+    },
+    {
+      "id": "reasoning-decisions",
+      "title": "Reasoning & Decisions",
+      "concepts": ["Reasoning", "Planning", "Decisions", "Routing"]
+    },
+    {
+      "id": "tool-calling",
+      "title": "Tool Calling",
+      "concepts": ["Functions", "APIs", "Tools", "Structured outputs"]
+    },
+    {
+      "id": "state",
+      "title": "State",
+      "concepts": ["Session state", "Workflow state", "Persistent state"]
+    },
+    {
+      "id": "memory",
+      "title": "Memory",
+      "concepts": [
+        "Working memory",
+        "Short-term memory",
+        "Long-term memory",
+        "Episodic memory",
+        "Semantic memory"
+      ]
+    },
+    {
+      "id": "planning",
+      "title": "Planning",
+      "concepts": ["Task decomposition", "Planning", "Reflection", "Critique"]
+    },
+    {
+      "id": "agent-orchestration",
+      "title": "Agent Orchestration",
+      "concepts": [
+        "Sequential workflows",
+        "Parallel workflows",
+        "Routers",
+        "Supervisors"
+      ]
+    },
+    {
+      "id": "multi-agent-systems",
+      "title": "Multi-Agent Systems",
+      "concepts": [
+        "Specialized agents",
+        "Delegation",
+        "Coordination",
+        "Communication"
+      ]
+    },
+    {
+      "id": "protocols",
+      "title": "Protocols",
+      "concepts": ["MCP", "A2A", "Tool protocols", "Agent communication"]
+    },
+    {
+      "id": "human-in-the-loop",
+      "title": "Human-in-the-Loop",
+      "concepts": ["Approvals", "Escalations", "Review", "Feedback"]
+    },
+    {
+      "id": "agent-evaluation",
+      "title": "Agent Evaluation",
+      "concepts": [
+        "Task completion",
+        "Tool correctness",
+        "Trajectory evaluation",
+        "Safety evaluation"
+      ]
+    },
+    {
+      "id": "observability",
+      "title": "Observability",
+      "concepts": ["Traces", "State inspection", "Tool logs", "Cost", "Latency"]
+    },
+    {
+      "id": "security",
+      "title": "Security",
+      "concepts": [
+        "Permissions",
+        "Tool access",
+        "Prompt injection",
+        "Isolation"
+      ]
+    },
+    {
+      "id": "production-agents",
+      "title": "Production Agents",
+      "concepts": [
+        "Reliability",
+        "Retries",
+        "Idempotency",
+        "Long-running workflows",
+        "Failure recovery"
+      ]
+    }
+  ],
+  "computer-vision": [
+    {
+      "id": "start-here",
+      "title": "Start Here",
+      "concepts": []
+    },
+    {
+      "id": "image-representation",
+      "title": "Image representation",
+      "concepts": []
+    },
+    {
+      "id": "cnn-fundamentals",
+      "title": "CNN fundamentals",
+      "concepts": []
+    },
+    {
+      "id": "image-classification",
+      "title": "Image classification",
+      "concepts": []
+    },
+    {
+      "id": "object-detection",
+      "title": "Object detection",
+      "concepts": []
+    },
+    {
+      "id": "image-segmentation",
+      "title": "Image segmentation",
+      "concepts": []
+    },
+    {
+      "id": "ocr",
+      "title": "OCR",
+      "concepts": []
+    },
+    {
+      "id": "vision-transformers",
+      "title": "Vision Transformers",
+      "concepts": []
+    },
+    {
+      "id": "image-embeddings",
+      "title": "Image embeddings",
+      "concepts": []
+    },
+    {
+      "id": "vision-language-models",
+      "title": "Vision-language models",
+      "concepts": []
+    },
+    {
+      "id": "image-generation",
+      "title": "Image generation",
+      "concepts": []
+    },
+    {
+      "id": "video-understanding",
+      "title": "Video understanding",
+      "concepts": []
+    },
+    {
+      "id": "multimodal-vision-systems",
+      "title": "Multimodal vision systems",
+      "concepts": []
+    },
+    {
+      "id": "production-vision",
+      "title": "Production vision",
+      "concepts": []
+    }
+  ],
+  "reinforcement-learning": [
+    {
+      "id": "start-here",
+      "title": "Start Here",
+      "concepts": []
+    },
+    {
+      "id": "agent-environment",
+      "title": "Agent & environment",
+      "concepts": []
+    },
+    {
+      "id": "state",
+      "title": "State",
+      "concepts": []
+    },
+    {
+      "id": "action",
+      "title": "Action",
+      "concepts": []
+    },
+    {
+      "id": "reward",
+      "title": "Reward",
+      "concepts": []
+    },
+    {
+      "id": "mdps",
+      "title": "MDPs",
+      "concepts": []
+    },
+    {
+      "id": "value-functions",
+      "title": "Value functions",
+      "concepts": []
+    },
+    {
+      "id": "q-learning",
+      "title": "Q-learning",
+      "concepts": []
+    },
+    {
+      "id": "sarsa",
+      "title": "SARSA",
+      "concepts": []
+    },
+    {
+      "id": "deep-q-networks",
+      "title": "Deep Q Networks",
+      "concepts": []
+    },
+    {
+      "id": "policy-gradients",
+      "title": "Policy gradients",
+      "concepts": []
+    },
+    {
+      "id": "actor-critic",
+      "title": "Actor-Critic",
+      "concepts": []
+    },
+    {
+      "id": "ppo",
+      "title": "PPO",
+      "concepts": []
+    },
+    {
+      "id": "reward-modeling",
+      "title": "Reward modeling",
+      "concepts": []
+    },
+    {
+      "id": "rlhf",
+      "title": "RLHF",
+      "concepts": []
+    },
+    {
+      "id": "dpo",
+      "title": "DPO",
+      "concepts": []
+    },
+    {
+      "id": "grpo",
+      "title": "GRPO",
+      "concepts": []
+    },
+    {
+      "id": "offline-rl",
+      "title": "Offline RL",
+      "concepts": []
+    },
+    {
+      "id": "multi-agent-rl",
+      "title": "Multi-agent RL",
+      "concepts": []
+    },
+    {
+      "id": "rl-for-agents",
+      "title": "RL for agents",
+      "concepts": []
+    }
+  ],
+  "data-science": [
+    {
+      "id": "start-here",
+      "title": "Start Here",
+      "concepts": []
+    },
+    {
+      "id": "statistics",
+      "title": "Statistics",
+      "concepts": []
+    },
+    {
+      "id": "probability",
+      "title": "Probability",
+      "concepts": []
+    },
+    {
+      "id": "data-preparation",
+      "title": "Data preparation",
+      "concepts": []
+    },
+    {
+      "id": "exploratory-analysis",
+      "title": "Exploratory analysis",
+      "concepts": []
+    },
+    {
+      "id": "visualization",
+      "title": "Visualization",
+      "concepts": []
+    },
+    {
+      "id": "hypothesis-testing",
+      "title": "Hypothesis testing",
+      "concepts": []
+    },
+    {
+      "id": "feature-engineering",
+      "title": "Feature engineering",
+      "concepts": []
+    },
+    {
+      "id": "experimentation",
+      "title": "Experimentation",
+      "concepts": []
+    },
+    {
+      "id": "a-b-testing",
+      "title": "A/B testing",
+      "concepts": []
+    },
+    {
+      "id": "forecasting",
+      "title": "Forecasting",
+      "concepts": []
+    },
+    {
+      "id": "recommendation-systems",
+      "title": "Recommendation systems",
+      "concepts": []
+    },
+    {
+      "id": "causal-inference",
+      "title": "Causal inference",
+      "concepts": []
+    },
+    {
+      "id": "business-analytics",
+      "title": "Business analytics",
+      "concepts": []
+    },
+    {
+      "id": "communicating-results",
+      "title": "Communicating results",
+      "concepts": []
+    }
+  ],
+  "ai-engineering": [
+    {
+      "id": "start-here",
+      "title": "Start Here",
+      "concepts": []
+    },
+    {
+      "id": "python-for-ai",
+      "title": "Python for AI",
+      "concepts": []
+    },
+    {
+      "id": "apis",
+      "title": "APIs",
+      "concepts": []
+    },
+    {
+      "id": "fastapi",
+      "title": "FastAPI",
+      "concepts": []
+    },
+    {
+      "id": "data-pipelines",
+      "title": "Data pipelines",
+      "concepts": []
+    },
+    {
+      "id": "embeddings-infrastructure",
+      "title": "Embeddings infrastructure",
+      "concepts": []
+    },
+    {
+      "id": "vector-databases",
+      "title": "Vector databases",
+      "concepts": []
+    },
+    {
+      "id": "knowledge-graphs",
+      "title": "Knowledge graphs",
+      "concepts": []
+    },
+    {
+      "id": "model-serving",
+      "title": "Model serving",
+      "concepts": []
+    },
+    {
+      "id": "llm-gateways",
+      "title": "LLM gateways",
+      "concepts": []
+    },
+    {
+      "id": "caching",
+      "title": "Caching",
+      "concepts": []
+    },
+    {
+      "id": "queues",
+      "title": "Queues",
+      "concepts": []
+    },
+    {
+      "id": "distributed-systems",
+      "title": "Distributed systems",
+      "concepts": []
+    },
+    {
+      "id": "gpu-inference",
+      "title": "GPU inference",
+      "concepts": []
+    },
+    {
+      "id": "docker",
+      "title": "Docker",
+      "concepts": []
+    },
+    {
+      "id": "kubernetes",
+      "title": "Kubernetes",
+      "concepts": []
+    },
+    {
+      "id": "cloud-ai",
+      "title": "Cloud AI",
+      "concepts": []
+    },
+    {
+      "id": "reliability",
+      "title": "Reliability",
+      "concepts": []
+    },
+    {
+      "id": "scalability",
+      "title": "Scalability",
+      "concepts": []
+    },
+    {
+      "id": "security",
+      "title": "Security",
+      "concepts": []
+    },
+    {
+      "id": "latency-optimization",
+      "title": "Latency optimization",
+      "concepts": []
+    },
+    {
+      "id": "cost-optimization",
+      "title": "Cost optimization",
+      "concepts": []
+    },
+    {
+      "id": "production-architecture",
+      "title": "Production architecture",
+      "concepts": []
+    }
+  ],
+  "mlops-llmops": [
+    {
+      "id": "start-here",
+      "title": "Start Here",
+      "concepts": []
+    },
+    {
+      "id": "experiment-tracking",
+      "title": "Experiment tracking",
+      "concepts": []
+    },
+    {
+      "id": "data-versioning",
+      "title": "Data versioning",
+      "concepts": []
+    },
+    {
+      "id": "model-registry",
+      "title": "Model registry",
+      "concepts": []
+    },
+    {
+      "id": "feature-stores",
+      "title": "Feature stores",
+      "concepts": []
+    },
+    {
+      "id": "ci-cd",
+      "title": "CI/CD",
+      "concepts": []
+    },
+    {
+      "id": "deployment",
+      "title": "Deployment",
+      "concepts": []
+    },
+    {
+      "id": "model-monitoring",
+      "title": "Model monitoring",
+      "concepts": []
+    },
+    {
+      "id": "data-drift",
+      "title": "Data drift",
+      "concepts": []
+    },
+    {
+      "id": "model-drift",
+      "title": "Model drift",
+      "concepts": []
+    },
+    {
+      "id": "evaluation-pipelines",
+      "title": "Evaluation pipelines",
+      "concepts": []
+    },
+    {
+      "id": "llm-evaluation",
+      "title": "LLM evaluation",
+      "concepts": []
+    },
+    {
+      "id": "prompt-management",
+      "title": "Prompt management",
+      "concepts": []
+    },
+    {
+      "id": "llm-tracing",
+      "title": "LLM tracing",
+      "concepts": []
+    },
+    {
+      "id": "observability",
+      "title": "Observability",
+      "concepts": []
+    },
+    {
+      "id": "feedback-loops",
+      "title": "Feedback loops",
+      "concepts": []
+    },
+    {
+      "id": "cost-monitoring",
+      "title": "Cost monitoring",
+      "concepts": []
+    },
+    {
+      "id": "governance",
+      "title": "Governance",
+      "concepts": []
+    },
+    {
+      "id": "reproducibility",
+      "title": "Reproducibility",
+      "concepts": []
+    },
+    {
+      "id": "production-reliability",
+      "title": "Production reliability",
+      "concepts": []
+    }
+  ],
+  "research": [
+    {
+      "id": "start-here",
+      "title": "Start Here",
+      "concepts": [
+        "How TheJobPoolConsultants covers research",
+        "Source standards",
+        "Evidence vs interpretation"
+      ]
+    },
+    {
+      "id": "foundational-papers",
+      "title": "Foundational Papers",
+      "concepts": [
+        "Neural networks",
+        "Representation learning",
+        "Attention",
+        "Transformers"
+      ]
+    },
+    {
+      "id": "machine-learning-papers",
+      "title": "Machine Learning Papers",
+      "concepts": []
+    },
+    {
+      "id": "deep-learning-papers",
+      "title": "Deep Learning Papers",
+      "concepts": []
+    },
+    {
+      "id": "nlp-papers",
+      "title": "NLP Papers",
+      "concepts": []
+    },
+    {
+      "id": "transformer-papers",
+      "title": "Transformer Papers",
+      "concepts": []
+    },
+    {
+      "id": "llm-papers",
+      "title": "LLM Papers",
+      "concepts": []
+    },
+    {
+      "id": "retrieval-rag-papers",
+      "title": "Retrieval & RAG Papers",
+      "concepts": []
+    },
+    {
+      "id": "agent-research",
+      "title": "Agent Research",
+      "concepts": []
+    },
+    {
+      "id": "multimodal-research",
+      "title": "Multimodal Research",
+      "concepts": []
+    },
+    {
+      "id": "evaluation-research",
+      "title": "Evaluation Research",
+      "concepts": []
+    },
+    {
+      "id": "ai-safety-alignment",
+      "title": "AI Safety & Alignment",
+      "concepts": []
+    },
+    {
+      "id": "paper-product",
+      "title": "Paper → Product",
+      "concepts": [
+        "source-backed summary",
+        "evidence",
+        "limitations",
+        "engineering interpretation",
+        "product implications"
+      ]
+    },
+    {
+      "id": "research-maps",
+      "title": "Research Maps",
+      "concepts": ["groups of related papers", "evolution of an idea"]
+    }
+  ],
+  "architectures": [
+    {
+      "id": "start-here",
+      "title": "Start Here",
+      "concepts": []
+    },
+    {
+      "id": "ml-system-design",
+      "title": "ML system design",
+      "concepts": []
+    },
+    {
+      "id": "nlp-system-design",
+      "title": "NLP system design",
+      "concepts": []
+    },
+    {
+      "id": "llm-architecture",
+      "title": "LLM architecture",
+      "concepts": []
+    },
+    {
+      "id": "rag-architecture",
+      "title": "RAG architecture",
+      "concepts": []
+    },
+    {
+      "id": "advanced-rag",
+      "title": "Advanced RAG",
+      "concepts": []
+    },
+    {
+      "id": "graphrag",
+      "title": "GraphRAG",
+      "concepts": []
+    },
+    {
+      "id": "agent-architecture",
+      "title": "Agent architecture",
+      "concepts": []
+    },
+    {
+      "id": "multi-agent-architecture",
+      "title": "Multi-agent architecture",
+      "concepts": []
+    },
+    {
+      "id": "ai-platform-architecture",
+      "title": "AI platform architecture",
+      "concepts": []
+    },
+    {
+      "id": "data-architecture",
+      "title": "Data architecture",
+      "concepts": []
+    },
+    {
+      "id": "inference-architecture",
+      "title": "Inference architecture",
+      "concepts": []
+    },
+    {
+      "id": "search-architecture",
+      "title": "Search architecture",
+      "concepts": []
+    },
+    {
+      "id": "recommendation-architecture",
+      "title": "Recommendation architecture",
+      "concepts": []
+    },
+    {
+      "id": "evaluation-architecture",
+      "title": "Evaluation architecture",
+      "concepts": []
+    },
+    {
+      "id": "observability-architecture",
+      "title": "Observability architecture",
+      "concepts": []
+    },
+    {
+      "id": "security-architecture",
+      "title": "Security architecture",
+      "concepts": []
+    },
+    {
+      "id": "scaling-patterns",
+      "title": "Scaling patterns",
+      "concepts": []
+    }
+  ],
+  "build": [
+    {
+      "id": "start-here",
+      "title": "Start Here",
+      "concepts": [
+        "How to use the build guides",
+        "Baselines first",
+        "How experiments are described"
+      ]
+    },
+    {
+      "id": "machine-learning",
+      "title": "Machine Learning",
+      "concepts": [
+        "classification project",
+        "regression project",
+        "evaluation project"
+      ]
+    },
+    {
+      "id": "deep-learning",
+      "title": "Deep Learning",
+      "concepts": [
+        "neural network from fundamentals",
+        "image classifier",
+        "transformer exercise"
+      ]
+    },
+    {
+      "id": "nlp",
+      "title": "NLP",
+      "concepts": ["text classifier", "embeddings", "semantic search"]
+    },
+    {
+      "id": "generative-ai",
+      "title": "Generative AI",
+      "concepts": ["prompt experiment", "RAG", "hybrid retrieval", "evaluation"]
+    },
+    {
+      "id": "agents",
+      "title": "Agents",
+      "concepts": [
+        "tool-calling agent",
+        "stateful agent",
+        "MCP",
+        "multi-agent workflow"
+      ]
+    },
+    {
+      "id": "architecture",
+      "title": "Architecture",
+      "concepts": ["production RAG", "AI API", "evaluation service"]
+    },
+    {
+      "id": "evaluation",
+      "title": "Evaluation",
+      "concepts": ["retrieval evaluation", "LLM evaluation", "agent evaluation"]
+    },
+    {
+      "id": "deployment",
+      "title": "Deployment",
+      "concepts": ["Docker", "API", "cloud", "observability"]
+    }
+  ],
+  "careers": [
+    {
+      "id": "start-here",
+      "title": "Start Here",
+      "concepts": []
+    },
+    {
+      "id": "ai-engineer",
+      "title": "AI Engineer",
+      "concepts": []
+    },
+    {
+      "id": "ml-engineer",
+      "title": "ML Engineer",
+      "concepts": []
+    },
+    {
+      "id": "data-scientist",
+      "title": "Data Scientist",
+      "concepts": []
+    },
+    {
+      "id": "nlp-engineer",
+      "title": "NLP Engineer",
+      "concepts": []
+    },
+    {
+      "id": "generative-ai-engineer",
+      "title": "Generative AI Engineer",
+      "concepts": []
+    },
+    {
+      "id": "agentic-ai-engineer",
+      "title": "Agentic AI Engineer",
+      "concepts": []
+    },
+    {
+      "id": "ai-platform-engineer",
+      "title": "AI Platform Engineer",
+      "concepts": []
+    },
+    {
+      "id": "mlops-engineer",
+      "title": "MLOps Engineer",
+      "concepts": []
+    },
+    {
+      "id": "applied-scientist",
+      "title": "Applied Scientist",
+      "concepts": []
+    },
+    {
+      "id": "forward-deployed-engineer",
+      "title": "Forward Deployed Engineer",
+      "concepts": []
+    },
+    {
+      "id": "ai-architect",
+      "title": "AI Architect",
+      "concepts": []
+    },
+    {
+      "id": "skill-maps",
+      "title": "Skill maps",
+      "concepts": []
+    },
+    {
+      "id": "project-ideas",
+      "title": "Project ideas",
+      "concepts": []
+    },
+    {
+      "id": "certifications",
+      "title": "Certifications",
+      "concepts": []
+    },
+    {
+      "id": "interview-preparation",
+      "title": "Interview preparation",
+      "concepts": []
+    },
+    {
+      "id": "career-transitions",
+      "title": "Career transitions",
+      "concepts": []
+    }
+  ]
+}

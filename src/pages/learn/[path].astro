@@ -1,0 +1,71 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { learningPaths } from '../../data/learning-paths';
+import { publishedArticles } from '../../utils/content';
+import { url } from '../../utils/urls';
+export function getStaticPaths() {
+  return learningPaths.map((path) => ({
+    params: { path: path.id },
+    props: { path },
+  }));
+}
+const { path } = Astro.props;
+const articles = await publishedArticles();
+---
+
+<BaseLayout
+  title={path.title + ' learning path'}
+  description={path.description}
+>
+  <nav class="breadcrumb" aria-label="Breadcrumb">
+    <a href={url('learn/')}>Learning paths</a>
+    <span>/</span>
+    <span aria-current="page">{path.title}</span>
+  </nav>
+  <div class="page-hero">
+    <p class="eyebrow">An ordered journey</p>
+    <h1>{path.title}</h1>
+    <p class="lead">{path.description}</p>
+    <p class="muted">
+      For: {path.audience}
+      <br />
+      Prerequisites: {path.prerequisites}
+    </p>
+    <span class="meta">
+      {path.steps.length} stages · Beginner → Intermediate → Advanced
+    </span>
+  </div>
+  <ol class="path-steps">
+    {path.steps.map((step, i) => {
+      const article = articles.find((a) => a.data.slug === path.articles[i]);
+      return (
+        <li>
+          <div>
+            <span class="meta muted">
+              {i < Math.ceil(path.steps.length / 3)
+                ? 'Beginner'
+                : i < Math.ceil((path.steps.length * 2) / 3)
+                  ? 'Intermediate'
+                  : 'Advanced'}
+            </span>
+            <h2>{step}</h2>
+            {article ? (
+              <a
+                class="text-link"
+                href={url('articles/' + article.data.slug + '/')}
+              >
+                {article.data.title} →
+              </a>
+            ) : (
+              <p class="muted">Dedicated reading is planned for this stage.</p>
+            )}
+            <br />
+            <a class="text-link" href={url('topics/' + path.topics[i] + '/')}>
+              Explore the topic ↗
+            </a>
+          </div>
+        </li>
+      );
+    })}
+  </ol>
+</BaseLayout>

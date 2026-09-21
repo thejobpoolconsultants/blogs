@@ -1,0 +1,18 @@
+---
+import { brand } from '../data/brand-assets';
+import { url } from '../utils/urls';
+const { emblem } = brand.assets;
+interface Props {
+  decorative?: boolean;
+}
+const { decorative = false } = Astro.props;
+---
+
+<img
+  class="publication-emblem"
+  src={url(emblem.src)}
+  width={emblem.width}
+  height={emblem.height}
+  alt={decorative ? '' : 'TheJobPoolConsultants Knowledge Hub'}
+  decoding="async"
+/>

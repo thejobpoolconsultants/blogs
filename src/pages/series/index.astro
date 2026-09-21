@@ -1,0 +1,37 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { series } from '../../data/series';
+import { publishedArticles } from '../../utils/content';
+import { url } from '../../utils/urls';
+const articles = await publishedArticles();
+---
+
+<BaseLayout
+  title="Series & collections"
+  description="Follow an idea across ordered articles and signature formats, from first principles to architecture."
+>
+  <div class="page-hero">
+    <p class="eyebrow">One idea leads to another</p>
+    <h1>Stay with the thread.</h1>
+    <p class="lead">
+      Ordered explanations and recurring formats. Counts reflect published
+      articles; planned collections are labeled clearly.
+    </p>
+  </div>
+  <div class="topic-grid">
+    {series.map((s) => {
+      const count = articles.filter((a) => a.data.series === s.id).length;
+      return (
+        <a class="topic-card" href={url('series/' + s.id + '/')}>
+          <h3>{s.title} ↗</h3>
+          <p>{s.description}</p>
+          <span class="meta">
+            {count
+              ? count + ' published article' + (count === 1 ? '' : 's')
+              : 'Planned collection'}
+          </span>
+        </a>
+      );
+    })}
+  </div>
+</BaseLayout>

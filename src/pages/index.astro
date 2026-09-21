@@ -1,0 +1,355 @@
+---
+import { researchEditorial } from '../data/research-editorial';
+import EditorialStatement from '../components/EditorialStatement.astro';
+import {
+  editorialQuotes,
+  homepageEditorial,
+  topicInsightIds,
+} from '../data/editorial-quotes';
+import BrandBanner from '../components/BrandBanner.astro';
+import { brand } from '../data/brand-assets';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import IntelligenceMap from '../components/IntelligenceMap.astro';
+import ArchitectureDiagram from '../components/ArchitectureDiagram.astro';
+import ArticleCard from '../components/ArticleCard.astro';
+import ArticleList from '../components/ArticleList.astro';
+import LearningPathCard from '../components/LearningPathCard.astro';
+import { publishedArticles } from '../utils/content';
+import { topics } from '../data/topics';
+import { learningPaths } from '../data/learning-paths';
+import { url } from '../utils/urls';
+const articles = await publishedArticles();
+const featured = articles.find((a) => a.data.featured)!;
+const explore = topics.filter((t) =>
+  [
+    'machine-learning',
+    'deep-learning',
+    'nlp',
+    'generative-ai',
+    'agentic-ai',
+    'computer-vision',
+  ].includes(t.id),
+);
+const mechanismSlugs = [
+  'how-machines-represent-words',
+  'neural-networks-learn-representations',
+  'attention-paper-to-product',
+  'how-rag-actually-works',
+  'agent-isnt-one-model',
+];
+const symbols = ['ƒ(x)', 'Σ', 'Aa', '◈', '↗', '⊞'];
+---
+
+<BaseLayout>
+  <section class="hero">
+    <div>
+      <p class="eyebrow">Artificial intelligence · Engineering · Research</p>
+      <h1>
+        <span class="hero-line">Understand</span>{' '}
+        <span class="hero-line">intelligence.</span>
+        <span class="hero-build">
+          Build <em>what’s next.</em>
+        </span>
+      </h1>
+      <EditorialStatement
+        quote={editorialQuotes[homepageEditorial.hero]}
+        variant="inline"
+        as="p"
+        label=""
+      />
+      <div class="hero-actions">
+        <a class="button primary" href={url('topics/')}>
+          Explore AI <span aria-hidden="true">↗</span>
+        </a>
+        <a class="button" href={url('learn/')}>
+          Start a learning path <span aria-hidden="true">→</span>
+        </a>
+      </div>
+    </div>
+    <IntelligenceMap />
+  </section>
+  <div class="topic-strip meta">
+    <span>The full picture</span>
+    <span>Machine Learning</span>
+    <span>Deep Learning</span>
+    <span>NLP</span>
+    <span>Generative AI</span>
+    <span>Agents</span>
+    <span>Research</span>
+    <span>Architecture</span>
+  </div>
+  <section class="section" aria-labelledby="big-idea-title">
+    <div class="section-heading">
+      <p class="eyebrow" style="margin:0">
+        The big idea
+      </p>
+      <span class="meta muted">A closer look at the system</span>
+    </div>
+    <div class="big-idea">
+      <div class="feature-copy">
+        <p class="eyebrow">Agentic AI / The architecture</p>
+        <h2 id="big-idea-title">{featured.data.title}</h2>
+        <EditorialStatement
+          quote={editorialQuotes.agentSystem}
+          variant="inline"
+          as="p"
+          label=""
+        />
+        <a class="text-link" href={url('articles/' + featured.data.slug + '/')}>
+          Explore the architecture <span aria-hidden="true">↗</span>
+        </a>
+      </div>
+      <ArchitectureDiagram />
+    </div>
+  </section>
+  <section class="section">
+    <div class="section-heading">
+      <div>
+        <p class="eyebrow">Find your starting point</p>
+        <h2>Explore intelligence.</h2>
+      </div>
+      <a class="text-link" href={url('topics/')}>
+        View all 15 topics ↗
+      </a>
+    </div>
+    <div class="topic-grid">
+      {explore.map((t, i) => {
+        const matches = articles.filter((a) => a.data.topic === t.id);
+        return (
+          <a
+            class="topic-card"
+            data-topic={t.id}
+            href={url('topics/' + t.id + '/')}
+          >
+            <span class="topic-symbol" aria-hidden="true">
+              {symbols[i]}
+            </span>
+            <h3>
+              {t.title} <span aria-hidden="true">↗</span>
+            </h3>
+            <p>
+              {topicInsightIds[t.id]
+                ? editorialQuotes[topicInsightIds[t.id]!].lines.join(' ')
+                : t.description}
+            </p>
+            <span class="meta">
+              {matches.length} {matches.length === 1 ? 'article' : 'articles'}
+            </span>
+            <span class="latest">
+              {matches[0]
+                ? 'Start with: ' + matches[0].data.title
+                : 'Explore the concept map · Articles in preparation'}
+            </span>
+          </a>
+        );
+      })}
+    </div>
+  </section>
+  <section class="section evolution">
+    <div>
+      <p class="eyebrow">Connect the dots</p>
+      <h2>
+        From algorithms
+        <br />
+        to agents.
+      </h2>
+      <EditorialStatement
+        quote={editorialQuotes.evolution}
+        variant="inline"
+        as="p"
+        label=""
+      />
+      <p class="muted">
+        These ideas overlap and coexist. Earlier methods remain useful.
+      </p>
+      <a class="text-link" href={url('ai-evolution/')}>
+        Explore the evolution of AI ↗
+      </a>
+    </div>
+    <div class="evolution-track">
+      {[
+        ['01', 'Machine learning', 'machine-learning'],
+        ['02', 'Deep learning', 'deep-learning'],
+        ['03', 'Language & vision', 'nlp'],
+        ['04', 'Generation', 'generative-ai'],
+        ['05', 'Agent systems', 'agentic-ai'],
+      ].map(([n, t, id]) => (
+        <a href={url('topics/' + id + '/')}>
+          <span class="number">{n}</span>
+          {t}
+        </a>
+      ))}
+    </div>
+  </section>
+  <section class="section">
+    <div class="section-heading">
+      <div>
+        <p class="eyebrow">Ideas worth your attention</p>
+        <h2>Latest thinking.</h2>
+      </div>
+      <a class="text-link" href={url('articles/')}>
+        All articles ↗
+      </a>
+    </div>
+    <div class="article-grid">
+      {articles
+        .filter((a) => !a.data.featured)
+        .slice(0, 6)
+        .map((article, index) => (
+          <ArticleCard article={article} index={index} art />
+        ))}
+    </div>
+  </section>
+  <section class="section split">
+    <div>
+      <p class="eyebrow">Under the hood</p>
+      <h2>
+        Past the interface.
+        <br />
+        Into the mechanism.
+      </h2>
+      <p class="lead">
+        Follow the information. Understand the decisions. See what changes
+        during learning.
+      </p>
+      <a class="text-link" href={url('series/')}>
+        Explore the collections ↗
+      </a>
+    </div>
+    <div>
+      <ArticleList
+        articles={mechanismSlugs.map((slug) =>
+          articles.find((a) => a.data.slug === slug)!,
+        )}
+      />
+    </div>
+  </section>
+  <section class="section split">
+    <div>
+      <p class="eyebrow">Architecture</p>
+      <h2>See the system.</h2>
+      <EditorialStatement
+        quote={editorialQuotes.architecture}
+        variant="inline"
+        as="p"
+        label=""
+      />
+      <ArticleList
+        articles={articles.filter((a) => a.data.topic === 'architectures')}
+      />
+    </div>
+    <ArchitectureDiagram
+      mode="rag"
+      caption="A RAG pipeline connects evidence, access rules, generation, and evaluation."
+    />
+  </section>
+  <section class="section split research-build">
+    <div>
+      <p class="eyebrow">Paper → Product</p>
+      <EditorialStatement
+        quote={editorialQuotes.research}
+        variant="inline"
+        label=""
+      />
+      <p class="muted">{researchEditorial.homepageSupport}</p>
+      <ArticleList
+        articles={articles.filter((a) => a.data.topic === 'research')}
+      />
+    </div>
+    <div>
+      <p class="eyebrow">Build & experiment</p>
+      <EditorialStatement
+        quote={editorialQuotes.build}
+        variant="inline"
+        label=""
+      />
+      <p class="muted">
+        Small, inspectable examples. Explicit assumptions. A baseline you can
+        improve.
+      </p>
+      <ArticleList
+        articles={articles.filter((a) => a.data.topic === 'build')}
+      />
+    </div>
+  </section>
+  <section class="section">
+    <div class="section-heading">
+      <div>
+        <p class="eyebrow">A little direction goes a long way</p>
+        <EditorialStatement
+          quote={editorialQuotes.learning}
+          variant="inline"
+          label=""
+        />
+      </div>
+      <a class="text-link" href={url('learn/')}>
+        All learning paths ↗
+      </a>
+    </div>
+    <div class="path-grid">
+      {learningPaths.map((path, index) => (
+        <LearningPathCard path={path} index={index} />
+      ))}
+    </div>
+  </section>
+  <section
+    class="section publication-feature"
+    aria-labelledby="publication-title"
+  >
+    <div class="section-heading">
+      <div>
+        <p class="eyebrow">{brand.descriptor}</p>
+        <h2 id="publication-title">
+          Ideas worth understanding.
+          <br />
+          Knowledge worth building on.
+        </h2>
+      </div>
+      <p class="muted">
+        TheJobPoolConsultants connects the ideas behind intelligent systems with
+        the practice of building them. Find a subject, follow the evidence, and
+        choose your next step.
+      </p>
+    </div>
+    <BrandBanner kind="publication" />
+    <nav class="explore-links" aria-label="Explore the Knowledge Hub">
+      <a class="text-link" href={url('topics/')}>
+        Explore topics →
+      </a>
+      <a class="text-link" href={url('research/')}>
+        Explore research →
+      </a>
+      <a class="text-link" href={url('architectures/')}>
+        Explore architecture →
+      </a>
+      <a class="text-link" href={url('learn/')}>
+        Explore learning paths →
+      </a>
+    </nav>
+  </section>
+  <EditorialStatement
+    quote={editorialQuotes[homepageEditorial.bigIdea]}
+    href={url(homepageEditorial.bigIdeaPath)}
+  />
+  <section class="section">
+    <div class="section-heading">
+      <h2>Follow your curiosity.</h2>
+      <span class="muted">There’s more than one way in.</span>
+    </div>
+    <div class="explore-links">
+      {[
+        ['Topics', 'topics'],
+        ['Series', 'series'],
+        ['Research', 'research'],
+        ['Architecture', 'architectures'],
+        ['Build', 'build'],
+        ['Learning paths', 'learn'],
+        ['AI landscape', 'landscape'],
+      ].map(([label, path]) => (
+        <a class="button" href={url(path + '/')}>
+          {label} ↗
+        </a>
+      ))}
+    </div>
+  </section>
+</BaseLayout>

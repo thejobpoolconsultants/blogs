@@ -1,0 +1,29 @@
+---
+import { researchEditorial } from '../data/research-editorial';
+---
+
+<aside
+  class="research-editorial-note"
+  aria-labelledby="research-editorial-note-title"
+  data-pagefind-ignore
+>
+  <h2 id="research-editorial-note-title">About this article</h2>
+  <p>{researchEditorial.disclosure}</p>
+</aside>
+<style>
+  .research-editorial-note {
+    border-top: 1px solid var(--line);
+    margin-block: 2rem;
+    padding-top: 1.4rem;
+  }
+  .research-editorial-note h2 {
+    font: 600 1.1rem/1.5 var(--font-sans);
+    letter-spacing: 0;
+    margin: 0 0 0.75rem;
+  }
+  .research-editorial-note p {
+    font-size: 0.95rem;
+    color: var(--muted);
+    line-height: 1.8;
+  }
+</style>

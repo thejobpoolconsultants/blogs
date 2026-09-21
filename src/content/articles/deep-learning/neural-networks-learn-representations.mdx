@@ -1,0 +1,92 @@
+---
+slug: 'neural-networks-learn-representations'
+topic: 'deep-learning'
+title: 'Simple operations. Learned representations.'
+description: 'Follow a signal through a neural network, then follow the error back to understand what training changes.'
+subtopics:
+  ['neural network fundamentals', 'backpropagation', 'representation learning']
+tags: ['Fundamentals', 'Neural Networks']
+series: 'deep-learning-under-the-hood'
+type: 'deep-dive'
+publishedAt: '2026-09-20'
+updatedAt: '2026-09-20'
+status: 'published'
+difficulty: 'beginner'
+authors: ['thejobpoolconsultants']
+audience: ['Students and practicing engineers']
+seriesOrder: 1
+sources:
+  [
+    {
+      'title': 'Goodfellow, Bengio and Courville: Deep Feedforward Networks',
+      'url': 'https://www.deeplearningbook.org/contents/mlp.html',
+      'role': 'supporting',
+      'kind': 'textbook',
+      'supports': 'Feedforward networks and backpropagation background; not a result from the illustrative delivery-time model.',
+    },
+  ]
+relatedArticles: ['how-machines-represent-words']
+prerequisites: ['Curiosity and basic technical literacy']
+learningOutcomes:
+  [
+    'Follow a signal through a neural network, then follow the error back to understand what training changes.',
+  ]
+---
+
+import ResearchStatement from '../../../components/ResearchStatement.astro';
+import ConceptFlow from '../../../components/ConceptFlow.astro';
+
+## What changes between layers?
+
+Consider an image classifier. The input is an array of pixel values, but the output is a score for each class. A neural network learns intermediate representations that help map one to the other.
+
+A layer combines its inputs using weights, adds biases, and usually applies a nonlinear function. Stacking only linear transformations would still produce a linear transformation. Nonlinearity allows the composition to represent a richer family of functions.
+
+## Follow the forward pass
+
+Take two input values: parcel weight and distance. A small hidden layer could compute several weighted combinations of these values and pass each through an activation function. An output layer combines those hidden values into a prediction.
+
+<ResearchStatement kind="example">
+  <p>
+    This is a teaching example, not an argument that a neural network is the
+    right delivery-time model. A simpler baseline may work better for a small
+    table.
+  </p>
+</ResearchStatement>
+
+<ConceptFlow
+  steps={[
+    'Inputs',
+    'Weighted combinations',
+    'Nonlinearity',
+    'Prediction',
+    'Loss',
+  ]}
+  caption="The forward pass produces a prediction and a loss. Each intermediate value depends on the current parameters."
+/>
+
+## Follow the gradient
+
+Backpropagation applies the chain rule to calculate how a loss changes with respect to parameters. An optimizer then uses those gradients to update the parameters. Backpropagation and the optimizer are related but distinct operations.
+
+A gradient is local information. It does not certify that the next update will improve performance on unseen data, or that optimization will find the best possible solution. Learning rate, initialization, architecture, and data all matter.
+
+The [Deep Learning textbook](https://www.deeplearningbook.org/contents/mlp.html) develops the mathematics of feedforward networks and gradient-based learning. Work through the chain rule alongside the visual explanation.
+
+## A small thought experiment
+
+Imagine a hidden unit whose output is always zero for the current examples. Depending on the activation and inputs, its gradient path may contribute little or nothing to learning. Adding more hidden units is not automatically useful if the training dynamics prevent them from contributing.
+
+Inspect distributions of activations and gradients when training behaves strangely. Also verify input scaling and labels before changing architecture.
+
+## Representation is not a guarantee of meaning
+
+An internal vector may encode distinctions useful for the training objective. That does not mean every coordinate corresponds to a human concept, or that the representation will transfer to an unfamiliar domain.
+
+Test the behavior you need. A classifier that succeeds on clean catalog images may fail on dim warehouse photographs. The class names can be identical while the evidence distribution changes.
+
+## Build understanding before scale
+
+For a first experiment, use a tiny dataset and a tiny network. Check that it can fit a small subset. Then evaluate held-out examples. Plot training and validation losses separately, and keep the preprocessing fixed.
+
+**Next question:** if representations are useful because they combine information, how should a language model decide which other tokens matter? That leads to attention.

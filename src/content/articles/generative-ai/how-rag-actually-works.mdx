@@ -1,0 +1,126 @@
+---
+slug: 'how-rag-actually-works'
+topic: 'generative-ai'
+title: 'RAG gives a model evidence. Not certainty.'
+description: 'Separate retrieval from generation to understand where grounded answers succeed—and where they still fail.'
+subtopics: ['RAG', 'grounding', 'evaluation']
+tags: ['RAG', 'Evaluation', 'Context Engineering']
+series: 'generative-ai-systems'
+type: 'explainer'
+publishedAt: '2026-09-20'
+updatedAt: '2026-09-20'
+status: 'published'
+difficulty: 'beginner'
+authors: ['thejobpoolconsultants']
+audience: ['Students and practicing engineers']
+seriesOrder: 1
+sources:
+  [
+    {
+      'title': 'Lewis et al. (2020): Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks',
+      'url': 'https://arxiv.org/abs/2005.11401',
+      'role': 'primary',
+      'kind': 'paper',
+      'supports': 'The original retrieval-augmented sequence-to-sequence formulations and their reported task evaluations; not the production architecture proposed here.',
+    },
+  ]
+relatedArticles: ['agent-isnt-one-model']
+prerequisites: ['Curiosity and basic technical literacy']
+learningOutcomes:
+  [
+    'Separate retrieval from generation to understand where grounded answers succeed—and where they still fail.',
+  ]
+---
+
+import ResearchStatement from '../../../components/ResearchStatement.astro';
+import TopicInsight from '../../../components/TopicInsight.astro';
+import { editorialQuotes } from '../../../data/editorial-quotes';
+import ArchitectureDiagram from '../../../components/ArchitectureDiagram.astro';
+import MentalModel from '../../../components/MentalModel.astro';
+
+<MentalModel>
+  <p>
+    Think of retrieval as selecting a small reference shelf for one question.
+    The model still has to use those references correctly. Test the selection
+    and the answer separately.
+  </p>
+</MentalModel>
+
+## What if the answer is in your documents?
+
+A model is asked about a procedure updated yesterday. Its parameters may not contain that update. Retrieval-augmented generation introduces another source of information: material retrieved at request time.
+
+<ResearchStatement
+  kind="source"
+  source="https://arxiv.org/abs/2005.11401"
+  sourceLabel="Lewis et al. (2020), RAG paper"
+>
+  <p>
+    Lewis and colleagues studied a pretrained sequence-to-sequence model paired
+    with retrieved Wikipedia passages. The authors report improvements on the
+    knowledge-intensive tasks and comparisons they evaluated. Those results do
+    not establish reliability for every document assistant.
+  </p>
+</ResearchStatement>
+
+## Two pipelines, two sets of decisions
+
+<ResearchStatement kind="interpretation">
+  <p>
+    The two-pipeline view below is an engineering explanation of a document
+    assistant. Ingestion, reranking and citation-handling choices are not
+    presented as results from the original RAG experiments.
+  </p>
+</ResearchStatement>
+
+The preparation pipeline collects documents, extracts text, preserves metadata, splits material into useful units, and builds an index.
+
+The request pipeline interprets a question, retrieves candidates, optionally reranks them, selects context, and asks a model to produce an answer. The answer can include source references for inspection.
+
+<ArchitectureDiagram
+  mode="rag"
+  caption="Retrieval supplies candidate evidence. Generation uses that evidence; evaluation must inspect both stages."
+/>
+
+<TopicInsight topic="RAG" quote={editorialQuotes.retrieval} />
+
+## Walk through a failure
+
+<ResearchStatement kind="example">
+  <p>
+    A reader asks, “How long is the approval window?” The retriever returns an
+    old policy because its wording matches the question closely. The model
+    summarizes it accurately.
+  </p>
+</ResearchStatement>
+
+The generation step did its local job, yet the answer is wrong for the current policy. The missing requirement was effective-date handling in the retrieval pipeline. Rewriting the prompt alone will not repair that index.
+
+## Grounding is a measurable behavior
+
+Keep separate questions in your evaluation:
+
+- Did retrieval find the relevant, authorized material?
+- Did the selected context include the necessary evidence?
+- Does each important answer claim follow from that evidence?
+- Do citations point to passages that support the claim?
+- Does the system abstain when the evidence is inadequate?
+
+A citation can be real but irrelevant. A fluent answer can combine a correct statement with an unsupported conclusion.
+
+## A practical trade-off table
+
+| Decision               | Benefit                      | Cost or risk                           |
+| ---------------------- | ---------------------------- | -------------------------------------- |
+| Smaller chunks         | More precise retrieval units | Context can become fragmented          |
+| More retrieved context | Potentially broader coverage | Higher latency and irrelevant material |
+| Reranking              | A second relevance check     | Another stage to operate and evaluate  |
+| Frequent indexing      | Fresher evidence             | More ingestion and versioning work     |
+
+Treat these as design hypotheses. Measure their effects on your own questions.
+
+## What comes next?
+
+Start with a versioned document set and an explicit evaluation set. Log which document versions were selected for each answer without collecting unnecessary personal data.
+
+**Next question:** how should identity, permission checks, caching, and source updates fit around this pipeline? Those are architecture decisions, and they are part of answer quality.

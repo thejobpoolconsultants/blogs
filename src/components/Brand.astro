@@ -1,0 +1,54 @@
+---
+import { url } from '../utils/urls';
+import { brand } from '../data/brand-assets';
+interface Props {
+  variant?: 'header' | 'footer';
+}
+const { variant = 'header' } = Astro.props;
+const { logo, darkLogo, emblem } = brand.assets;
+---
+
+<a
+  class:list={['brand', 'asset-brand', 'brand-' + variant]}
+  href={url()}
+  aria-label="TheJobPoolConsultants Blogs Knowledge Hub home"
+>
+  <span class="brand-desktop">
+    {[
+      { theme: 'light', image: logo },
+      { theme: 'dark', image: darkLogo },
+    ].map(({ theme, image }) => (
+      <img
+        class={'brand-logo-' + theme}
+        src={url(image.small.src)}
+        srcset={`${url(image.small.src)} ${image.small.width}w, ${url(image.src)} ${image.width}w`}
+        sizes={
+          variant === 'footer' ? '260px' : '(max-width: 1100px) 253px, 288px'
+        }
+        width={image.width}
+        height={image.height}
+        alt="TheJobPoolConsultants Blogs Knowledge Hub"
+        loading={variant === 'footer' ? 'lazy' : 'eager'}
+        decoding="async"
+      />
+    ))}
+  </span>
+  {variant === 'header' && (
+    <span class="brand-mobile">
+      <img
+        src={url(emblem.small.src)}
+        width={emblem.small.width}
+        height={emblem.small.height}
+        alt=""
+        aria-hidden="true"
+      />
+      <span>
+        <strong>{brand.name}</strong>
+        <small>{brand.descriptor}</small>
+      </span>
+    </span>
+  )}
+  <span class="brand-sr-only">
+    {brand.name} · {brand.descriptor}
+  </span>
+</a>

@@ -1,0 +1,111 @@
+---
+slug: 'production-rag-architecture'
+topic: 'architectures'
+title: 'Inside a production RAG pipeline.'
+description: 'A reference design that puts source versions, authorization, retrieval quality, and failure handling around generation.'
+subtopics:
+  ['RAG architecture', 'evaluation architecture', 'observability architecture']
+tags: ['RAG', 'Architecture', 'Evaluation']
+series: 'architecture-series'
+type: 'architecture'
+difficulty: 'advanced'
+publishedAt: '2026-09-20'
+updatedAt: '2026-09-20'
+status: 'published'
+authors: ['thejobpoolconsultants']
+audience: ['Students and practicing engineers']
+seriesOrder: 1
+sources:
+  [
+    {
+      'title': 'Lewis et al. (2020): Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks',
+      'url': 'https://arxiv.org/abs/2005.11401',
+      'role': 'primary',
+      'kind': 'paper',
+      'supports': 'The original retrieval-augmented sequence-to-sequence formulations and their reported task evaluations; not the production architecture proposed here.',
+    },
+  ]
+relatedArticles: ['attention-paper-to-product']
+prerequisites: ['Application development', 'Retrieval fundamentals']
+learningOutcomes:
+  [
+    'A reference design that puts source versions, authorization, retrieval quality, and failure handling around generation.',
+  ]
+---
+
+import ResearchStatement from '../../../components/ResearchStatement.astro';
+import TopicInsight from '../../../components/TopicInsight.astro';
+import { editorialQuotes } from '../../../data/editorial-quotes';
+import ArchitectureDiagram from '../../../components/ArchitectureDiagram.astro';
+
+## Problem and requirements
+
+Design a document assistant for an internal knowledge collection. Different readers can access different documents. Policies change, and some questions have no supported answer.
+
+<ResearchStatement kind="interpretation">
+  <p>
+    This is a proposed reference architecture. It is not a benchmark or a
+    description of a deployed customer system.
+  </p>
+</ResearchStatement>
+
+Define success before selecting infrastructure: authorized evidence, traceable document versions, understandable failure states, and a latency budget appropriate to the workflow.
+
+## High-level architecture
+
+<ArchitectureDiagram
+  mode="rag"
+  caption="The online path combines identity-scoped retrieval, selected evidence, generation, and evaluation. An independent ingestion path maintains the document index."
+/>
+
+Keep ingestion separate from serving. An ingestion job should extract text, validate metadata, record the source version, and write searchable chunks. Promote an index version only after quality checks pass.
+
+## Request flow
+
+Resolve identity in the application, then apply access controls before material can enter the model context. Retrieve candidates, rerank if justified by evaluation, and select evidence within a context budget.
+
+Generate an answer with source identifiers. Resolve those identifiers to actual documents when rendering citations. Return an explicit insufficient-evidence response when the system cannot support an answer.
+
+The [original RAG research](https://arxiv.org/abs/2005.11401) motivates combining retrieval with generation. The permissions, deployment boundaries, and operational checks here are engineering recommendations for this example.
+
+## Data flow and caching
+
+Store source identifier, version, chunk location, and access metadata with every chunk. Avoid logging raw sensitive document text merely to make debugging convenient.
+
+A cache key for an answer may need to include the query, permitted scope, index version, prompt version, and model version. Sharing a cached answer across permission boundaries can expose material even when the retriever itself is correctly scoped.
+
+## Security and failure modes
+
+Retrieved text is untrusted input. A document may contain language that tries to redirect the assistant. It should remain evidence, not acquire authority over the application.
+
+| Failure                         | Detection                     | Response                                 |
+| ------------------------------- | ----------------------------- | ---------------------------------------- |
+| Index is stale                  | Source/index version mismatch | Reindex or disclose freshness limits     |
+| Retrieval times out             | Stage timeout and trace       | Return an explicit temporary failure     |
+| No supporting passage           | Evidence sufficiency check    | Abstain or ask for a narrower question   |
+| Citation does not support claim | Claim-to-passage review       | Regenerate, qualify, or remove the claim |
+| Access policy changes           | Policy/version invalidation   | Invalidate affected caches and entries   |
+
+<TopicInsight topic="Evaluation" quote={editorialQuotes.evaluation} />
+
+## Observability and evaluation
+
+Measure each stage independently: retrieval relevance, answer support, citation correctness, refusal quality, latency, and cost. Record version identifiers so a regression can be reproduced.
+
+Keep a fixed evaluation set for comparisons, but add examples from newly discovered failures. Track both, because improving on an old test does not prove coverage of new situations.
+
+## Scaling and alternatives
+
+A single lexical index may be enough for a small collection with precise terminology. Hybrid search or a reranker adds operational cost and should earn its place.
+
+Scale ingestion, retrieval, and generation independently when measurements show a bottleneck. Queue background indexing work, but avoid turning every online step into another network hop without a reason.
+
+## Production checklist
+
+- Demonstrate that forbidden documents never enter unauthorized context.
+- Verify how deletions and permission changes propagate.
+- Test stale, contradictory, missing, and malicious documents.
+- Exercise timeout and partial-failure responses.
+- Establish a rollback path for index, prompt, and model changes.
+
+**Next question:** which of these guarantees can you test automatically before every release? Start with the ones whose failure would be hardest to notice from the final answer alone.

@@ -1,0 +1,140 @@
+---
+import { url } from '../utils/urls';
+const nodes = [
+  {
+    label: 'Data',
+    x: 214,
+    y: 30,
+    topic: 'data-science',
+    note: 'Data supplies the examples. Its quality shapes what can be learned.',
+  },
+  {
+    label: 'Patterns',
+    x: 85,
+    y: 80,
+    topic: 'machine-learning',
+    note: 'Learning fits patterns to examples. Evaluation tests whether they hold.',
+  },
+  {
+    label: 'Context',
+    x: 343,
+    y: 80,
+    topic: 'generative-ai',
+    note: 'Context selects the instructions and evidence available for one task.',
+  },
+  {
+    label: 'Tools',
+    x: 58,
+    y: 165,
+    topic: 'agentic-ai',
+    note: 'Tools connect a model to actions. The surrounding system controls access.',
+  },
+  {
+    label: 'Memory',
+    x: 370,
+    y: 165,
+    topic: 'agentic-ai',
+    note: 'Memory preserves selected information across steps, with explicit boundaries.',
+  },
+  {
+    label: 'Reasoning',
+    x: 85,
+    y: 250,
+    topic: 'nlp',
+    note: 'Reasoning is part of the process. A plausible explanation still needs checking.',
+  },
+  {
+    label: 'Feedback',
+    x: 343,
+    y: 250,
+    topic: 'mlops-llmops',
+    note: 'Feedback helps measure failures and guide the next iteration.',
+  },
+  {
+    label: 'Action',
+    x: 214,
+    y: 300,
+    topic: 'agentic-ai',
+    note: 'Actions change the world. Permissions, validation, and observation make them inspectable.',
+  },
+];
+---
+
+<div class="hero-visual">
+  <div class="visual-top meta">
+    <span>A map of intelligence</span>
+    <span>Fig. 01 / Explore</span>
+  </div>
+  <figure>
+    <svg
+      viewBox="0 0 428 332"
+      role="group"
+      aria-label="Explore the connected parts of an intelligent system"
+    >
+      <circle class="map-orbit" cx="214" cy="165" r="104" />
+      <circle
+        class="map-orbit"
+        cx="214"
+        cy="165"
+        r="145"
+        stroke-dasharray="2 7"
+      />
+      {nodes.map((node) => (
+        <path class="map-connection" d={`M214 165L${node.x} ${node.y}`} />
+      ))}
+      <a
+        class="map-core"
+        href={url('topics/artificial-intelligence/')}
+        aria-label="Explore artificial intelligence"
+      >
+        <circle cx="214" cy="165" r="46" />
+        <circle cx="214" cy="165" r="52" opacity=".18" />
+        <text x="214" y="154" text-anchor="middle" class="core-small">
+          CONNECTED
+        </text>
+        <text x="214" y="174" text-anchor="middle">
+          Intelligence
+        </text>
+      </a>
+      {nodes.map((node) => (
+        <a
+          class="map-node"
+          href={url('topics/' + node.topic + '/')}
+          data-note={node.note}
+          aria-label={'Explore ' + node.label}
+        >
+          <rect x={node.x - 48} y={node.y - 19} width="96" height="38" rx="7" />
+          <circle class="node-dot" cx={node.x - 33} cy={node.y} r="2" />
+          <text x={node.x + 5} y={node.y + 4} text-anchor="middle">
+            {node.label}
+          </text>
+        </a>
+      ))}
+    </svg>
+    <figcaption>
+      <span class="map-caption-mark" aria-hidden="true">
+        ↳
+      </span>
+      <span id="map-caption">
+        Intelligence is more than a model. Follow a connection to explore how
+        the pieces work together.
+      </span>
+    </figcaption>
+  </figure>
+</div>
+<script>
+  const caption = document.querySelector<HTMLElement>('#map-caption')!;
+  const initial = caption.textContent;
+  document.querySelectorAll<SVGAElement>('.map-node').forEach((node) => {
+    const show = () => {
+      caption.textContent = node.dataset.note || initial;
+    };
+    const restore = () => {
+      caption.textContent = initial;
+    };
+    node.addEventListener('mouseenter', show);
+    node.addEventListener('focus', show);
+    node.addEventListener('mouseleave', restore);
+    node.addEventListener('blur', restore);
+  });
+</script>

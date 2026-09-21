@@ -1,0 +1,40 @@
+---
+import EditorialStatement from '../../components/EditorialStatement.astro';
+import { editorialQuotes } from '../../data/editorial-quotes';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import LearningPathCard from '../../components/LearningPathCard.astro';
+import { learningPaths } from '../../data/learning-paths';
+---
+
+<BaseLayout
+  title="Learning paths"
+  description="Six ordered journeys through AI, ML, deep learning, NLP, generative systems, and agents."
+>
+  <div class="page-hero">
+    <p class="eyebrow">Where should I start?</p>
+    <h1>{editorialQuotes.learning.lines.join(' ')}</h1>
+    <EditorialStatement
+      quote={editorialQuotes.learningNext}
+      variant="inline"
+      as="p"
+      label=""
+    />
+    <p class="lead">
+      Choose a destination. Follow the concepts in order. Each path
+      distinguishes available reading from stages that are still planned.
+    </p>
+  </div>
+  <div class="path-grid">
+    {learningPaths.map((path, index) => (
+      <LearningPathCard path={path} index={index} />
+    ))}
+  </div>
+  <section class="section">
+    <h2>A map, at your pace.</h2>
+    <p class="lead">
+      Stages show relative difficulty, not a promise of completion in a fixed
+      number of hours. Revisit prerequisites whenever a concept needs more time.
+      These are learning guides, not credentials or tracked courses.
+    </p>
+  </section>
+</BaseLayout>

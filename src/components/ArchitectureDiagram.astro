@@ -1,0 +1,65 @@
+---
+interface Props {
+  mode?: 'agent' | 'rag';
+  caption?: string;
+}
+const {
+  mode = 'agent',
+  caption = 'The model proposes an action. The surrounding system validates, executes, and records it.',
+} = Astro.props;
+---
+
+<figure class="system-diagram">
+  <div class="diagram-coordinate meta">
+    <span>
+      System / {mode === 'agent' ? 'Agent loop' : 'Grounded generation'}
+    </span>
+    <span>Fig. 02</span>
+  </div>
+  <div class="flow">
+    <div class="flow-node" data-role="human">
+      <strong>{mode === 'agent' ? 'User intent' : 'Question'}</strong>
+      <small>Input & constraints</small>
+    </div>
+    <span class="flow-arrow" aria-hidden="true">
+      →
+    </span>
+    <div class="flow-node">
+      <strong>
+        {mode === 'agent' ? 'Context & policy' : 'Retrieve & rank'}
+      </strong>
+      <small>
+        {mode === 'agent' ? 'Evidence · permissions' : 'Authorized evidence'}
+      </small>
+    </div>
+  </div>
+  <div class="agent-core">
+    <small>
+      {mode === 'agent' ? 'The decision layer' : 'The generation layer'}
+    </small>
+    {mode === 'agent' ? 'Model + orchestration' : 'Context + model'}
+    <small style="margin:12px 0 0">
+      {mode === 'agent'
+        ? 'Propose → Validate → Execute → Observe'
+        : 'Evidence → Prompt → Answer → Citations'}
+    </small>
+  </div>
+  <div class="flow">
+    {(mode === 'agent'
+      ? ['Tools', 'State', 'Evaluation']
+      : ['Documents', 'Access rules', 'Evaluation']
+    ).map((label) => (
+      <div
+        class="flow-node"
+        data-role={label === 'Evaluation' ? 'evaluation' : 'system'}
+      >
+        <strong>{label}</strong>
+      </div>
+    ))}
+  </div>
+  <div class="diagram-feedback">
+    ↳ Observe · evaluate · update{' '}
+    {mode === 'agent' ? 'the next decision' : 'the pipeline'}
+  </div>
+  <figcaption>{caption}</figcaption>
+</figure>

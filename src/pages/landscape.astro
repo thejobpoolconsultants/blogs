@@ -1,0 +1,74 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { url } from '../utils/urls';
+const groups = [
+  [
+    'Foundation models',
+    'generative-ai',
+    ['Language models', 'Multimodal models', 'Representations'],
+  ],
+  [
+    'Retrieval',
+    'generative-ai',
+    ['Embeddings', 'Vector search', 'Hybrid search', 'GraphRAG'],
+  ],
+  [
+    'Agents',
+    'agentic-ai',
+    ['Tools', 'Memory', 'Planning', 'MCP', 'Multi-agent systems'],
+  ],
+  [
+    'Quality',
+    'mlops-llmops',
+    ['Evaluation', 'Observability', 'Feedback', 'Governance'],
+  ],
+  [
+    'Infrastructure',
+    'ai-engineering',
+    ['Inference', 'Caching', 'Model serving', 'Security'],
+  ],
+  [
+    'Foundations',
+    'machine-learning',
+    ['Statistics', 'Supervised learning', 'Optimization', 'Generalization'],
+  ],
+] as const;
+---
+
+<BaseLayout
+  title="AI landscape"
+  description="A visual map connecting foundation models, retrieval, agents, evaluation, and AI infrastructure."
+>
+  <div class="page-hero">
+    <p class="eyebrow">A map of the system</p>
+    <h1>
+      Where does each
+      <br />
+      piece fit?
+    </h1>
+    <p class="lead">
+      Follow a system layer into its topic hub, or search for a specific
+      concept. This map emphasizes engineering relationships rather than vendor
+      rankings.
+    </p>
+  </div>
+  <div class="topic-grid">
+    {groups.map(([title, topic, concepts]) => (
+      <section class="topic-card">
+        <h2 style="font-size:1.6rem">
+          <a href={url('topics/' + topic + '/')}>{title} ↗</a>
+        </h2>
+        <div class="pills">
+          {concepts.map((c) => (
+            <a
+              class="pill"
+              href={url('search/') + '?q=' + encodeURIComponent(c)}
+            >
+              {c}
+            </a>
+          ))}
+        </div>
+      </section>
+    ))}
+  </div>
+</BaseLayout>

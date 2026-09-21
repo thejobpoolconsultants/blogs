@@ -1,0 +1,79 @@
+---
+slug: 'context-is-a-design-decision'
+topic: 'artificial-intelligence'
+title: 'The context is a design decision.'
+description: 'What a model sees is a product of selection, permissions, and time—not just the size of a context window.'
+subtopics: ['AI architectures']
+tags: ['Context Engineering', 'Fundamentals']
+series: 'one-big-idea'
+type: 'one-big-idea'
+publishedAt: '2026-09-20'
+updatedAt: '2026-09-20'
+status: 'published'
+difficulty: 'beginner'
+authors: ['thejobpoolconsultants']
+audience: ['Students and practicing engineers']
+seriesOrder: 1
+sources:
+  [
+    {
+      'title': 'Lewis et al. (2020): Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks',
+      'url': 'https://arxiv.org/abs/2005.11401',
+      'role': 'primary',
+      'kind': 'paper',
+      'supports': 'The original retrieval-augmented sequence-to-sequence formulations and their reported task evaluations; not the production architecture proposed here.',
+    },
+  ]
+relatedArticles: ['what-machines-learn']
+prerequisites: ['Curiosity and basic technical literacy']
+learningOutcomes:
+  [
+    'What a model sees is a product of selection, permissions, and time—not just the size of a context window.',
+  ]
+---
+
+import ResearchStatement from '../../../components/ResearchStatement.astro';
+
+## A window is capacity. Context is a choice.
+
+A system can have room for a large amount of text and still miss the one fact required to answer a question.
+
+Think of a document assistant answering a policy question. The designer decides which sources are searchable, how versions are represented, which passages are selected, and which reader can access them. Those decisions shape the evidence before the model generates its first word.
+
+## Make the selection visible
+
+Write down a context contract:
+
+- What information is required for this task?
+- Where does it come from?
+- How fresh must it be?
+- Who is allowed to see it?
+- What should happen when it is missing?
+
+<ResearchStatement kind="interpretation">
+  <p>
+    This contract is a proposed design exercise. It is not a claim that one
+    prompt format will improve every model.
+  </p>
+</ResearchStatement>
+
+## Do less, deliberately
+
+For a narrow question, a small set of relevant passages may be easier to inspect than an entire document collection. Conversely, removing context too aggressively can hide exceptions or dependencies.
+
+<ResearchStatement kind="experiment">
+  <p>
+    For a proposed reader test, keep the question fixed, vary the supplied
+    evidence, and check whether the answer remains supported. Include a version
+    with the necessary evidence removed. Record unsupported confident answers as
+    failures under this test definition.
+  </p>
+</ResearchStatement>
+
+Retrieval-augmented systems provide one way to select external evidence; the [original RAG paper](https://arxiv.org/abs/2005.11401) explores that connection between retrieval and generation. The design responsibilities remain in the surrounding application.
+
+## The next question
+
+Instead of asking only “How much can the model read?”, also ask “Why is each piece of information here?”
+
+That question connects context engineering to architecture, access control, and evaluation. It turns an invisible prompt-building step into a system boundary you can reason about.

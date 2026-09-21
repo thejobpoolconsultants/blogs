@@ -1,0 +1,24 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import TopicBook from '../../components/TopicBook.astro';
+import { topics } from '../../data/topics';
+import { url } from '../../utils/urls';
+export function getStaticPaths() {
+  return topics.map((topic) => ({
+    params: { topic: topic.id },
+    props: { topic },
+  }));
+}
+const { topic } = Astro.props;
+---
+
+<BaseLayout title={topic.title} description={topic.description}>
+  <nav class="breadcrumb topic-breadcrumb" aria-label="Breadcrumb">
+    <a href={url()}>Home</a>
+    <span>/</span>
+    <a href={url('topics/')}>Topics</a>
+    <span>/</span>
+    <span aria-current="page">{topic.title}</span>
+  </nav>
+  <TopicBook topic={topic} />
+</BaseLayout>
