@@ -9,7 +9,7 @@
   },
   "scripts": {
     "dev": "astro dev",
-    "build": "astro build && pagefind --site dist && node scripts/verify.mjs && node scripts/research-content-check.mjs && node scripts/topic-books-check.mjs",
+    "build": "astro build && pagefind --site dist && node scripts/verify.mjs && node scripts/research-content-check.mjs && node scripts/topic-books-check.mjs && node scripts/knowledge-sequences-check.mjs",
     "preview": "astro preview --host 127.0.0.1",
     "check": "astro check",
     "lint": "eslint .",
@@ -19,7 +19,9 @@
     "test:browser": "node scripts/browser-qa.mjs",
     "verify:research": "node scripts/research-content-check.mjs",
     "verify:topics": "node scripts/topic-books-check.mjs",
-    "test:topics": "node scripts/topic-books-browser-qa.mjs"
+    "test:topics": "node scripts/topic-books-browser-qa.mjs",
+    "verify:knowledge": "node scripts/knowledge-sequences-check.mjs",
+    "test:machine-learning": "node scripts/machine-learning-browser-qa.mjs && node scripts/knowledge-navigation-qa.mjs"
   },
   "dependencies": {
     "@astrojs/mdx": "8.0.1",

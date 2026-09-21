@@ -1,0 +1,18 @@
+---
+interface Props {
+  status: 'published' | 'planned' | 'draft';
+}
+const { status } = Astro.props;
+---
+
+{status !== 'draft' && (
+  <span
+    class:list={[
+      'knowledge-status',
+      { 'is-published': status === 'published' },
+    ]}
+    data-concept-status={status}
+  >
+    {status === 'published' ? 'Published' : 'Article in preparation'}
+  </span>
+)}

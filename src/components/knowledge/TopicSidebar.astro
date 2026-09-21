@@ -1,0 +1,84 @@
+---
+import type { TopicSequence } from '../../data/topic-sequences/types';
+import { sectionPath, conceptPath } from '../../data/topic-sequences';
+import { url } from '../../utils/urls';
+interface Props {
+  sequence: TopicSequence;
+  selected?: string;
+}
+const { sequence, selected } = Astro.props;
+const active = sequence.sections.find((section) => section.slug === selected);
+---
+
+<aside class="book-sidebar" data-pagefind-ignore>
+  <details class="book-menu knowledge-menu" open>
+    <summary>
+      <span>
+        {sequence.title} Sections <small>{active?.title || 'Overview'}</small>
+      </span>
+      <span aria-hidden="true">⌄</span>
+    </summary>
+    <div class="book-navigation">
+      <p class="book-nav-title meta">{sequence.title}</p>
+      <nav aria-label={sequence.title + ' sections'}>
+        <a
+          class="book-section-link"
+          href={url(sectionPath(sequence))}
+          aria-current={!selected ? 'page' : undefined}
+        >
+          Overview
+        </a>
+        <ol class="book-sections">
+          {sequence.sections.map((section) => (
+            <li class="knowledge-chapter">
+              <a
+                class="book-section-link"
+                href={url(sectionPath(sequence, section.slug))}
+                aria-current={selected === section.slug ? 'page' : undefined}
+                data-chapter-link={section.slug}
+              >
+                <span class="number">{section.number}</span>
+                <span>{section.title}</span>
+              </a>
+              <details
+                class="chapter-disclosure"
+                name={'chapters-' + sequence.id}
+                open={selected === section.slug}
+                data-chapter={section.slug}
+              >
+                <summary
+                  aria-label={'Subtopics for ' + section.title}
+                  aria-controls={'subtopics-' + section.slug}
+                >
+                  <span aria-hidden="true">⌄</span>
+                </summary>
+                <ul
+                  class="knowledge-subtopics"
+                  id={'subtopics-' + section.slug}
+                >
+                  {section.concepts.map((concept) => (
+                    <li>
+                      <a
+                        href={url(conceptPath(sequence, section.slug, concept))}
+                        data-concept-link={concept.slug}
+                      >
+                        <span class="number">{concept.number}</span>
+                        <span>{concept.title}</span>
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              </details>
+            </li>
+          ))}
+        </ol>
+      </nav>
+      <a
+        class="book-path-link text-link"
+        href={url('learn/' + sequence.learningPath.id + '/')}
+      >
+        {sequence.learningPath.title} ↗
+      </a>
+    </div>
+  </details>
+</aside>

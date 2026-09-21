@@ -1,3 +1,4 @@
+import { sequenceFor } from './topic-sequences/index.ts';
 import sectionData from './topic-sections.json' with { type: 'json' };
 
 export interface TopicSection {
@@ -12,8 +13,18 @@ export interface SectionReading {
   concepts?: string[];
 }
 const books: Record<string, TopicSection[]> = sectionData;
-export const sectionsFor = (topic: string): TopicSection[] =>
-  books[topic] || [];
+export const sectionsFor = (topic: string): TopicSection[] => {
+  const sequence = sequenceFor(topic);
+  return sequence
+    ? sequence.sections.map((section) => ({
+        id: section.slug,
+        title: section.title,
+        concepts: section.concepts
+          .filter((concept) => concept.status !== 'draft')
+          .map((concept) => concept.title),
+      }))
+    : books[topic] || [];
+};
 export const conceptId = (section: string, concept: string) =>
   section +
   '--' +
@@ -53,24 +64,6 @@ export const topicReading: Record<string, SectionReading[]> = {
       concepts: ['AI agents', 'Tools'],
     },
     { article: context, sections: ['ai-systems'] },
-  ],
-  'machine-learning': [
-    {
-      article: ml,
-      sections: [
-        'start-here',
-        'ml-fundamentals',
-        'supervised-learning',
-        'evaluation',
-      ],
-      concepts: [
-        'What is Machine Learning?',
-        'Training vs inference',
-        'Generalization',
-        'Overfitting',
-        'Train / validation / test sets',
-      ],
-    },
   ],
   'deep-learning': [
     {

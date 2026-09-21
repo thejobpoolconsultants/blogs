@@ -175,7 +175,7 @@ const nav = [
             <a
               href={url('topics/' + id + '/')}
               aria-current={
-                Astro.url.pathname === url('topics/' + id + '/')
+                Astro.url.pathname.startsWith(url('topics/' + id + '/'))
                   ? 'page'
                   : undefined
               }

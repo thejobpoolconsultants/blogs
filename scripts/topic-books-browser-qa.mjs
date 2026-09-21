@@ -2,6 +2,7 @@ import { chromium, expect } from '@playwright/test';
 import AxeBuilder from '@axe-core/playwright';
 import assert from 'node:assert/strict';
 import { mkdir, writeFile } from 'node:fs/promises';
+import { sequenceFor } from '../src/data/topic-sequences/index.ts';
 import { topics } from '../src/data/topics.ts';
 import {
   sectionsFor,
@@ -68,7 +69,7 @@ try {
           route + ' overflow at ' + width,
         );
         await expect(page.locator('h1')).toHaveCount(1);
-        if (route !== 'topics/') {
+        if (route !== 'topics/' && route !== 'topics/machine-learning/') {
           await checkPanel('overview');
           assert.equal(
             await page.locator('.book-menu').evaluate((menu) => menu.open),
@@ -150,7 +151,7 @@ try {
   }
   await page.setViewportSize({ width: 1440, height: 960 });
   // Exercise every requested section rather than just the first page in the menu.
-  for (const topic of topics) {
+  for (const topic of topics.filter((topic) => !sequenceFor(topic.id))) {
     await page.goto(base + 'topics/' + topic.id + '/');
     for (const section of sectionsFor(topic.id)) {
       await page.locator('[data-section="' + section.id + '"]').click();
@@ -162,7 +163,7 @@ try {
       );
     }
   }
-  report.interactions.push({ checks: 'all 219 section links' });
+  report.interactions.push({ checks: 'all 208 legacy section links' });
   await page.goto(base + 'topics/nlp/#transformers');
   await page.setViewportSize({ width: 375, height: 900 });
   await expect(page.locator('.book-menu')).not.toHaveAttribute('open', '');
@@ -207,7 +208,7 @@ try {
       report.responsive.length +
       ' responsive states, ' +
       report.accessibility.length +
-      ' accessibility audits, all 219 sections, history/deep links, mobile keyboard navigation, and no-JavaScript fallback.',
+      ' accessibility audits, all 208 legacy sections, history/deep links, mobile keyboard navigation, and no-JavaScript fallback.',
   );
 } finally {
   await writeFile(output + '/report.json', JSON.stringify(report, null, 2));

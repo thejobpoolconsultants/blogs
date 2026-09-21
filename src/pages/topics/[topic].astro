@@ -1,6 +1,8 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import TopicBook from '../../components/TopicBook.astro';
+import TopicKnowledgeLayout from '../../components/knowledge/TopicKnowledgeLayout.astro';
+import { sequenceFor } from '../../data/topic-sequences';
 import { topics } from '../../data/topics';
 import { url } from '../../utils/urls';
 export function getStaticPaths() {
@@ -10,15 +12,22 @@ export function getStaticPaths() {
   }));
 }
 const { topic } = Astro.props;
+const sequence = sequenceFor(topic.id);
 ---
 
 <BaseLayout title={topic.title} description={topic.description}>
-  <nav class="breadcrumb topic-breadcrumb" aria-label="Breadcrumb">
-    <a href={url()}>Home</a>
-    <span>/</span>
-    <a href={url('topics/')}>Topics</a>
-    <span>/</span>
-    <span aria-current="page">{topic.title}</span>
-  </nav>
-  <TopicBook topic={topic} />
+  {sequence ? (
+    <TopicKnowledgeLayout sequence={sequence} />
+  ) : (
+    <>
+      <nav class="breadcrumb topic-breadcrumb" aria-label="Breadcrumb">
+        <a href={url()}>Home</a>
+        <span>/</span>
+        <a href={url('topics/')}>Topics</a>
+        <span>/</span>
+        <span aria-current="page">{topic.title}</span>
+      </nav>
+      <TopicBook topic={topic} />
+    </>
+  )}
 </BaseLayout>

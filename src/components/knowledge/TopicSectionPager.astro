@@ -1,0 +1,48 @@
+---
+import type { TopicSequence } from '../../data/topic-sequences/types';
+import { sectionPath } from '../../data/topic-sequences';
+import { url } from '../../utils/urls';
+interface Props {
+  sequence: TopicSequence;
+  selected: string;
+}
+const { sequence, selected } = Astro.props;
+const index = sequence.sections.findIndex(
+  (section) => section.slug === selected,
+);
+const previous = sequence.sections[index - 1];
+const next = sequence.sections[index + 1];
+---
+
+<nav class="book-pagination" aria-label="Section sequence" data-pagefind-ignore>
+  <a
+    rel={previous ? 'prev' : undefined}
+    href={url(sectionPath(sequence, previous?.slug))}
+  >
+    <span class="meta">← Previous section</span>
+    <span>{previous?.title || 'Overview'}</span>
+  </a>
+  {next ? (
+    <a rel="next" href={url(sectionPath(sequence, next.slug))}>
+      <span class="meta">Next section →</span>
+      <span>{next.title}</span>
+    </a>
+  ) : (
+    <a href={url('learn/' + sequence.learningPath.id + '/')}>
+      <span class="meta">Continue learning ↗</span>
+      <span>{sequence.learningPath.title}</span>
+    </a>
+  )}
+</nav>
+<nav
+  class="book-learning"
+  aria-label="Topic and learning path"
+  data-pagefind-ignore
+>
+  <a class="text-link" href={url(sectionPath(sequence))}>
+    {sequence.title} overview
+  </a>
+  <a class="text-link" href={url('learn/' + sequence.learningPath.id + '/')}>
+    {sequence.learningPath.title} ↗
+  </a>
+</nav>

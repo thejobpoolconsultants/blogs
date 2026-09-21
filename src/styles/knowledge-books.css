@@ -1,0 +1,211 @@
+.knowledge-book {
+  grid-template-columns: 285px minmax(0, 1fr);
+  gap: clamp(28px, 4vw, 64px);
+}
+.knowledge-menu > summary small {
+  display: block;
+  font-size: 0.78rem;
+  font-weight: 400;
+  color: var(--muted);
+  margin-top: 2px;
+}
+.knowledge-chapter {
+  position: relative;
+}
+.knowledge-chapter > .book-section-link {
+  padding-right: 42px;
+}
+.knowledge-chapter .book-section-link .number {
+  color: var(--editorial-gold);
+}
+.chapter-disclosure > summary {
+  position: absolute;
+  right: 0;
+  top: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 44px;
+  list-style: none;
+  color: var(--muted);
+  border-radius: 3px;
+}
+.chapter-disclosure > summary::-webkit-details-marker {
+  display: none;
+}
+.chapter-disclosure > summary:hover {
+  background: var(--background-secondary);
+}
+.chapter-disclosure[open] > summary span {
+  transform: rotate(180deg);
+}
+.knowledge-subtopics {
+  list-style: none;
+  padding: 0;
+  margin: 4px 0 12px 15px;
+  border-left: 1px solid var(--line);
+}
+.knowledge-subtopics a {
+  display: flex;
+  align-items: baseline;
+  gap: 9px;
+  min-height: 40px;
+  padding: 9px 8px;
+  font-size: 0.75rem;
+  line-height: 1.5;
+  color: var(--muted);
+  border-left: 2px solid transparent;
+}
+.knowledge-subtopics a .number {
+  font-size: 0.56rem;
+  flex-shrink: 0;
+  letter-spacing: 0;
+}
+.knowledge-subtopics a[aria-current] {
+  color: var(--accent);
+  border-left-color: var(--accent);
+  background: var(--background-secondary);
+}
+.knowledge-subtopics a:hover {
+  background: var(--background-secondary);
+  color: var(--ink);
+}
+.knowledge-book .book-heading .lead {
+  margin-top: 24px;
+}
+.knowledge-coverage-note {
+  border: 0;
+  padding: 0;
+  margin: 24px 0 36px;
+}
+.knowledge-group-title {
+  font-size: 1.2rem;
+  padding-top: 12px;
+  margin: 32px 0 20px;
+}
+.knowledge-concept-list ol {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.knowledge-concept {
+  display: grid;
+  grid-template-columns: 50px minmax(0, 1fr);
+  gap: 20px;
+  padding: 24px 0;
+  border-top: 1px solid var(--line);
+  scroll-margin-top: 24px;
+}
+.knowledge-concept-number {
+  color: var(--editorial-gold);
+  padding-top: 6px;
+  letter-spacing: 0.02em;
+}
+.knowledge-concept h3 {
+  font-size: 1.2rem;
+  margin-bottom: 10px;
+  line-height: 1.4;
+}
+.knowledge-concept h3 a {
+  text-decoration: underline;
+  text-decoration-color: var(--line);
+}
+.knowledge-concept-description {
+  color: var(--muted);
+  font-size: 0.86rem;
+  line-height: 1.7;
+  margin-bottom: 12px;
+  max-width: 65ch;
+}
+.knowledge-concept-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 18px;
+  font-size: 0.72rem;
+  color: var(--muted);
+}
+.knowledge-level {
+  text-transform: capitalize;
+}
+.knowledge-status {
+  display: inline-flex;
+  gap: 8px;
+  align-items: center;
+}
+.knowledge-status::before {
+  content: '';
+  width: 5px;
+  height: 5px;
+  border: 1px solid currentColor;
+  border-radius: 50%;
+}
+.knowledge-status.is-published {
+  color: var(--evaluation);
+}
+.knowledge-status.is-published::before {
+  background: currentColor;
+}
+.knowledge-sequence-directory {
+  margin-top: 48px;
+}
+.knowledge-sequence-directory h2 {
+  font-size: 1.4rem;
+}
+.knowledge-sequence-directory ol {
+  list-style: none;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0 28px;
+}
+.knowledge-sequence-directory a {
+  display: grid;
+  grid-template-columns: 24px minmax(0, 1fr) 12px;
+  gap: 12px;
+  padding: 16px 0;
+  border-top: 1px solid var(--line);
+  font-size: 0.85rem;
+  align-items: baseline;
+}
+.knowledge-sequence-directory .number {
+  color: var(--editorial-gold);
+}
+.knowledge-sequence-directory li {
+  scroll-margin-top: 80px;
+}
+.search-concept-status {
+  color: var(--muted);
+  font-size: 0.8rem;
+}
+@media (max-width: 1000px) {
+  .knowledge-book {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .knowledge-concept {
+    scroll-margin-top: 100px;
+  }
+  .knowledge-menu > summary {
+    min-height: 72px;
+  }
+}
+@media (max-width: 600px) {
+  .knowledge-concept {
+    grid-template-columns: 38px minmax(0, 1fr);
+    gap: 12px;
+    padding-block: 22px;
+  }
+  .knowledge-concept h3 {
+    font-size: 1.08rem;
+  }
+  .knowledge-concept-number {
+    font-size: 0.63rem;
+  }
+  .knowledge-sequence-directory ol {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+.knowledge-book .book-navigation {
+  overscroll-behavior: auto;
+}

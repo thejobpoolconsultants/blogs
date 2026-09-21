@@ -1,0 +1,21 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import TopicKnowledgeLayout from '../../../components/knowledge/TopicKnowledgeLayout.astro';
+import { topicSequences } from '../../../data/topic-sequences';
+export function getStaticPaths() {
+  return topicSequences.flatMap((sequence) =>
+    sequence.sections.map((section) => ({
+      params: { topic: sequence.id, section: section.slug },
+      props: { sequence, section },
+    })),
+  );
+}
+const { sequence, section } = Astro.props;
+---
+
+<BaseLayout
+  title={sequence.title + ': ' + section.title}
+  description={section.description}
+>
+  <TopicKnowledgeLayout sequence={sequence} selected={section.slug} />
+</BaseLayout>

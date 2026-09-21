@@ -390,7 +390,7 @@
   .book-menu > summary::-webkit-details-marker {
     display: none;
   }
-  .book-menu[open] > summary span {
+  .book-menu[open] > summary > span:last-child {
     transform: rotate(180deg);
   }
   .book-navigation {
@@ -472,4 +472,8 @@
   display: inline-flex;
   align-items: center;
   min-height: 44px;
+}
+
+.topic-breadcrumb {
+  align-items: center;
 }

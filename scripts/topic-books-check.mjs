@@ -1,6 +1,7 @@
 import { readFile } from 'node:fs/promises';
 import assert from 'node:assert/strict';
 import { load } from 'cheerio';
+import { sequenceFor } from '../src/data/topic-sequences/index.ts';
 import { topics } from '../src/data/topics.ts';
 import {
   sectionsFor,
@@ -10,7 +11,7 @@ import {
 } from '../src/data/topic-books.ts';
 
 const expectedCounts = [
-  8, 11, 11, 13, 12, 14, 14, 20, 15, 23, 20, 14, 18, 9, 17,
+  8, 22, 11, 13, 12, 14, 14, 20, 15, 23, 20, 14, 18, 9, 17,
 ];
 let sectionCount = 0;
 for (const [index, topic] of topics.entries()) {
@@ -20,6 +21,10 @@ for (const [index, topic] of topics.entries()) {
     expectedCounts[index],
     topic.id + ': sequence changed',
   );
+  if (sequenceFor(topic.id)) {
+    sectionCount += sections.length;
+    continue;
+  }
   assert.equal(sections[0].id, 'start-here');
   assert.equal(
     new Set(sections.map((section) => section.id)).size,

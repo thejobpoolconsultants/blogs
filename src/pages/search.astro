@@ -1,5 +1,6 @@
 ---
 import { articleTypes, articleTypeLabel } from '../data/research-editorial';
+import '../styles/knowledge-books.css';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { topics } from '../data/topics';
 import { url } from '../utils/urls';
@@ -18,11 +19,16 @@ import { url } from '../utils/urls';
       curious about?
     </h1>
     <p class="lead">
-      Search explanations, architecture, and ideas. Try “retrieval”,
-      “attention”, or “evaluation”.
+      Search explanations, architecture, ideas, and planned concepts. Try
+      “retrieval”, “attention”, or “evaluation”.
     </p>
   </div>
-  <div class="search-wrap" id="search" data-index={url('pagefind/pagefind.js')}>
+  <div
+    class="search-wrap"
+    id="search"
+    data-index={url('pagefind/pagefind.js')}
+    data-concepts={url('concept-index.json')}
+  >
     <form id="search-form" role="search">
       <div class="search-command-bar">
         <span class="meta">Knowledge index</span>

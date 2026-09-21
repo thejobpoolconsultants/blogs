@@ -1,0 +1,59 @@
+---
+import type { KnowledgeSection } from '../../data/topic-sequences/types';
+import TopicConceptStatus from './TopicConceptStatus.astro';
+import { url } from '../../utils/urls';
+interface Props {
+  section: KnowledgeSection;
+}
+const { section } = Astro.props;
+const concepts = section.concepts.filter(
+  (concept) => concept.status !== 'draft',
+);
+const groups = [
+  ...new Set(concepts.map((concept) => concept.group || 'Subtopics')),
+];
+---
+
+<div class="knowledge-concept-list">
+  {groups.map((group, index) => (
+    <section aria-labelledby={'concept-group-' + index}>
+      <h2 class="knowledge-group-title" id={'concept-group-' + index}>
+        {group}
+      </h2>
+      <ol>
+        {concepts
+          .filter((concept) => (concept.group || 'Subtopics') === group)
+          .map((concept) => (
+            <li
+              class="knowledge-concept"
+              id={concept.slug}
+              tabindex="-1"
+              data-concept-id={concept.id}
+            >
+              <span class="number knowledge-concept-number">
+                {concept.number}
+              </span>
+              <div>
+                <h3>
+                  {concept.status === 'published' && concept.articleSlug ? (
+                    <a href={url('articles/' + concept.articleSlug + '/')}>
+                      {concept.title} <span aria-hidden="true">↗</span>
+                    </a>
+                  ) : (
+                    concept.title
+                  )}
+                </h3>
+                <p class="knowledge-concept-description">
+                  {concept.description}
+                </p>
+                <div class="knowledge-concept-meta">
+                  <span class="knowledge-level">{concept.level}</span>
+                  <TopicConceptStatus status={concept.status} />
+                </div>
+              </div>
+            </li>
+          ))}
+      </ol>
+    </section>
+  ))}
+</div>
