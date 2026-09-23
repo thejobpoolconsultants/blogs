@@ -69,7 +69,10 @@ try {
           route + ' overflow at ' + width,
         );
         await expect(page.locator('h1')).toHaveCount(1);
-        if (route !== 'topics/' && route !== 'topics/machine-learning/') {
+        if (
+          route !== 'topics/' &&
+          !['topics/machine-learning/', 'topics/deep-learning/'].includes(route)
+        ) {
           await checkPanel('overview');
           assert.equal(
             await page.locator('.book-menu').evaluate((menu) => menu.open),
@@ -163,7 +166,7 @@ try {
       );
     }
   }
-  report.interactions.push({ checks: 'all 208 legacy section links' });
+  report.interactions.push({ checks: 'all 197 legacy section links' });
   await page.goto(base + 'topics/nlp/#transformers');
   await page.setViewportSize({ width: 375, height: 900 });
   await expect(page.locator('.book-menu')).not.toHaveAttribute('open', '');

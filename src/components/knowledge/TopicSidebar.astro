@@ -38,7 +38,7 @@ const active = sequence.sections.find((section) => section.slug === selected);
                 data-chapter-link={section.slug}
               >
                 <span class="number">{section.number}</span>
-                <span>{section.title}</span>
+                <span>{section.navTitle || section.title}</span>
               </a>
               <details
                 class="chapter-disclosure"

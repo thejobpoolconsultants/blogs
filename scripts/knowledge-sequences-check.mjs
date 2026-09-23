@@ -12,6 +12,10 @@ const expectedML = [
   24, 41, 18, 23, 32, 15, 23, 11, 10, 31, 10, 11, 8, 19, 19, 13, 12, 12, 14, 25,
   16, 17,
 ];
+const expectedDL = [
+  16, 30, 17, 10, 17, 14, 18, 17, 12, 9, 8, 19, 19, 8, 18, 16, 21, 11, 13, 12,
+  14, 14, 10, 12, 10, 11, 13, 10, 14, 25, 15, 21,
+];
 const search = JSON.parse(await readFile('dist/concept-index.json', 'utf8'));
 let count = 0;
 for (const sequence of topicSequences) {
@@ -26,6 +30,14 @@ for (const sequence of topicSequences) {
     assert.deepEqual(
       sequence.sections.map((section) => section.concepts.length),
       expectedML,
+    );
+  }
+  if (sequence.id === 'deep-learning') {
+    assert.equal(sequence.sections.length, 32);
+    assert.equal(conceptCount(sequence), 474);
+    assert.deepEqual(
+      sequence.sections.map((section) => section.concepts.length),
+      expectedDL,
     );
   }
   for (const [index, section] of sequence.sections.entries()) {
@@ -66,6 +78,19 @@ for (const sequence of topicSequences) {
       $('.book-section-link[aria-current=page]').attr('data-chapter-link'),
       section.slug,
     );
+    for (const slug of section.relatedArticleSlugs || []) {
+      await access('dist/articles/' + slug + '/index.html');
+      assert.equal(
+        $('[data-related-article="' + slug + '"]').attr('href'),
+        '/blogs/articles/' + slug + '/',
+      );
+      if (slug === 'attention-paper-to-product')
+        assert.equal(
+          $('[data-related-article="' + slug + '"]').attr('data-article-topic'),
+          'research',
+        );
+    }
+    if (section.diagram) assert.equal($('.knowledge-cycle').length, 1);
     for (const [ordinal, concept] of section.concepts.entries()) {
       assert(!ids.has(concept.id), 'Duplicate concept ID: ' + concept.id);
       ids.add(concept.id);
@@ -139,8 +164,10 @@ for (const sequence of topicSequences) {
     status: 'draft',
     articleSlug: 'private-article',
   });
+  fixture.sections[0].relatedArticleSlugs = ['unpublished-reading'];
   const before = JSON.stringify(fixture);
   const safe = publicSequence(fixture, new Set());
+  assert.equal(safe.sections[0].relatedArticleSlugs.length, 0);
   assert.equal(
     JSON.stringify(fixture),
     before,

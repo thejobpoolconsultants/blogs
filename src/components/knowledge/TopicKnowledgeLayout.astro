@@ -7,6 +7,8 @@ import {
 } from '../../data/topic-sequences';
 import { publishedArticles } from '../../utils/content';
 import { url } from '../../utils/urls';
+import TopicRelatedReading from './TopicRelatedReading.astro';
+import TopicLearningCycle from './TopicLearningCycle.astro';
 import TopicSidebar from './TopicSidebar.astro';
 import TopicConceptList from './TopicConceptList.astro';
 import TopicSectionPager from './TopicSectionPager.astro';
@@ -99,6 +101,16 @@ const ownArticles = articles.filter(
             </p>
           </>
         )}
+        {section.notice && <p class="book-coverage-note">{section.notice}</p>}
+        {section.diagram && <TopicLearningCycle diagram={section.diagram} />}
+        <TopicRelatedReading
+          articles={(section.relatedArticleSlugs || []).flatMap((slug) => {
+            const article = articles.find(
+              (article) => article.data.slug === slug,
+            );
+            return article ? [article] : [];
+          })}
+        />
         <TopicConceptList section={section} />
         <TopicSectionPager sequence={sequence} selected={section.slug} />
       </>

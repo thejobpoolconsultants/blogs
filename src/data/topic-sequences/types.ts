@@ -15,6 +15,14 @@ export type KnowledgeConcept = ConceptBase &
     | { status: 'planned' | 'draft'; articleSlug?: string }
   );
 export interface KnowledgeSection {
+  navTitle?: string;
+  relatedArticleSlugs?: string[];
+  notice?: string;
+  diagram?: {
+    label: string;
+    stages: { label: string; steps: string[] }[];
+    caption: string;
+  };
   number: string;
   slug: string;
   title: string;

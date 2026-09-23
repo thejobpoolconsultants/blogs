@@ -65,37 +65,6 @@ export const topicReading: Record<string, SectionReading[]> = {
     },
     { article: context, sections: ['ai-systems'] },
   ],
-  'deep-learning': [
-    {
-      article: dl,
-      sections: ['start-here', 'neural-network-fundamentals', 'training'],
-      concepts: [
-        'Neural network intuition',
-        'Neuron',
-        'Weights',
-        'Bias',
-        'Layers',
-        'Activation functions',
-        'Loss functions',
-        'Gradient descent',
-        'Backpropagation',
-      ],
-    },
-    {
-      article: attention,
-      sections: ['attention', 'transformers'],
-      concepts: [
-        'Query',
-        'Key',
-        'Value',
-        'Self-attention',
-        'Multi-head attention',
-        'Encoder',
-        'Decoder',
-        'Positional encoding',
-      ],
-    },
-  ],
   nlp: [
     {
       article: words,

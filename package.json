@@ -21,7 +21,8 @@
     "verify:topics": "node scripts/topic-books-check.mjs",
     "test:topics": "node scripts/topic-books-browser-qa.mjs",
     "verify:knowledge": "node scripts/knowledge-sequences-check.mjs",
-    "test:machine-learning": "node scripts/machine-learning-browser-qa.mjs && node scripts/knowledge-navigation-qa.mjs"
+    "test:machine-learning": "node scripts/machine-learning-browser-qa.mjs && node scripts/knowledge-navigation-qa.mjs",
+    "test:deep-learning": "node scripts/deep-learning-browser-qa.mjs"
   },
   "dependencies": {
     "@astrojs/mdx": "8.0.1",

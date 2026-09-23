@@ -1,0 +1,53 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import { topicById } from '../../data/topics';
+import { articleTypeLabel } from '../../data/research-editorial';
+import { url } from '../../utils/urls';
+interface Props {
+  articles: CollectionEntry<'articles'>[];
+}
+const { articles } = Astro.props;
+---
+
+{articles.length > 0 && (
+  <section
+    class="book-reading knowledge-related-reading"
+    aria-labelledby="related-reading-title"
+  >
+    <h2 id="related-reading-title">Related reading</h2>
+    {articles.map((article) => (
+      <a
+        class="article-row"
+        href={url('articles/' + article.data.slug + '/')}
+        data-related-article={article.data.slug}
+        data-article-topic={article.data.topic}
+      >
+        <div>
+          <p class="meta">
+            {topicById(article.data.topic).title} /{' '}
+            {articleTypeLabel(article.data.type)}
+          </p>
+          <h3>{article.data.title}</h3>
+          <p>{article.data.description}</p>
+        </div>
+        <span aria-hidden="true">↗</span>
+      </a>
+    ))}
+  </section>
+)}
+<style>
+  .knowledge-related-reading {
+    margin-block: 32px;
+  }
+  .knowledge-related-reading > h2 {
+    font-size: 1.2rem;
+  }
+  .knowledge-related-reading .article-row {
+    grid-template-columns: minmax(0, 1fr) 18px;
+  }
+  .knowledge-related-reading .article-row .meta {
+    font-size: 0.65rem;
+    color: var(--editorial-gold);
+    margin-bottom: 12px;
+  }
+</style>

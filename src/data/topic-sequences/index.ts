@@ -1,7 +1,8 @@
+import { deepLearning } from './deep-learning.ts';
 import { machineLearning } from './machine-learning.ts';
 import type { TopicSequence, KnowledgeConcept } from './types.ts';
 
-export const topicSequences: TopicSequence[] = [machineLearning];
+export const topicSequences: TopicSequence[] = [machineLearning, deepLearning];
 export const sequenceFor = (id: string) =>
   topicSequences.find((sequence) => sequence.id === id);
 export const sectionPath = (sequence: TopicSequence, section?: string) =>
@@ -21,6 +22,13 @@ export function publicSequence(
     ...sequence,
     sections: sequence.sections.map((section) => ({
       ...section,
+      ...(section.relatedArticleSlugs
+        ? {
+            relatedArticleSlugs: section.relatedArticleSlugs.filter((slug) =>
+              published.has(slug),
+            ),
+          }
+        : {}),
       concepts: section.concepts
         .filter((concept) => concept.status !== 'draft')
         .map((concept) => {

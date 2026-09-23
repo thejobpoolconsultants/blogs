@@ -11,7 +11,7 @@ import {
 } from '../src/data/topic-books.ts';
 
 const expectedCounts = [
-  8, 22, 11, 13, 12, 14, 14, 20, 15, 23, 20, 14, 18, 9, 17,
+  8, 22, 32, 13, 12, 14, 14, 20, 15, 23, 20, 14, 18, 9, 17,
 ];
 let sectionCount = 0;
 for (const [index, topic] of topics.entries()) {
