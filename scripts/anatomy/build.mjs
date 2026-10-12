@@ -1,7 +1,11 @@
 import { mkdirSync, writeFileSync } from 'node:fs';
 import * as k from './vendor/iso-kit.mjs';
 import * as A from './vendor/audit.mjs';
-import { viewOf } from './vendor/lathe.mjs';
+import * as G from './vendor/lathe.mjs';
+import { materialFor, materialCss } from './materials.mjs';
+import { programBuilders } from './program-builders.mjs';
+import { programExplainers } from '../../src/data/program-explainers.ts';
+const { viewOf } = G;
 
 const WIDTH = 600,
   HEIGHT = 380;
@@ -20,11 +24,13 @@ mkdirSync(OUT, { recursive: true });
 mkdirSync('src/data/generated', { recursive: true });
 mkdirSync('artifacts/anatomy', { recursive: true });
 const SAMPLE_STATES = Array.from({ length: 17 }, (_, i) => i / 16);
-const themeTokens = `
+const themeTokens =
+  `
 .iso[data-theme="light"]{--anatomy-paper:#fefdf9;--anatomy-top:#fffefa;--anatomy-face:#fffefa;--anatomy-shade-0:#c3cad4;--anatomy-shade-1:#d3d8df;--anatomy-shade-2:#e1e4e8;--anatomy-shade-3:#eef0f2;--anatomy-hi:#263553;--anatomy-mid:#69758c;--anatomy-lo:#9da7b7;--anatomy-faint:#c7cdd6;--anatomy-lit:#18264f;--anatomy-lit-top:#fffdf4;--anatomy-lit-shade:#e6ddc7;--anatomy-dot:#263553;--anatomy-halo:#748095;--anatomy-halo-opacity:.16}
 .iso[data-theme="dark"]{--anatomy-paper:#111a2e;--anatomy-top:#25324b;--anatomy-face:#263550;--anatomy-shade-0:#0b1323;--anatomy-shade-1:#152039;--anatomy-shade-2:#1a2842;--anatomy-shade-3:#20304c;--anatomy-hi:#d4dce9;--anatomy-mid:#8797b2;--anatomy-lo:#526582;--anatomy-faint:#354660;--anatomy-lit:#eed49a;--anatomy-lit-top:#36435a;--anatomy-lit-shade:#2d3950;--anatomy-dot:#d4dce9;--anatomy-halo:#030813;--anatomy-halo-opacity:.55}
 .instrument-glass .iso-top,.instrument-glass .iso-shade{fill:var(--anatomy-shade-0)}
-`;
+` + materialCss;
+writeFileSync('src/styles/anatomy-materials.css', materialCss);
 
 class Bench {
   constructor(id, title, caption) {
@@ -80,11 +86,13 @@ class Bench {
     );
   }
   record(name, at, svg, shape, options) {
-    const move = options.moving ? [84, 0, 0] : [0, 0, 0];
+    const move = options.move || (options.moving ? [84, 0, 0] : [0, 0, 0]);
+    const material = options.material || materialFor(this.id, name);
+    if (material) svg = `<g class="material-${material}">${svg}</g>`;
     this.R.put({
       name,
       at,
-      piece: options.moving ? 'selector' : name,
+      piece: options.piece || (options.moving ? 'selector' : name),
       move,
       svg,
       shapes: [this.R.solid(shape)],
@@ -131,10 +139,12 @@ class Bench {
     });
     for (const [i, [x, y]] of k.corners(BASE, 7).entries())
       this.cylinder(`stand.fastener-${i}`, x, y, 1.2, 0, 0.8, { tone: 'lo' });
-    this.slab('stand.nameplate', -88, 48, 40, 11, 0, 0.7, {
+    const plateX = this.id === 'cloud' ? 34 : -88;
+    this.slab('stand.nameplate', plateX, 48, 40, 11, 0, 0.7, {
       tone: 'lo',
-      inner: this.rules(-84, 51, 24, 0.7),
+      inner: this.rules(plateX + 4, 51, 24, 0.7),
     });
+    if (this.id !== 'retrieval') return;
     this.slab('controls.tray', 34, 32, 54, 27, 0, 3, {
       detail: true,
       seam: true,
@@ -199,10 +209,16 @@ class Bench {
     ).join('');
   }
   finish(label, moving = false) {
-    const states = moving ? SAMPLE_STATES : [0];
+    if (programExplainers[this.id])
+      this.caption = programExplainers[this.id].caption;
+    const states = Array.isArray(moving)
+      ? moving
+      : moving
+        ? SAMPLE_STATES
+        : [0];
     A.settle(this.R, P, { states });
     const result = A.auditOrExit(this.R, P, {
-      frames: moving ? SAMPLE_STATES : [],
+      frames: moving ? states : [],
       apart: false,
     });
     if (this.parts.length < 40)
@@ -214,7 +230,7 @@ class Bench {
       .sort((a, b) => a.key - b.key)
       .map(
         (item) =>
-          `<g data-part-name="${item.name}" data-sort-key="${item.key.toFixed(6)}" data-sort-lift="${item.move.reduce((s, v, i) => s + v * V[i], 0).toFixed(6)}"${item.piece === 'selector' ? ' data-moving-selector=""' : ''}>${item.svg}</g>`,
+          `<g data-part-name="${item.name}" data-sort-key="${item.key.toFixed(6)}" data-sort-lift="${item.move.reduce((s, v, i) => s + v * V[i], 0).toFixed(6)}" data-motion-piece="${item.piece}"${item.piece === 'selector' ? ' data-moving-selector=""' : ''}>${item.svg}</g>`,
       )
       .join('')}</g>`;
     const svg = k.figureSvg({ width: WIDTH, height: HEIGHT, label, body });
@@ -257,6 +273,12 @@ class Bench {
       partNames: this.parts,
       svg,
       axis: k.axisVector(P, [84, 0, 0]),
+      worldAxes: [
+        [1, 0, 0],
+        [0, 1, 0],
+        [0, 0, 1],
+      ].map((v) => k.axisVector(P, v)),
+      view: V,
       geometryProblems: result ? A.failures(result) : null,
     };
   }
@@ -329,348 +351,12 @@ function retrieval(id = 'retrieval') {
   );
 }
 
-function infrastructure() {
-  const b = new Bench(
-    'infrastructure',
-    'Compute, network and cooling',
-    'Compute trays connect through a network switch; cooling and power support the rack.',
-  );
-  b.slab('rack.plinth', -67, -49, 134, 67, 0, 4, { detail: true, tone: 'lo' });
-  for (const [i, x] of [-65, 59].entries())
-    for (const [j, y] of [-47, 10].entries())
-      b.slab(`rack.upright-${i}-${j}`, x, y, 6, 6, 4, 94, { seam: true });
-  for (let row = 0; row < 4; row++) {
-    const z = 10 + row * 20;
-    for (const [edge, y] of [-45, 6].entries())
-      b.slab(`rack.support-${row}-${edge}`, -59, y, 118, 8, z - 3, 3);
-    b.slab(`rack.shelf-${row}`, -59, -41, 118, 51, z, 3, {
-      detail: true,
-      tone: 'lo',
-    });
-    for (let col = 0; col < 3; col++) {
-      const x = -50 + col * 36;
-      b.slab(`compute-${row}-${col}.package`, x, -20, 28, 30, z + 3, 5, {
-        lit: row === 2 && col === 1,
-        detail: true,
-      });
-      const vents = Array.from({ length: 5 }, (_, vent) =>
-        k.planOutline(
-          { x: x + 3 + vent * 4.5, y: -15, w: 1.3, d: 18, r: 0.6 },
-          z + 10,
-          P,
-          4,
-        ),
-      ).join('');
-      b.slab(`compute-${row}-${col}.heatsink`, x + 2, -18, 24, 26, z + 8, 2, {
-        tone: 'lo',
-        inner: k.lineSvg(vents, { tone: 'faint' }),
-      });
-    }
-  }
-  for (const [edge, y] of [-45, 6].entries())
-    b.slab(`network.support-${edge}`, -59, y, 118, 8, 91, 3);
-  b.slab('network.switch', -59, -41, 118, 51, 94, 4, { detail: true });
-  b.slab('power.rail', 75, -46, 8, 57, 0, 6, { detail: true });
-  for (let i = 0; i < 5; i++)
-    b.slab(`network.port-${i}`, -45 + i * 19, 10, 12, 3, 94, 3, { tone: 'hi' });
-  return b.finish(
-    'Open GPU rack with four compute shelves, vented heatsinks, structural uprights, a network switch and a power rail.',
-  );
-}
-
-function performance() {
-  const b = new Bench(
-    'performance',
-    'A shared batch fixture',
-    'Several requests sit in one batch fixture and share a processing step; this illustration makes no timing claim.',
-  );
-  b.slab('batch.bed', -85, -34, 121, 52, 0, 4, { detail: true });
-  for (let lane = 0; lane < 4; lane++) {
-    const y = -28 + lane * 11;
-    b.slab(`batch.guide-${lane}`, -81, y, 113, 2, 4, 2, { tone: 'lo' });
-    for (let tile = 0; tile < 3; tile++)
-      b.slab(`request-${lane}-${tile}`, -76 + tile * 28, y + 2, 20, 6, 4, 4, {
-        detail: true,
-        lit: lane === 1 && tile === 1,
-      });
-  }
-  for (const [i, x] of [-83, 25].entries())
-    b.slab(`batch.post-${i}`, x, -36, 6, 6, 4, 39);
-  b.slab('batch.processing-bar', -83, -36, 114, 6, 43, 6, { detail: true });
-  for (let i = 0; i < 4; i++)
-    b.slab(`batch.probe-${i}`, -73 + i * 26, -36, 5, 6, 49, 4);
-  b.terminal(48, -40);
-  for (let i = 0; i < 4; i++)
-    b.slab(`output.token-${i}`, -70 + i * 20, 24, 12, 8, 0, 3, { tone: 'hi' });
-  return b.finish(
-    'Request-processing test bench with four batch lanes, a shared processing bar and a completed request tray.',
-  );
-}
-
-function robotics() {
-  const b = new Bench(
-    'robotics',
-    'Perception, planning and action',
-    'A mounted camera observes objects; a jointed arm reaches over the sorting bed.',
-  );
-  b.slab('conveyor.bed', -75, -10, 134, 26, 0, 5, { detail: true });
-  for (let i = 0; i < 12; i++)
-    b.slab(`conveyor.segment-${i}`, -72 + i * 10, -7, 8, 20, 5, 2, {
-      radius: 0.5,
-      tone: 'lo',
-    });
-  for (const [i, x] of [-55, -12, 30].entries())
-    b.slab(`object-${i}`, x, -2, 8, 8, 7, 7, { lit: i === 1, detail: true });
-  b.slab('robot.mount', -68, -43, 26, 25, 0, 5, { detail: true });
-  b.cylinder('robot.shoulder', -55, -31, 9, 5, 8, { knurl: true });
-  b.slab('robot.upper-arm', -61, -37, 12, 12, 13, 35, { seam: true });
-  b.cylinder('robot.elbow', -55, -31, 8, 48, 5, { knurl: true });
-  b.slab('robot.forearm', -55, -36, 49, 10, 53, 7, { detail: true });
-  b.slab('robot.tool-slide', -14, -26, 8, 34, 53, 7, { detail: true });
-  b.slab('robot.wrist', -14, -2, 8, 10, 39, 14);
-  b.slab('robot.gripper-palm', -17, -2, 14, 10, 35, 4, { detail: true });
-  b.slab('robot.gripper-left', -17, -2, 3, 10, 25, 10);
-  b.slab('robot.gripper-right', -6, -2, 3, 10, 25, 10);
-  b.slab('camera.foot', 69, -45, 18, 18, 0, 4, { detail: true });
-  b.slab('camera.mast', 75, -39, 6, 6, 4, 65);
-  b.slab('camera.housing', 68, -42, 20, 16, 69, 12, { detail: true });
-  b.slab('camera.lens', 72, -26, 12, 3, 72, 6, { tone: 'hi' });
-  for (let i = 0; i < 2; i++) {
-    b.slab(`bin-${i}.floor`, -75 + i * 40, 28, 30, 14, 0, 2);
-    b.slab(`bin-${i}.back`, -75 + i * 40, 28, 30, 2, 2, 7);
-    b.slab(`bin-${i}.front`, -75 + i * 40, 40, 30, 2, 2, 7);
-  }
-  return b.finish(
-    'Camera mast and articulated robot arm over a segmented conveyor, with sample objects and two receiving bins.',
-  );
-}
-
-function research() {
-  const b = new Bench(
-    'research',
-    'A navigation test rig',
-    'A small agent navigates a field of possible actions and obstacles toward a goal; feedback guides subsequent decisions.',
-  );
-  for (let row = 0; row < 4; row++)
-    for (let col = 0; col < 4; col++)
-      b.slab(
-        `field.tile-${row}-${col}`,
-        -86 + col * 27,
-        -44 + row * 18,
-        26,
-        17,
-        0,
-        2,
-        { tone: 'lo', radius: 0.3 },
-      );
-  for (const [i, [x, y]] of [
-    [-59, -26],
-    [-5, -8],
-    [-32, 10],
-  ].entries())
-    b.slab(`field.obstacle-${i}`, x + 3, y + 3, 17, 10, 2, 9, { detail: true });
-  b.slab('agent.chassis', -80, -39, 15, 10, 2, 5, { lit: true, detail: true });
-  for (let i = 0; i < 4; i++)
-    b.slab(
-      `agent.wheel-${i}`,
-      -82 + (i % 2) * 17,
-      -38 + Math.floor(i / 2) * 7,
-      2,
-      2,
-      2,
-      4,
-      { tone: 'lo' },
-    );
-  b.slab('goal.pad', -2, 12, 11, 10, 2, 2, { tone: 'hi' });
-  b.slab('goal.post', 2, 15, 2, 2, 4, 16);
-  b.slab('goal.flag', 4, 15, 9, 2, 15, 5, { tone: 'hi' });
-  b.terminal(49, -44);
-  return b.finish(
-    'Navigation test field with sixteen cells, obstacles, a small agent, a goal flag and a feedback terminal.',
-  );
-}
-
-function cloud() {
-  const b = new Bench(
-    'cloud',
-    'Controlled access and standby',
-    'An access gate precedes the service banks; a separate standby bank illustrates a failover option.',
-  );
-  b.slab('cabinet.floor', -76, -46, 150, 60, 0, 4, { detail: true });
-  for (const [i, x] of [-76, 68].entries())
-    for (const [j, y] of [-46, 8].entries())
-      b.slab(`cabinet.post-${i}-${j}`, x, y, 6, 6, 4, 69);
-  for (let row = 0; row < 3; row++) {
-    const z = 12 + row * 20;
-    for (const [edge, y] of [-44, 4].entries())
-      b.slab(`cabinet.support-${row}-${edge}`, -70, y, 138, 8, z - 3, 3);
-    b.slab(`cabinet.shelf-${row}`, -70, -40, 138, 48, z, 3, {
-      detail: true,
-      tone: 'lo',
-    });
-    for (let col = 0; col < 3; col++) {
-      const x = -64 + col * 44;
-      b.slab(`service-${row}-${col}.module`, x, -22, 32, 30, z + 3, 11, {
-        detail: true,
-        seam: true,
-      });
-      b.slab(`service-${row}-${col}.status`, x + 12, 8, 7, 1, z + 8, 2, {
-        tone: 'hi',
-      });
-    }
-  }
-  b.slab('cabinet.top', -76, -46, 150, 60, 73, 3, { detail: true });
-  b.slab('access.pedestal', -87, 21, 35, 17, 0, 5, { detail: true });
-  b.slab('access.left', -86, 24, 5, 9, 5, 20);
-  b.slab('access.right', -58, 24, 5, 9, 5, 20);
-  b.slab('access.gate', -81, 24, 23, 9, 21, 4, { lit: true, detail: true });
-  return b.finish(
-    'A service cabinet with three module banks, status indicators, a standby bank and a separate physical access gate.',
-  );
-}
-
-function hardware() {
-  const b = new Bench(
-    'hardware',
-    'Compute and memory movement',
-    'Memory packages and compute sit on a board joined by conductive tracks; moving data is part of computation.',
-  );
-  b.slab('board.substrate', -83, -45, 119, 70, 0, 2, {
-    detail: true,
-    tone: 'lo',
-  });
-  for (let row = 0; row < 6; row++)
-    b.slab(`board.bus-${row}`, -76, -34 + row * 8, 102, 0.8, 2, 0.6, {
-      tone: 'lo',
-      radius: 0.1,
-    });
-  for (let i = 0; i < 4; i++) {
-    const x = -76 + (i % 2) * 68,
-      y = -38 + Math.floor(i / 2) * 37;
-    b.slab(`memory-${i}.support`, x, y, 25, 22, 2.6, 1);
-    b.slab(`memory-${i}.package`, x, y, 25, 22, 3.6, 4, { detail: true });
-  }
-  b.slab('compute.socket', -44, -29, 33, 38, 2.6, 3, { detail: true });
-  b.slab('compute.package', -42, -27, 29, 34, 5.6, 6, {
-    lit: true,
-    detail: true,
-  });
-  for (let fin = 0; fin < 8; fin++)
-    b.slab(`compute.heatsink-${fin}`, -41 + fin * 3.5, -26, 1.4, 32, 11.6, 6, {
-      radius: 0.2,
-      tone: 'lo',
-    });
-  for (let i = 0; i < 6; i++)
-    b.slab(`board.connector-${i}`, -76 + i * 17, 23, 10, 2, 2, 3, {
-      tone: 'hi',
-    });
-  b.terminal(49, -44);
-  return b.finish(
-    'Processor demonstration board with a central compute package, heatsink fins, four memory packages, bus tracks and connectors.',
-  );
-}
-
-function leadership() {
-  const b = new Bench(
-    'leadership',
-    'Finite resources, deliberate tradeoffs',
-    'Three finite resource trays make allocation visible: adding to one commitment reduces what remains available.',
-  );
-  for (let tray = 0; tray < 3; tray++) {
-    const x = -86 + tray * 43;
-    b.slab(`capacity-${tray}.tray`, x, -38, 36, 54, 0, 3, {
-      detail: true,
-      tone: 'lo',
-    });
-    b.slab(`capacity-${tray}.backstop`, x, -41, 36, 3, 0, 7);
-    b.slab(`capacity-${tray}.ruler`, x, 18, 36, 4, 0, 0.8, {
-      radius: 0.2,
-      inner:
-        k.lineSvg(k.topTicks(x + 2, x + 34, 4, 4, 18, 0.8, [1.5, 3], P).minor, {
-          tone: 'lo',
-        }) +
-        k.lineSvg(k.topTicks(x + 2, x + 34, 4, 4, 18, 0.8, [1.5, 3], P).major, {
-          tone: 'mid',
-        }),
-    });
-    for (let row = 0; row < 3; row++)
-      for (let token = 0; token < [2, 3, 1][tray]; token++)
-        b.slab(
-          `capacity-${tray}.token-${row}-${token}`,
-          x + 4 + token * 9,
-          -31 + row * 14,
-          7,
-          10,
-          3,
-          6,
-          { lit: tray === 1 && row === 1 && token === 1, detail: true },
-        );
-  }
-  b.terminal(53, -45, 0, 40, 47);
-  return b.finish(
-    'Capacity-planning console with three finite resource trays, allocation tokens, rooted scale strips and a planning instrument.',
-  );
-}
-
-function deployment() {
-  const b = new Bench(
-    'deployment',
-    'Integration and acceptance',
-    'Separate modules meet at an integration fixture; acceptance indicators represent checks before delivery.',
-  );
-  for (let module = 0; module < 3; module++) {
-    const x = -86 + module * 43;
-    b.slab(`module-${module}.mount`, x, -39, 34, 39, 0, 3, {
-      detail: true,
-      tone: 'lo',
-    });
-    b.slab(`module-${module}.case`, x + 3, -35, 28, 29, 3, 13, {
-      seam: true,
-      detail: true,
-    });
-    for (let i = 0; i < 3; i++)
-      b.slab(`module-${module}.port-${i}`, x + 7 + i * 7, -6, 4, 2, 7, 4, {
-        tone: 'hi',
-      });
-    for (let i = 0; i < 2; i++)
-      b.slab(
-        `module-${module}.test-pad-${i}`,
-        x + 8 + i * 12,
-        -30,
-        5,
-        7,
-        16,
-        1,
-        { tone: 'hi' },
-      );
-  }
-  b.slab('integration.fixture', -86, 5, 120, 13, 0, 6, {
-    lit: true,
-    detail: true,
-  });
-  for (let i = 0; i < 3; i++) {
-    b.slab(`integration.connector-${i}`, -76 + i * 43, 0, 12, 5, 0, 3);
-    b.cylinder(`acceptance.indicator-${i}`, -68 + i * 36, 11, 2, 6, 1, {
-      tone: 'hi',
-    });
-  }
-  b.terminal(50, -44);
-  return b.finish(
-    'Prototype integration bench with three module bays, physical connector pads, a shared fixture and three acceptance indicators.',
-  );
-}
-
+const educational = programBuilders(Bench, P, k, A, G);
 const builders = {
   retrieval,
-  agents: () => retrieval('agents'),
-  infrastructure,
-  performance,
-  robotics,
-  research,
-  cloud,
-  hardware,
-  leadership,
-  deployment,
+  ...Object.fromEntries(
+    Object.entries(educational).filter(([id]) => id in programExplainers),
+  ),
 };
 const only = process.argv.find((arg) => arg.startsWith('--only='))?.slice(7);
 const manifest = [];
@@ -678,6 +364,11 @@ for (const [id, build] of Object.entries(builders)) {
   if (only && id !== only) continue;
   console.log(`\n${id}: building and depth-sorting Anatomy Figure`);
   const figure = build();
+  if (id !== 'retrieval')
+    writeFileSync(
+      `src/data/generated/${id}-figure.json`,
+      JSON.stringify(figure),
+    );
   if (id === 'retrieval')
     writeFileSync(
       'src/data/generated/retrieval-figure.json',
@@ -686,11 +377,39 @@ for (const [id, build] of Object.entries(builders)) {
   const { svg, ...metadata } = figure;
   manifest.push({ ...metadata, inlineBytes: Buffer.byteLength(svg) });
 }
-if (!only)
+if (!only) {
   writeFileSync(
     'src/data/generated/anatomy-manifest.json',
     JSON.stringify(manifest, null, 2),
   );
+  writeFileSync(
+    'docs/design/anatomy-art-direction.json',
+    JSON.stringify(
+      {
+        source: 'https://github.com/wheresryan22/anatomy',
+        scope:
+          'Ten distinct, colored, interactive program Figures plus the retained document-retrieval hero. SVG-first with visible teaching copy and native HTML controls.',
+        plan: 'docs/design/program-explainers.md',
+        truth_contract:
+          'Authored educational states. Performance, matrix arithmetic, fixed-policy feedback, architecture allocations and customer checks use pure local models. No live training, measured hardware results, commercial chip layouts or business predictions.',
+        figures: manifest.map((entry) => ({
+          id: entry.id,
+          concept:
+            programExplainers[entry.id]?.intro ||
+            'Find a source before presenting a grounded answer.',
+          learning: programExplainers[entry.id]?.learn,
+          application: programExplainers[entry.id]?.build,
+          caption: entry.caption,
+          parts: entry.parts,
+          partNames: entry.partNames,
+          geometryProblems: entry.geometryProblems,
+        })),
+      },
+      null,
+      2,
+    ),
+  );
+}
 console.log(
   JSON.stringify(
     manifest.map(({ id, parts, geometryProblems }) => ({
@@ -702,3 +421,139 @@ console.log(
     2,
   ),
 );
+
+if (process.argv.includes('--motion')) {
+  const motionReport = [];
+  function frame(b, names, description) {
+    A.settle(b.R, P, { states: [0] });
+    const result = A.auditOrExit(b.R, P, { frames: [], apart: false });
+    const problems = result ? A.failures(result) : null;
+    if (problems !== 0)
+      throw new Error(`${description}: motion geometry audit failed`);
+    motionReport.push({ description, parts: b.parts.length, problems });
+    return {
+      parts: b.R.items
+        .filter((item) => names.includes(item.name))
+        .map((item) => ({ name: item.name, svg: item.svg })),
+      order: b.R.items
+        .toSorted((a, b) => a.key - b.key)
+        .map((item) => item.name),
+    };
+  }
+  if (!only || only === 'robotics') {
+    const poses = [
+      { y: 0, palm: 35, objectY: 0, objectZ: 7 },
+      { y: 0, palm: 17, objectY: 0, objectZ: 7 },
+      { y: 0, palm: 35, objectY: 0, objectZ: 25 },
+      { y: 32, palm: 35, objectY: 32, objectZ: 25 },
+      { y: 32, palm: 12, objectY: 32, objectZ: 2 },
+      { y: 32, palm: 35, objectY: 32, objectZ: 2 },
+    ];
+    const frames = [
+      frame(
+        educational.robotBench(poses[0]),
+        [
+          'robot.wrist',
+          'robot.gripper-palm',
+          'robot.gripper-left',
+          'robot.gripper-right',
+          'object-1',
+        ],
+        'robotics start',
+      ),
+    ];
+    for (let segment = 1; segment < poses.length; segment++)
+      for (let step = 1; step <= 6; step++) {
+        const t = step / 6;
+        const pose = Object.fromEntries(
+          Object.keys(poses[0]).map((key) => [
+            key,
+            poses[segment - 1][key] +
+              (poses[segment][key] - poses[segment - 1][key]) * t,
+          ]),
+        );
+        frames.push(
+          frame(
+            educational.robotBench(pose),
+            [
+              'robot.wrist',
+              'robot.gripper-palm',
+              'robot.gripper-left',
+              'robot.gripper-right',
+              'object-1',
+            ],
+            `robotics segment ${segment}, sample ${step}`,
+          ),
+        );
+      }
+    writeFileSync(
+      `${OUT}/robotics-motion.json`,
+      JSON.stringify({ sequences: [frames] }),
+    );
+  }
+  if (!only || only === 'research') {
+    const sequences = [];
+    for (let policy = 0; policy < 2; policy++) {
+      const path = educational.navigationReplay(policy).positions;
+      const names = [
+        'agent.chassis',
+        'agent.wheel-0-0',
+        'agent.wheel-0-1',
+        'agent.wheel-1-0',
+        'agent.wheel-1-1',
+        'reward.dial-body',
+      ];
+      const reward = educational.navigationReplay(policy).reward;
+      const frames = [
+        frame(
+          educational.researchBench(path[0], reward),
+          names,
+          `research ${policy} start`,
+        ),
+      ];
+      for (let segment = 1; segment < path.length; segment++)
+        for (let step = 1; step <= 6; step++) {
+          const t = step / 6;
+          const position = path[segment - 1].map(
+            (v, i) => v + (path[segment][i] - v) * t,
+          );
+          frames.push(
+            frame(
+              educational.researchBench(position, reward),
+              names,
+              `research policy ${policy}, move ${segment}, sample ${step}`,
+            ),
+          );
+        }
+      sequences.push(frames);
+    }
+    writeFileSync(`${OUT}/research-motion.json`, JSON.stringify({ sequences }));
+  }
+  if (!only || only === 'cloud') {
+    const frames = [];
+    for (let step = 0; step <= 6; step++)
+      frames.push(
+        frame(
+          educational.cloudBench({ gate: (16 * step) / 6, request: 0 }),
+          ['access.gate', 'access.request'],
+          `cloud gate sample ${step}`,
+        ),
+      );
+    for (let step = 1; step <= 6; step++)
+      frames.push(
+        frame(
+          educational.cloudBench({ gate: 16, request: (20 * step) / 6 }),
+          ['access.gate', 'access.request'],
+          `cloud request sample ${step}`,
+        ),
+      );
+    writeFileSync(
+      `${OUT}/cloud-motion.json`,
+      JSON.stringify({ sequences: [frames] }),
+    );
+  }
+  writeFileSync(
+    'artifacts/anatomy/motion-audit.json',
+    JSON.stringify(motionReport, null, 2),
+  );
+}

@@ -1,0 +1,232 @@
+.mechanism-heading {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 12px 12px 0;
+  color: var(--muted);
+  font: 0.68rem/1.4 var(--font-mono);
+}
+.mechanism-heading .meta {
+  color: var(--editorial-gold);
+  font-size: 0.65rem;
+}
+.mechanism-art {
+  aspect-ratio: 600/380;
+  width: 100%;
+}
+.mechanism-art svg {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+.mechanism-hint {
+  padding: 0 12px 12px;
+  font-size: 0.75rem;
+  color: var(--muted);
+}
+.mechanism-legend {
+  font-size: 0.68rem;
+  line-height: 1.6;
+  color: var(--muted);
+  margin: 8px 0 16px;
+}
+.mechanism-controls label {
+  display: block;
+  color: var(--ink);
+  font-size: 0.78rem;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+.mechanism-control-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 10px;
+}
+.mechanism-controls select,
+.mechanism-controls button {
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius);
+  background: var(--surface);
+  color: var(--ink);
+  font: 0.78rem/1.3 var(--font-sans);
+  min-height: 44px;
+  padding: 9px;
+}
+.mechanism-control-row select {
+  width: 100%;
+  flex: 1 1 100%;
+}
+.mechanism-controls button {
+  flex: 1;
+  cursor: pointer;
+}
+.mechanism-controls button:hover {
+  border-color: var(--editorial-gold);
+}
+.mechanism-controls button:disabled {
+  cursor: default;
+  opacity: 0.6;
+}
+.mechanism-controls .mechanism-switch {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  font-weight: 400;
+  line-height: 1.5;
+}
+.mechanism-switch input {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+  accent-color: #2563eb;
+}
+.architecture-parameters {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+}
+.architecture-parameters select {
+  width: 100%;
+  display: block;
+  margin-top: 6px;
+}
+.architecture-parameters .mechanism-switch {
+  grid-column: 1/-1;
+}
+.mechanism-output {
+  border-left: 3px solid var(--editorial-gold);
+  padding: 12px 14px;
+  background: var(--background-secondary);
+  border-radius: 0 var(--radius) var(--radius) 0;
+  min-height: 160px;
+}
+.mechanism-output strong {
+  font-size: 0.82rem;
+  display: block;
+  margin-bottom: 6px;
+  color: var(--ink);
+}
+.mechanism-output p {
+  color: var(--muted);
+  font-size: 0.79rem;
+  line-height: 1.65;
+  margin: 0;
+}
+.mechanism-disclosure {
+  margin-top: 12px;
+  color: var(--muted);
+  font-size: 0.75rem;
+  line-height: 1.6;
+}
+.mechanism-disclosure summary {
+  cursor: pointer;
+  min-height: 44px;
+  display: list-item;
+  padding-block: 12px;
+}
+.mechanism-disclosure p {
+  margin: 4px 0;
+}
+.program-mechanism [data-part-name] {
+  transition:
+    filter 240ms ease,
+    opacity 240ms ease;
+}
+.program-mechanism .mechanism-active {
+  filter: drop-shadow(
+    0 0 2px color-mix(in srgb, var(--editorial-gold) 35%, transparent)
+  );
+}
+.program-mechanism .mechanism-muted {
+  opacity: 0.72;
+}
+.program-mechanism .mechanism-hidden {
+  visibility: hidden;
+}
+.program-mechanism .mechanism-failed .iso-top,
+.program-mechanism .mechanism-failed .iso-shade,
+.program-mechanism .mechanism-failed .iso-fill {
+  fill: #e76f51;
+}
+.program-mechanism .mechanism-route .iso-top {
+  fill: #0d9488;
+}
+.program-learning {
+  font-size: 0.84rem !important;
+  line-height: 1.6;
+}
+.program-learning strong {
+  color: var(--ink);
+}
+.program-project {
+  padding: 16px 0;
+  border-top: 1px solid var(--line);
+  font-size: 0.88rem !important;
+  line-height: 1.65;
+}
+.program-project strong {
+  display: block;
+  color: var(--ink);
+  margin-bottom: 4px;
+}
+.transition-project-actions {
+  grid-column: 1/-1;
+}
+.transition-program {
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 28px 48px;
+}
+.transition-program .program-illustration {
+  margin: 0;
+}
+.transition-project-actions .program-project {
+  margin: 0;
+}
+.transition-program .program-actions {
+  margin-top: 12px;
+}
+.program-grid {
+  grid-auto-rows: auto;
+}
+.program-card {
+  display: grid;
+  grid-template-rows: subgrid;
+  grid-row: span 7;
+  row-gap: 0;
+}
+.program-card-actions {
+  margin-top: 0;
+  align-self: end;
+}
+.program-card-top {
+  margin-bottom: 14px;
+}
+.specialist-heading {
+  margin-top: 36px;
+}
+@media (max-width: 767px) {
+  .transition-program {
+    grid-template-columns: 1fr;
+  }
+  .transition-project-actions {
+    grid-column: auto;
+  }
+  .program-card h3,
+  .program-card > p.program-learning,
+  .program-card > p:first-of-type {
+    min-height: 0;
+  }
+  .program-card {
+    display: flex;
+  }
+  .mechanism-output {
+    min-height: 0;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .program-mechanism [data-part-name] {
+    transition: none;
+  }
+}

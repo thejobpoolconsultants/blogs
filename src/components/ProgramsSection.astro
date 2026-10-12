@@ -2,6 +2,7 @@
 import { specialistPrograms, programWebsite } from '../data/programs';
 import { siteConfig } from '../utils/urls';
 import ProgramIllustration from './ProgramIllustration.astro';
+import { programExplainers } from '../data/program-explainers';
 ---
 
 <section
@@ -39,19 +40,18 @@ import ProgramIllustration from './ProgramIllustration.astro';
         <div class="program-card-top">
           <span class="meta">Program {program.number}</span>
         </div>
-        <ProgramIllustration kind={program.icon} number={program.number} />
         <h3 id={`${program.id}-title`}>{program.title}</h3>
-        <p>{program.benefit}</p>
+        <p>{programExplainers[program.icon].intro}</p>
+        <p class="program-learning">
+          <strong>You’ll practice:</strong>{' '}
+          {programExplainers[program.icon].learn.replace(/^Practice /, '')}
+        </p>
+        <ProgramIllustration kind={program.icon} number={program.number} />
+        <p class="program-project">
+          <strong>You could build</strong>
+          {programExplainers[program.icon].build}
+        </p>
         <div class="program-card-actions">
-          <a
-            class="button"
-            href={siteConfig.enquiryForm}
-            target="_blank"
-            rel="noopener noreferrer"
-            aria-label={`Enquire About This Program — ${program.title}`}
-          >
-            Enquire About This Program <span aria-hidden="true">↗</span>
-          </a>
           <a
             class="text-link"
             href={programWebsite(program.id)}
@@ -60,6 +60,15 @@ import ProgramIllustration from './ProgramIllustration.astro';
             aria-label={`Explore Program — ${program.title}`}
           >
             Explore Program <span aria-hidden="true">↗</span>
+          </a>
+          <a
+            class="button"
+            href={siteConfig.enquiryForm}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label={`Enquire About This Program — ${program.title}`}
+          >
+            Enquire About This Program <span aria-hidden="true">↗</span>
           </a>
         </div>
       </article>
@@ -77,22 +86,14 @@ import ProgramIllustration from './ProgramIllustration.astro';
 >
   <div class="guidance-intro">
     <p class="eyebrow">Individual career guidance</p>
-    <h2 id="guidance-title">
-      Limited Seats.
-      <br />
-      Individual Guidance.
-      <br />
-      <em>A Clearer Direction.</em>
-    </h2>
+    <h2 id="guidance-title">Limited Seats. Individual Career Guidance.</h2>
   </div>
   <div>
     <p>
       We accept a limited number of learners per cohort so we can focus on each
-      learner’s career goals, practical progress and transition.
-    </p>
-    <p>
-      Share your background and interests through our enquiry form. Our team
-      will respond with program details and guidance on a suitable pathway.
+      learner’s goals, practical progress and career transition. Share your
+      background through our enquiry form, and our team will respond with
+      program details and guidance.
     </p>
     <div class="program-actions">
       <a

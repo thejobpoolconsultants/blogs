@@ -1,38 +1,120 @@
 ---
-import manifest from '../data/generated/anatomy-manifest.json';
+import transition from '../data/generated/transition-figure.json';
+import agents from '../data/generated/agents-figure.json';
+import infrastructure from '../data/generated/infrastructure-figure.json';
+import performance from '../data/generated/performance-figure.json';
+import robotics from '../data/generated/robotics-figure.json';
+import research from '../data/generated/research-figure.json';
+import cloud from '../data/generated/cloud-figure.json';
+import hardware from '../data/generated/hardware-figure.json';
+import leadership from '../data/generated/leadership-figure.json';
+import deployment from '../data/generated/deployment-figure.json';
+import {
+  programExplainers,
+  demonstrationState,
+  type ProgramKind,
+} from '../data/program-explainers';
 import { url } from '../utils/urls';
 import '../styles/anatomy.css';
+import '../styles/anatomy-materials.css';
+import '../styles/program-mechanisms.css';
 interface Props {
-  kind: string;
+  kind: ProgramKind;
   number: string;
 }
 const { kind, number } = Astro.props;
-const art = manifest.find((entry) => entry.id === kind)!;
+const art = {
+  transition,
+  agents,
+  infrastructure,
+  performance,
+  robotics,
+  research,
+  cloud,
+  hardware,
+  leadership,
+  deployment,
+}[kind];
+const demo = programExplainers[kind];
+const initial = demonstrationState(kind, 0);
 ---
 
-<figure class="program-illustration">
-  <div class="anatomy-static-stage">
-    <span class="anatomy-art-index meta" aria-hidden="true">
-      Fig. {number}
-    </span>
-    <img
-      class="anatomy-art-light"
-      src={url(`illustrations/anatomy/${kind}-light.svg`)}
-      width="600"
-      height="380"
-      alt={art.label}
-      loading="lazy"
-      decoding="async"
-    />
-    <img
-      class="anatomy-art-dark"
-      src={url(`illustrations/anatomy/${kind}-dark.svg`)}
-      width="600"
-      height="380"
-      alt={art.label}
-      loading="lazy"
-      decoding="async"
-    />
+<figure
+  class="program-illustration program-mechanism"
+  data-program-demo={kind}
+  data-choice="0"
+  data-running="false"
+  data-axes={JSON.stringify(art.worldAxes)}
+  data-view={JSON.stringify(art.view)}
+  data-motion-url={
+    ['robotics', 'research', 'cloud'].includes(kind)
+      ? url(`illustrations/anatomy/${kind}-motion.json`)
+      : undefined
+  }
+>
+  <div class="anatomy-static-stage iso">
+    <div class="mechanism-heading">
+      <span class="meta">Fig. {number}</span>
+      <span>Illustrative demo</span>
+    </div>
+    <div class="mechanism-art" set:html={art.svg} />
+    <div class="mechanism-hint">{demo.hint}</div>
   </div>
-  <figcaption>{art.title}</figcaption>
+  <figcaption>{demo.caption}</figcaption>
+  <p class="mechanism-legend">{demo.legend.join(' · ')}</p>
+  <div class="mechanism-controls" hidden>
+    <label for={`mechanism-${kind}`}>{demo.hint}</label>
+    <div class="mechanism-control-row">
+      <select id={`mechanism-${kind}`} data-demo-choice>
+        {demo.options.map((option, index) => (
+          <option value={index}>{option}</option>
+        ))}
+      </select>
+      <button type="button" data-demo-replay>
+        Replay
+      </button>
+      <button type="button" data-demo-reset>
+        Reset
+      </button>
+    </div>
+    {kind === 'infrastructure' && (
+      <label class="mechanism-switch">
+        <input type="checkbox" data-demo-cooling checked /> Show cooling’s role
+        in heat removal
+      </label>
+    )}
+    {kind === 'leadership' && (
+      <div class="architecture-parameters">
+        <label>
+          Demand
+          <select data-demo-demand>
+            <option value="2">2 app units</option>
+            <option value="4">4 app units</option>
+          </select>
+        </label>
+        <label>
+          Budget
+          <select data-demo-budget>
+            <option value="6">6 resource units</option>
+            <option value="8">8 resource units</option>
+          </select>
+        </label>
+        <label class="mechanism-switch">
+          <input type="checkbox" data-demo-resilience /> Add two spare app units
+        </label>
+      </div>
+    )}
+  </div>
+  <div class="mechanism-output" aria-live="polite" aria-atomic="true">
+    <strong data-demo-title>{initial.title}</strong>
+    <p data-demo-result>{initial.text}</p>
+  </div>
+  <details class="mechanism-disclosure">
+    <summary>How it works</summary>
+    <p>{demo.note}</p>
+  </details>
 </figure>
+<script>
+  import { mountProgramDemonstrations } from '../scripts/program-demonstrations';
+  mountProgramDemonstrations();
+</script>

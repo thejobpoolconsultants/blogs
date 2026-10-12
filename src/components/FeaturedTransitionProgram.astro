@@ -1,6 +1,9 @@
 ---
-import { transitionProgram } from '../data/programs';
+import { transitionProgram, programWebsite } from '../data/programs';
+import { programExplainers } from '../data/program-explainers';
 import { siteConfig } from '../utils/urls';
+import ProgramIllustration from './ProgramIllustration.astro';
+const demo = programExplainers.transition;
 ---
 
 <section
@@ -16,12 +19,32 @@ import { siteConfig } from '../utils/urls';
       <p class="eyebrow">Featured pathway · Find your starting point</p>
       <h2 id="transition-program-title">{transitionProgram.title}</h2>
       <p class="transition-tagline">{transitionProgram.tagline}</p>
-      <p>{transitionProgram.description}</p>
+      <p>{demo.intro}</p>
+      <p class="program-learning">
+        <strong>You’ll practice:</strong> AI foundations, working with documents
+        and testing a first project.
+      </p>
       <p class="program-audience">
         <strong>Best suited to:</strong> Beginners, career switchers and
-        professionals moving into AI.
+        professionals moving into AI. Your background helps us find a suitable
+        starting point.
+      </p>
+    </div>
+    <ProgramIllustration kind="transition" number="00" />
+    <div class="transition-project-actions">
+      <p class="program-project">
+        <strong>You could build</strong>
+        {demo.build}
       </p>
       <div class="program-actions">
+        <a
+          class="text-link"
+          href={programWebsite(transitionProgram.id)}
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          Explore Program <span aria-hidden="true">↗</span>
+        </a>
         <a
           class="button primary"
           href={siteConfig.enquiryForm}
@@ -31,45 +54,7 @@ import { siteConfig } from '../utils/urls';
           Enquire About the AI Career Transition Program{' '}
           <span aria-hidden="true">↗</span>
         </a>
-        <a
-          class="text-link"
-          href={siteConfig.mainSite}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Explore Our Website <span aria-hidden="true">↗</span>
-        </a>
       </div>
-    </div>
-    <div
-      class="transition-steps"
-      aria-label="A progressive pathway with a starting point based on your background"
-    >
-      <p class="meta">One program. A progressive pathway.</p>
-      <ol>
-        <li>
-          <span aria-hidden="true">01</span>
-          <div>
-            <strong>AI foundations</strong>
-            <small>Build your understanding</small>
-          </div>
-        </li>
-        <li>
-          <span aria-hidden="true">02</span>
-          <div>
-            <strong>Applied AI</strong>
-            <small>Develop practical skills</small>
-          </div>
-        </li>
-        <li>
-          <span aria-hidden="true">03</span>
-          <div>
-            <strong>Advanced concepts</strong>
-            <small>Explore what comes next</small>
-          </div>
-        </li>
-      </ol>
-      <p>Your background helps us find a suitable starting point.</p>
     </div>
   </article>
 </section>

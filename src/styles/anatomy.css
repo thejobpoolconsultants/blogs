@@ -123,7 +123,7 @@
   margin: 12px 2px 0;
 }
 .program-illustration {
-  margin: -6px 0 24px;
+  margin: 12px 0 20px;
 }
 .anatomy-static-stage {
   position: relative;
@@ -153,8 +153,8 @@
   display: block;
 }
 .program-illustration figcaption {
-  font: 0.65rem/1.5 var(--font-mono);
-  color: var(--muted);
+  font: 0.86rem/1.55 var(--font-sans);
+  color: var(--ink);
   padding-top: 10px;
 }
 .iso {

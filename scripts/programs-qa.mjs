@@ -69,7 +69,17 @@ try {
     );
     assert.equal(layout.columns, width <= 600 ? 1 : width <= 1100 ? 2 : 3);
     if (width > 600)
-      assert(Math.max(...layout.heights) - Math.min(...layout.heights) < 2);
+      for (
+        let start = 0;
+        start < layout.heights.length;
+        start += layout.columns
+      ) {
+        const row = layout.heights.slice(start, start + layout.columns);
+        assert(
+          Math.max(...row) - Math.min(...row) < 2,
+          `Uneven cards within row at ${width}`,
+        );
+      }
     report.layouts.push(layout);
   }
   assert.equal(await page.locator('.program-card').count(), 9);
@@ -84,7 +94,7 @@ try {
       .evaluate((node) =>
         Boolean(
           node.compareDocumentPosition(document.querySelector('#programs')) &
-          Node.DOCUMENT_POSITION_FOLLOWING,
+          Node.DOCUMENT_POSITION_PRECEDING,
         ),
       ),
   );

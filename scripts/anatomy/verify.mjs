@@ -9,6 +9,15 @@ import { pathToFileURL } from 'node:url';
 import sharp from 'sharp';
 import { retrievalSamples } from '../../src/data/retrieval-demo.ts';
 import { siteConfig } from '../../site.config.mjs';
+import {
+  programExplainers,
+  demonstrationState,
+  navigationReplay,
+  servingSimulation,
+  architectureScenario,
+  acceptanceChecks,
+  matrixExample,
+} from '../../src/data/program-explainers.ts';
 
 const execFileAsync = promisify(execFile);
 const skillRoot =
@@ -42,6 +51,30 @@ const page = await context.newPage();
 const base = 'http://127.0.0.1:4321/blogs/';
 page.on('pageerror', (error) => report.errors.push(error.message));
 try {
+  assert.deepEqual(servingSimulation(false).completions, [5, 10, 15, 20]);
+  assert.deepEqual(servingSimulation(true).completions, [11, 11, 11, 11]);
+  assert(
+    servingSimulation(true).throughput > servingSimulation(false).throughput,
+  );
+  assert(
+    servingSimulation(true).firstResponse >
+      servingSimulation(false).firstResponse,
+  );
+  assert.deepEqual(matrixExample().product, [
+    [1, 2],
+    [3, 4],
+  ]);
+  assert.equal(navigationReplay(0).reward, 7);
+  assert.equal(navigationReplay(1).reward, 14);
+  assert(navigationReplay(0).reachedGoal && navigationReplay(1).reachedGoal);
+  assert.equal(architectureScenario(4, 6, true).shortfall, 4);
+  assert(
+    acceptanceChecks(0).every((check) => check.passed) &&
+      acceptanceChecks(1).every((check) => check.passed),
+  );
+  report.interactions.push(
+    'Pure models agree: batch waiting/throughput, matrix arithmetic, fixed-policy rewards, resource shortfall and three explicit customer acceptance checks.',
+  );
   assert(
     report.geometry.every(
       (entry) => entry.parts >= 40 && entry.geometryProblems === 0,
@@ -89,7 +122,7 @@ try {
       report.lines.push(result.value);
     }
   }
-  console.log('All 20 standalone line-end checks passed.');
+  console.log(`All ${lineJobs.length} standalone line-end checks passed.`);
   for (const width of [320, 390, 600, 768, 1024, 1440, 1920]) {
     await page.setViewportSize({ width, height: 1000 });
     await page.goto(base);
@@ -100,7 +133,7 @@ try {
       ),
       `Overflow at ${width}`,
     );
-    assert.equal(await page.locator('.program-illustration').count(), 9);
+    assert.equal(await page.locator('.program-illustration').count(), 10);
     assert.equal(await page.locator('.transition-program').count(), 1);
     assert.equal(
       await page.locator('.career-hero + .transition-feature').count(),
@@ -212,14 +245,16 @@ try {
       await page.setViewportSize({ width, height: 1000 });
       await page.goto(base);
       await page.evaluate(() => document.fonts.ready);
-      for (const art of await page.locator(`.anatomy-art-${theme}`).all()) {
-        await art.scrollIntoViewIfNeeded();
-        await art.evaluate(async (image) => {
-          await image.decode();
-          if (!image.naturalWidth || !image.naturalHeight)
-            throw new Error(`SVG did not decode: ${image.src}`);
-        });
-      }
+      assert.equal(
+        await page.locator('[data-program-demo] svg:visible').count(),
+        10,
+      );
+      for (const art of await page.locator('[data-program-demo] svg').all())
+        assert(
+          await art.evaluate(
+            (svg) => svg.querySelectorAll('.iso-fill').length >= 40,
+          ),
+        );
       await page.locator('.career-hero').scrollIntoViewIfNeeded();
       const result = await new AxeBuilder({ page })
         .withTags(['wcag2a', 'wcag2aa', 'wcag21aa', 'wcag22aa'])
@@ -255,10 +290,101 @@ try {
         .locator('.program-grid')
         .screenshot({ path: `${dest}/program-grid-${theme}-${width}.png` });
       assert.equal(
-        await page.locator(`.anatomy-art-${theme}:visible`).count(),
-        9,
+        await page.locator('[data-program-demo] svg:visible').count(),
+        10,
       );
     }
+  }
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.goto(base);
+  for (const [kind, definition] of Object.entries(programExplainers)) {
+    const figure = page.locator(`[data-program-demo="${kind}"]`);
+    await figure.scrollIntoViewIfNeeded();
+    assert.equal(
+      (await figure.locator('figcaption').textContent()).trim(),
+      definition.caption,
+    );
+    for (let choice = 0; choice < definition.options.length; choice++) {
+      await figure.locator('[data-demo-choice]').selectOption(String(choice));
+      assert.equal(await figure.getAttribute('data-choice'), String(choice));
+      assert.equal(
+        (await figure.locator('[data-demo-title]').textContent()).trim(),
+        demonstrationState(kind, choice).title,
+      );
+      if (
+        ['robotics', 'research', 'cloud'].includes(kind) &&
+        !(kind === 'robotics' && choice < 2)
+      ) {
+        await figure.locator('[data-demo-replay]:enabled').waitFor();
+        assert(Number(await figure.getAttribute('data-frame')) >= 0);
+      }
+      assert(
+        (await figure.locator('[data-demo-result]').textContent()).length > 60,
+      );
+      assert.equal(await figure.getAttribute('data-running'), 'false');
+    }
+    await figure.locator('[data-demo-choice]').focus();
+    await page.keyboard.press('Home');
+    await page.keyboard.press('ArrowDown');
+    assert.equal(await figure.locator('[data-demo-choice]').inputValue(), '1');
+    await figure.locator('[data-demo-reset]').click();
+    assert.equal(await figure.getAttribute('data-choice'), '0');
+    assert.equal(await figure.getAttribute('data-frame'), '0');
+    report.interactions.push(
+      `${kind}: every state, visible caption, keyboard selection, reduced-motion result and reset passed.`,
+    );
+  }
+  const architecture = page.locator('[data-program-demo="leadership"]');
+  await architecture.locator('[data-demo-demand]').selectOption('4');
+  await architecture.locator('[data-demo-resilience]').check();
+  assert(
+    (await architecture.locator('[data-demo-result]').textContent()).includes(
+      'exceeds the budget by 4',
+    ),
+  );
+  const infrastructure = page.locator('[data-program-demo="infrastructure"]');
+  await infrastructure.locator('[data-demo-cooling]').uncheck();
+  assert(
+    (await infrastructure.locator('[data-demo-result]').textContent()).includes(
+      'removing heat',
+    ),
+  );
+  await page.emulateMedia({ reducedMotion: 'no-preference' });
+  await page.goto(base);
+  for (const kind of ['robotics', 'research', 'cloud', 'performance']) {
+    const figure = page.locator(`[data-program-demo="${kind}"]`);
+    await figure.scrollIntoViewIfNeeded();
+    await figure.locator('[data-demo-replay]').click();
+    await page.waitForFunction(
+      (kind) =>
+        document.querySelector(`[data-program-demo="${kind}"]`).dataset
+          .running === 'true',
+      kind,
+    );
+    await page.waitForTimeout(180);
+    await figure.screenshot({ path: `${dest}/${kind}-motion-start.png` });
+    await page.locator('.updates-section').scrollIntoViewIfNeeded();
+    await page.waitForFunction(
+      (kind) =>
+        document.querySelector(`[data-program-demo="${kind}"]`).dataset
+          .running === 'false',
+      kind,
+    );
+    const paused = await figure.getAttribute('data-frame');
+    await page.waitForTimeout(200);
+    assert.equal(
+      await figure.getAttribute('data-frame'),
+      paused,
+      `${kind} stops offscreen`,
+    );
+    await figure.scrollIntoViewIfNeeded();
+    await page.waitForTimeout(1200);
+    await figure.screenshot({ path: `${dest}/${kind}-motion-middle.png` });
+    await figure.locator('[data-demo-reset]').click();
+    assert.equal(await figure.getAttribute('data-choice'), '0');
+    report.interactions.push(
+      `${kind}: meaningful motion starts, stops offscreen, resumes and resets.`,
+    );
   }
   const touch = await browser.newContext({
     viewport: { width: 390, height: 844 },
@@ -277,6 +403,15 @@ try {
       .getAttribute('data-document'),
     'B',
   );
+  for (const kind of Object.keys(programExplainers)) {
+    const figure=touchPage.locator(`[data-program-demo="${kind}"]`);
+    await figure.scrollIntoViewIfNeeded();
+    await figure.locator('[data-demo-choice]').tap();
+    await figure.locator('[data-demo-choice]').selectOption('1');
+    assert.equal(await figure.getAttribute('data-choice'),'1');
+    await figure.locator('[data-demo-reset]').tap();
+    assert.equal(await figure.getAttribute('data-choice'),'0');
+  }
   await touch.close();
   const plain = await browser.newContext({
     viewport: { width: 390, height: 844 },
@@ -288,13 +423,20 @@ try {
     await nojs.locator('[data-answer]').textContent(),
     retrievalSamples[0].answer,
   );
-  assert.equal(await nojs.locator('.program-illustration').count(), 9);
+  assert.equal(await nojs.locator('.program-illustration').count(), 10);
   assert.equal(await nojs.locator('.demo-controls:visible').count(), 0);
-  await nojs.locator('.anatomy-art-light').first().scrollIntoViewIfNeeded();
-  await nojs
-    .locator('.anatomy-art-light')
-    .first()
-    .evaluate((image) => image.decode());
+  assert.equal(await nojs.locator('.mechanism-controls:visible').count(), 0);
+  for (const figure of await nojs.locator('[data-program-demo]').all()) {
+    assert(
+      await figure
+        .locator('svg')
+        .evaluate((svg) => svg.querySelectorAll('.iso-fill').length >= 40),
+    );
+    assert((await figure.locator('figcaption').textContent()).length > 40);
+    assert(
+      (await figure.locator('[data-demo-result]').textContent()).length > 60,
+    );
+  }
   assert.equal(
     await nojs
       .getByRole('link', { name: /Get Career Guidance/ })
@@ -330,7 +472,7 @@ try {
     await sharp({
       create: {
         width: 1200,
-        height: 1900,
+        height: Math.ceil(manifest.length / 2) * 380,
         channels: 4,
         background: theme === 'light' ? '#fefdf9' : '#111a2e',
       },
