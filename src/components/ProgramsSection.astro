@@ -1,11 +1,7 @@
 ---
-import {
-  specialistPrograms,
-  transitionProgram,
-  programWebsite,
-} from '../data/programs';
+import { specialistPrograms, programWebsite } from '../data/programs';
 import { siteConfig } from '../utils/urls';
-import ProgramIcon from './ProgramIcon.astro';
+import ProgramIllustration from './ProgramIllustration.astro';
 ---
 
 <section
@@ -16,76 +12,14 @@ import ProgramIcon from './ProgramIcon.astro';
 >
   <div class="learning-program-bridge">
     <p class="eyebrow">Your next step</p>
-    <h2 id="programs-title">Ready to Turn Learning into Practice?</h2>
+    <h2 id="programs-title">Explore Independently. Progress with Guidance.</h2>
     <p class="lead">
-      Our free learning paths help you explore concepts at your own pace. Our
-      guided programs add practical projects, mentor feedback and individual
-      career guidance.
+      Our free articles and learning paths help you build understanding at your
+      own pace. Our guided programs add practical projects, mentor feedback and
+      individual career direction.
     </p>
   </div>
-  <article
-    class="transition-program"
-    aria-labelledby="transition-program-title"
-  >
-    <div>
-      <p class="eyebrow">Featured pathway · Find your starting point</p>
-      <h3 id="transition-program-title">{transitionProgram.title}</h3>
-      <p class="transition-tagline">{transitionProgram.tagline}</p>
-      <p>{transitionProgram.description}</p>
-      <p class="program-audience">
-        <strong>Best suited to:</strong> Beginners, career switchers and
-        professionals moving into AI.
-      </p>
-      <div class="program-actions">
-        <a
-          class="button primary"
-          href={siteConfig.enquiryForm}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Enquire About This Program <span aria-hidden="true">↗</span>
-        </a>
-        <a
-          class="text-link"
-          href={siteConfig.mainSite}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Explore Our Website <span aria-hidden="true">↗</span>
-        </a>
-      </div>
-    </div>
-    <div
-      class="transition-steps"
-      aria-label="A progressive pathway with a starting point based on your background"
-    >
-      <p class="meta">One program. A progressive pathway.</p>
-      <ol>
-        <li>
-          <span aria-hidden="true">01</span>
-          <div>
-            <strong>AI foundations</strong>
-            <small>Build your understanding</small>
-          </div>
-        </li>
-        <li>
-          <span aria-hidden="true">02</span>
-          <div>
-            <strong>Applied AI</strong>
-            <small>Develop practical skills</small>
-          </div>
-        </li>
-        <li>
-          <span aria-hidden="true">03</span>
-          <div>
-            <strong>Advanced concepts</strong>
-            <small>Explore what comes next</small>
-          </div>
-        </li>
-      </ol>
-      <p>Your background helps us find a suitable starting point.</p>
-    </div>
-  </article>
+
   <div class="section-heading specialist-heading">
     <div>
       <p class="eyebrow">Go further in your field</p>
@@ -104,8 +38,8 @@ import ProgramIcon from './ProgramIcon.astro';
       >
         <div class="program-card-top">
           <span class="meta">Program {program.number}</span>
-          <ProgramIcon kind={program.icon} />
         </div>
+        <ProgramIllustration kind={program.icon} number={program.number} />
         <h3 id={`${program.id}-title`}>{program.title}</h3>
         <p>{program.benefit}</p>
         <div class="program-card-actions">
@@ -123,9 +57,9 @@ import ProgramIcon from './ProgramIcon.astro';
             href={programWebsite(program.id)}
             target="_blank"
             rel="noopener noreferrer"
-            aria-label={`Explore on Our Website — ${program.title}`}
+            aria-label={`Explore Program — ${program.title}`}
           >
-            Explore on Our Website <span aria-hidden="true">↗</span>
+            Explore Program <span aria-hidden="true">↗</span>
           </a>
         </div>
       </article>
@@ -146,21 +80,19 @@ import ProgramIcon from './ProgramIcon.astro';
     <h2 id="guidance-title">
       Limited Seats.
       <br />
-      Focused Guidance.
+      Individual Guidance.
       <br />
-      <em>Your Next Step.</em>
+      <em>A Clearer Direction.</em>
     </h2>
   </div>
   <div>
     <p>
-      We accept a limited number of learners per cohort so we can focus on
-      individual career guidance, practical progress and each learner’s
-      transition.
+      We accept a limited number of learners per cohort so we can focus on each
+      learner’s career goals, practical progress and transition.
     </p>
     <p>
-      Not sure which program fits your background? Share your experience and
-      goals through our enquiry form. Our team will respond with guidance,
-      program information and next steps.
+      Share your background and interests through our enquiry form. Our team
+      will respond with program details and guidance on a suitable pathway.
     </p>
     <div class="program-actions">
       <a
@@ -169,7 +101,7 @@ import ProgramIcon from './ProgramIcon.astro';
         target="_blank"
         rel="noopener noreferrer"
       >
-        Find My Learning Path <span aria-hidden="true">↗</span>
+        Get Program Guidance <span aria-hidden="true">↗</span>
       </a>
       <a
         class="text-link"
@@ -177,7 +109,7 @@ import ProgramIcon from './ProgramIcon.astro';
         target="_blank"
         rel="noopener noreferrer"
       >
-        Visit TheJobPoolConsultants Website <span aria-hidden="true">↗</span>
+        Explore Our Website <span aria-hidden="true">↗</span>
       </a>
     </div>
   </div>

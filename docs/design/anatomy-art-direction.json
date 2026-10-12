@@ -1,0 +1,82 @@
+{
+  "source": "https://github.com/wheresryan22/anatomy",
+  "scope": "One interactive Figure and nine static Figures; SVG only, with accessible HTML copy and controls.",
+  "hero_concept": "A rail-mounted optical selector moves over one of three sample document trays; after arriving, that document and its matching grounded answer are shown together on the workstation readout.",
+  "truth_contract": "Three authored, illustrative handbook entries map one-to-one to sample questions. This is a deterministic retrieval demonstration, not live AI, program availability or measured performance.",
+  "common_parts": {
+    "base": [
+      "bench plate",
+      "four foot pads",
+      "four foot risers",
+      "four corner fasteners",
+      "engraved label plate"
+    ],
+    "controls": [
+      "control tray",
+      "six separate keycaps",
+      "two knurled control knobs"
+    ],
+    "detail": [
+      "base groove",
+      "wrapped seams",
+      "rooted scale ticks",
+      "closed ventilation slots",
+      "panel fasteners",
+      "printed document rules"
+    ]
+  },
+  "figures": [
+    {
+      "id": "retrieval",
+      "mechanism": "Three document trays with page stacks, a four-post gantry, two rails, a scanner carriage and optical head, a terminal case with a framed display and ventilation slots.",
+      "planned_solid_parts": 64
+    },
+    {
+      "id": "agents",
+      "mechanism": "The retrieval workstation with its scanner and tool controls; a document is the evidence for an answer.",
+      "planned_solid_parts": 64
+    },
+    {
+      "id": "infrastructure",
+      "mechanism": "Open GPU rack: four vertical rails, four compute trays, vented heatsinks, network switch, power rail and connector bus.",
+      "planned_solid_parts": 66
+    },
+    {
+      "id": "performance",
+      "mechanism": "Request bench: input queue tiles, a four-lane batch fixture, common processing head and a completed-output tray; grouping shares a processing step.",
+      "planned_solid_parts": 58
+    },
+    {
+      "id": "robotics",
+      "mechanism": "Camera mast watches a jointed robot arm over a sorting conveyor with objects and separate receiving bins.",
+      "planned_solid_parts": 62
+    },
+    {
+      "id": "research",
+      "mechanism": "Navigation test rig: tiled field, physical obstacles, a vehicle marker, goal fixture and feedback instrument.",
+      "planned_solid_parts": 58
+    },
+    {
+      "id": "cloud",
+      "mechanism": "Service cabinet: two service banks, a separate standby bank, input access gate and protected routing hardware.",
+      "planned_solid_parts": 64
+    },
+    {
+      "id": "hardware",
+      "mechanism": "Processor bench: a central compute package, separate memory packages, conductive bus tracks, connectors and a mounted instrument.",
+      "planned_solid_parts": 61
+    },
+    {
+      "id": "leadership",
+      "mechanism": "Capacity-planning console: three measured resource trays, allocation tokens, scale strips and a tradeoff readout.",
+      "planned_solid_parts": 60
+    },
+    {
+      "id": "deployment",
+      "mechanism": "Integration test bench: three connected module bays, a test fixture, three acceptance indicators and a delivery tray.",
+      "planned_solid_parts": 62
+    }
+  ],
+  "geometry": "Common world scale; x/y on the bench and z up. Four-tone shading from Anatomy. Every solid recorded with its true shape and depth sorted. Moving carriage constrained to its supported rails.",
+  "verification": "Geometry audit, line-end checks, desktop/390px captures in both themes, 4x junction crops, deterministic interaction checks, keyboard/touch, reduced motion, offscreen pause and no-JavaScript reading."
+}

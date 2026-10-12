@@ -61,6 +61,34 @@
 .transition-program h3 {
   font-size: clamp(1.8rem, 2.8vw, 2.55rem);
 }
+.transition-feature {
+  padding-bottom: 40px;
+}
+.transition-feature .transition-program h2 {
+  font-size: clamp(1.8rem, 2.8vw, 2.55rem);
+}
+.transition-feature .button.primary {
+  background: var(--brand-navy);
+  border-color: var(--brand-navy);
+  color: var(--surface-primary);
+}
+:root[data-theme='dark'] .transition-feature .button.primary {
+  background: var(--gold-on-dark);
+  border-color: var(--gold-on-dark);
+  color: var(--brand-midnight);
+}
+.career-hero:has(.retrieval-demo) {
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 52px;
+}
+.career-hero:has(.retrieval-demo) h1 {
+  font-size: clamp(2.7rem, 4.6vw, 4.3rem);
+  line-height: 1.1;
+  text-wrap: balance;
+}
+.program-card-top:has(+ .program-illustration) {
+  margin-bottom: 18px;
+}
 .transition-program p:not(.eyebrow, .transition-tagline) {
   color: var(--muted);
 }
@@ -302,6 +330,10 @@
   }
 }
 @media (max-width: 800px) {
+  .career-hero:has(.retrieval-demo) {
+    grid-template-columns: 1fr;
+    gap: 32px;
+  }
   .transition-program,
   .guidance-section {
     grid-template-columns: 1fr;

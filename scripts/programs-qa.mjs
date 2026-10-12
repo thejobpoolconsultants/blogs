@@ -89,7 +89,7 @@ try {
       ),
   );
   const actions = page.locator(
-    '.career-hero a, .programs-section a, .guidance-section a, .updates-section a, .header-tools a, .footer a, .mobile-menu a',
+    '.career-hero a, .transition-feature a, .programs-section a, .guidance-section a, .updates-section a, .header-tools a, .footer a, .mobile-menu a',
   );
   for (const link of await actions.all()) {
     const href = await link.getAttribute('href');
@@ -116,7 +116,15 @@ try {
       .locator('.programs-section a')
       .filter({ hasText: 'Enquire About This Program' })
       .count(),
-    10,
+    9,
+  );
+  assert.equal(
+    await page
+      .getByRole('link', {
+        name: /Enquire About the AI Career Transition Program/,
+      })
+      .getAttribute('href'),
+    siteConfig.enquiryForm,
   );
   for (const link of await page
     .locator('.programs-section a')

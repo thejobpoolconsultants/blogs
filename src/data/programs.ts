@@ -16,7 +16,7 @@ export const transitionProgram = {
   title: 'AI Career Transition Program',
   tagline: 'From Non-Tech to Tech — Your Guided Path into AI',
   description:
-    'Build your understanding of AI, develop practical skills and explore career opportunities through a progressive pathway combining AI foundations, applied AI and advanced concepts. We help you identify a suitable starting point based on your background.',
+    'Build your foundations, practice applying AI and progress toward more advanced concepts with projects and individual career guidance. Your starting point depends on your current skills and goals.',
 };
 
 export const specialistPrograms = [
@@ -24,48 +24,42 @@ export const specialistPrograms = [
     number: '01',
     id: 'generative-ai-agentic-systems',
     title: 'Generative AI & Agentic Systems Engineering',
-    benefit:
-      'Build AI applications that retrieve knowledge, use tools and support practical workflows.',
+    benefit: 'Build AI applications that retrieve knowledge and use tools.',
     icon: 'agents',
   },
   {
     number: '02',
     id: 'gpu-infrastructure-ai-data-centers',
     title: 'GPU Infrastructure & AI Data Center Engineering',
-    benefit:
-      'Explore the compute, networking and infrastructure behind large-scale AI systems.',
+    benefit: 'Explore the infrastructure supporting large-scale AI workloads.',
     icon: 'infrastructure',
   },
   {
     number: '03',
     id: 'ai-systems-performance',
     title: 'AI Systems Performance Engineering',
-    benefit:
-      'Develop skills in LLM inference, model serving and optimization for latency, throughput and cost.',
+    benefit: 'Improve model-serving latency, throughput and efficiency.',
     icon: 'performance',
   },
   {
     number: '04',
     id: 'robotics-physical-ai-autonomous-systems',
     title: 'Robotics, Physical AI & Autonomous Systems Engineering',
-    benefit:
-      'Connect perception, planning and action through robotics and simulation.',
+    benefit: 'Connect perception, planning and action.',
     icon: 'robotics',
   },
   {
     number: '05',
     id: 'reinforcement-learning-frontier-ai',
     title: 'Reinforcement Learning & Frontier AI Research Engineering',
-    benefit:
-      'Explore how intelligent systems learn, improve and make decisions through experimentation.',
+    benefit: 'Explore systems that learn through decisions and feedback.',
     icon: 'research',
   },
   {
     number: '06',
     id: 'cloud-kubernetes-ai-security',
     title: 'Cloud Platform, Kubernetes & AI Security Engineering',
-    benefit:
-      'Build, secure and operate cloud platforms supporting production AI workloads.',
+    benefit: 'Build and operate secure AI platforms.',
     icon: 'cloud',
   },
   {
@@ -73,24 +67,21 @@ export const specialistPrograms = [
     id: 'ai-accelerators-architecture-semiconductors',
     title:
       'AI Accelerators, Computer Architecture & Semiconductor Systems Engineering',
-    benefit:
-      'Understand the hardware, memory systems and accelerator architectures powering AI.',
+    benefit: 'Understand the hardware powering AI computation.',
     icon: 'hardware',
   },
   {
     number: '08',
     id: 'staff-ai-architect-leadership-cto',
     title: 'Staff AI Architect, AI Leadership & CTO Readiness',
-    benefit:
-      'Strengthen enterprise architecture, technical strategy and engineering leadership skills.',
+    benefit: 'Develop architecture, technical strategy and leadership skills.',
     icon: 'leadership',
   },
   {
     number: '09',
     id: 'forward-deployed-engineering',
     title: 'Forward Deployed Engineering',
-    benefit:
-      'Translate customer challenges into practical, deployed AI solutions with measurable business value.',
+    benefit: 'Turn customer challenges into deployed AI solutions.',
     icon: 'deployment',
   },
 ] as const;

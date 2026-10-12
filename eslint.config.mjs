@@ -11,6 +11,7 @@ export default defineConfig(
       'node_modules/**',
       'artifacts/**',
       '.agents/**',
+      'scripts/anatomy/vendor/**',
     ],
   },
   js.configs.recommended,

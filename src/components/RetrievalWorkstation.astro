@@ -1,0 +1,69 @@
+---
+import figure from '../data/generated/retrieval-figure.json';
+import { retrievalSamples } from '../data/retrieval-demo';
+import '../styles/anatomy.css';
+const sample = retrievalSamples[0];
+---
+
+<figure
+  class="retrieval-demo"
+  data-retrieval-demo
+  data-phase="ready"
+  data-document="A"
+  data-pagefind-ignore
+>
+  <div class="iso-plate">
+    <div class="anatomy-frame-heading">
+      <span class="meta">Fig. 01 / Illustrative demo</span>
+      <span class="meta">Answer from evidence</span>
+    </div>
+    <div
+      class="retrieval-stage iso"
+      data-axis-x={figure.axis[0]}
+      data-axis-y={figure.axis[1]}
+      set:html={figure.svg}
+    />
+    <div class="anatomy-frame-footer">
+      <span>Choose a sample question below</span>
+      <span data-readout>Document A · Ready</span>
+    </div>
+  </div>
+  <figcaption>
+    <strong>A question. A source. A grounded answer.</strong> The scanner
+    selects a matching sample document before an answer is shown.
+  </figcaption>
+  <div class="demo-controls">
+    <label for="sample-question">Try a sample question</label>
+    <div class="demo-control-row">
+      <select id="sample-question" disabled aria-describedby="demo-disclosure">
+        {retrievalSamples.map((entry, index) => (
+          <option value={index}>{entry.question}</option>
+        ))}
+      </select>
+      <button type="button" class="demo-tour" aria-pressed="true" disabled>
+        Pause tour
+      </button>
+    </div>
+  </div>
+  <div class="retrieval-output" data-output aria-busy="false">
+    <p class="meta" data-document-title>
+      Document A / {sample.title}
+    </p>
+    <blockquote data-document-excerpt>{sample.excerpt}</blockquote>
+    <p class="demo-answer-label">Answer grounded in this document</p>
+    <p class="demo-answer" data-answer>
+      {sample.answer}
+    </p>
+  </div>
+  <p class="demo-disclosure" id="demo-disclosure">
+    Illustrative demo · Three authored sample documents, with matching sample
+    answers.
+  </p>
+  <span class="sr-only" role="status" data-demo-announcement></span>
+</figure>
+<script>
+  import { mountRetrievalDemo } from '../scripts/retrieval-demo';
+  document
+    .querySelectorAll<HTMLElement>('[data-retrieval-demo]')
+    .forEach(mountRetrievalDemo);
+</script>

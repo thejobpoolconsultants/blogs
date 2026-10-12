@@ -84,6 +84,19 @@ Newsletter updates are optional through the external enquiry form; visitors must
 
 The homepage preserves its free learning paths and adds the consolidated career transition pathway, nine specialist programs, individual guidance, and an optional free-updates invitation. Recommendations at the end of articles stay outside the search index.
 
+The Anatomy update puts the consolidated transition pathway immediately below the hero and keeps the free learning-path cards before the specialist-program bridge. `RetrievalWorkstation.astro` demonstrates document retrieval using the three authored entries in `src/data/retrieval-demo.ts`; a selected question, scanner position, source and answer share one deterministic state. It uses no AI service or form submission. Visitors can pause its idle tour, and reduced-motion preferences disable the tour and movement. Animation stops offscreen and when the document is hidden. Without JavaScript, the first sample source and answer remain visible.
+
+`ProgramIllustration.astro` renders nine distinct, static, theme-aware SVGs with lazy image loading. Program titles, benefits and actions remain HTML. The artwork generator is `scripts/anatomy/build.mjs`; its unmodified vendor files come from the MIT-licensed [Anatomy project](https://github.com/wheresryan22/anatomy), with the license retained in `scripts/anatomy/vendor/LICENSE`. Art direction and grouped parts are in `docs/design/anatomy-art-direction.json`; the generated manifest records every solid by name. Geometry is precomputed at authoring time, so the browser only moves the hero selector and sorts its existing SVG parts.
+
+```sh
+npm run art:anatomy
+npm run build
+npm run preview -- --port 4321
+npm run test:anatomy
+```
+
+The art command must finish with ten `audit passed` results. Verification runs the installed Anatomy's line-end checker, captures both themes and 4× artwork, and checks desktop/mobile layout, accessibility, keyboard/touch input, rapid question changes, motion controls, no-JavaScript reading, and live external destinations. By default it finds the skill at `~/.claude/skills/anatomy`; set `ANATOMY_SKILL_DIR` to its installation directory elsewhere. Review every new screenshot after changing artwork. Reports and captures are under `artifacts/anatomy/`.
+
 With the production preview on port 4321, run `node scripts/programs-qa.mjs` to check responsive columns, keyboard actions, article recommendations, safe external links, search, light/dark accessibility, and live external destinations. Evidence is saved under `artifacts/programs/`. The Archify workflow source is `docs/design/program-discovery.workflow.json`; the delivered diagram and its browser receipt are in `artifacts/programs/`.
 
 ## License

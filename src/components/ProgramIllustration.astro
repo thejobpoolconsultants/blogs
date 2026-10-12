@@ -1,0 +1,38 @@
+---
+import manifest from '../data/generated/anatomy-manifest.json';
+import { url } from '../utils/urls';
+import '../styles/anatomy.css';
+interface Props {
+  kind: string;
+  number: string;
+}
+const { kind, number } = Astro.props;
+const art = manifest.find((entry) => entry.id === kind)!;
+---
+
+<figure class="program-illustration">
+  <div class="anatomy-static-stage">
+    <span class="anatomy-art-index meta" aria-hidden="true">
+      Fig. {number}
+    </span>
+    <img
+      class="anatomy-art-light"
+      src={url(`illustrations/anatomy/${kind}-light.svg`)}
+      width="600"
+      height="380"
+      alt={art.label}
+      loading="lazy"
+      decoding="async"
+    />
+    <img
+      class="anatomy-art-dark"
+      src={url(`illustrations/anatomy/${kind}-dark.svg`)}
+      width="600"
+      height="380"
+      alt={art.label}
+      loading="lazy"
+      decoding="async"
+    />
+  </div>
+  <figcaption>{art.title}</figcaption>
+</figure>
