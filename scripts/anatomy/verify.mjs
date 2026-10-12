@@ -404,13 +404,13 @@ try {
     'B',
   );
   for (const kind of Object.keys(programExplainers)) {
-    const figure=touchPage.locator(`[data-program-demo="${kind}"]`);
+    const figure = touchPage.locator(`[data-program-demo="${kind}"]`);
     await figure.scrollIntoViewIfNeeded();
     await figure.locator('[data-demo-choice]').tap();
     await figure.locator('[data-demo-choice]').selectOption('1');
-    assert.equal(await figure.getAttribute('data-choice'),'1');
+    assert.equal(await figure.getAttribute('data-choice'), '1');
     await figure.locator('[data-demo-reset]').tap();
-    assert.equal(await figure.getAttribute('data-choice'),'0');
+    assert.equal(await figure.getAttribute('data-choice'), '0');
   }
   await touch.close();
   const plain = await browser.newContext({

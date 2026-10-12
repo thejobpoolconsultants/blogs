@@ -151,16 +151,22 @@ export function programBuilders(Bench, P, k, A, G) {
         b.slab(`rack.upright-${i}-${j}`, x, y, 6, 6, 4, 94, { seam: true });
     for (let row = 0; row < 4; row++) {
       const z = 10 + row * 20;
-      for (const [edge, y] of [-45, 6].entries())
-        b.slab(`rack.support-${row}-${edge}`, -59, y, 118, 8, z - 3, 3);
+      b.slab(`rack.support-${row}-rear`, -59, -45, 118, 8, z - 3, 3);
+      b.slab(`rack.support-${row}-front`, -59, 6, 118, 8, z - 3, 3);
       b.slab(`rack.shelf-${row}`, -59, -41, 118, 51, z, 3, {
         detail: true,
         tone: 'lo',
       });
+      b.slab(`network.module-link-${row}`, 0, 10, 2, 6, z + 5, 2, {
+        radius: 0.3,
+      });
       for (let col = 0; col < 3; col++) {
         const x = -50 + col * 36,
           prefix = row === 0 ? `storage-${col}` : `compute-${row}-${col}`;
-        b.slab(`${prefix}.package`, x, -20, 28, 30, z + 3, 5, { detail: true });
+        b.slab(`${prefix}.package`, x, -20, 28, 30, z + 3, 5, {
+          detail: true,
+          seam: row === 0,
+        });
         const vents = Array.from({ length: 5 }, (_, vent) =>
           k.planOutline(
             { x: x + 3 + vent * 4.5, y: -15, w: 1.3, d: 18, r: 0.6 },
@@ -169,18 +175,34 @@ export function programBuilders(Bench, P, k, A, G) {
             4,
           ),
         ).join('');
-        b.slab(`${prefix}.heatsink`, x + 2, -18, 24, 26, z + 8, 2, {
-          inner: k.lineSvg(vents, { tone: 'faint' }),
-        });
+        if (row !== 0)
+          b.slab(`${prefix}.heatsink`, x + 2, -18, 24, 26, z + 8, 2, {
+            inner: k.lineSvg(vents, { tone: 'faint' }),
+          });
       }
     }
-    for (const [edge, y] of [-45, 6].entries())
-      b.slab(`network.support-${edge}`, -59, y, 118, 8, 91, 3);
+    b.slab('network.support-rear', -59, -45, 118, 8, 91, 3);
+    b.slab('network.support-front', -59, 6, 118, 8, 91, 3);
+    // Route the bus outside the shelf supports. Separate links meet the
+    // actual module faces and terminate at the center switch port.
+    const busLevels = [4, 24, 44, 64, 84, 94];
+    for (let section = 0; section < busLevels.length - 1; section++)
+      b.slab(
+        `network.backplane-${section}`,
+        0,
+        16,
+        2,
+        2,
+        busLevels[section],
+        busLevels[section + 1] - busLevels[section],
+        { radius: 0.3 },
+      );
     b.slab('network.switch', -59, -41, 118, 51, 94, 4, { detail: true });
+    b.slab('network.switch-link', 0, 13, 2, 5, 94, 3, { radius: 0.3 });
     for (let i = 0; i < 5; i++)
       b.slab(`network.port-${i}`, -45 + i * 19, 10, 12, 3, 94, 3);
     b.slab('cooling.plinth', 75, -46, 16, 57, 0, 6, { detail: true });
-    for (let i = 0; i < 8; i++)
+    for (let i = 0; i < 6; i++)
       b.slab(`cooling.fin-${i}`, 75, -43 + i * 6, 16, 3, 6, 45, {
         radius: 0.3,
       });
@@ -528,7 +550,11 @@ export function programBuilders(Bench, P, k, A, G) {
         detail: true,
       });
       b.slab(`connector.${name}.source-route`, -57, y + 5, 15, 4, 0, 2);
-      b.slab(`connector.${name}.app-route`, -19, y + 5, 20, 4, 0, 2);
+      b.slab(`connector.${name}.app-route`, -19, y + 5, i ? 17 : 20, 4, 0, 2);
+      if (i)
+        b.slab('connector.returns.app-turn', -2, 3, 3, 19, 0, 2, {
+          radius: 0.3,
+        });
     }
     laptop(b, 'prototype', 1, -41);
     b.slab('acceptance.station', 67, -41, 24, 54, 0, 4, {

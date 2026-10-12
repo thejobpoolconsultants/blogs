@@ -140,15 +140,34 @@
   );
 }
 .program-mechanism .mechanism-muted {
-  opacity: 0.72;
+  filter: saturate(0.45);
 }
 .program-mechanism .mechanism-hidden {
   visibility: hidden;
 }
-.program-mechanism .mechanism-failed .iso-top,
-.program-mechanism .mechanism-failed .iso-shade,
-.program-mechanism .mechanism-failed .iso-fill {
-  fill: #e76f51;
+:root[data-theme='light'] .iso .mechanism-failed [class*='material-'] {
+  --anatomy-paper: #e76f51;
+  --anatomy-top: #ffb39e;
+  --anatomy-shade-0: #99412d;
+  --anatomy-shade-1: #be543b;
+  --anatomy-shade-2: #ef856b;
+  --anatomy-shade-3: #ffb39e;
+  --anatomy-hi: #99412d;
+  --anatomy-mid: #99412d;
+  --anatomy-lo: #99412d;
+  --anatomy-dot: #99412d;
+}
+:root[data-theme='dark'] .iso .mechanism-failed [class*='material-'] {
+  --anatomy-paper: #ec8066;
+  --anatomy-top: #ffb59f;
+  --anatomy-shade-0: #75382b;
+  --anatomy-shade-1: #a34f3c;
+  --anatomy-shade-2: #cd6953;
+  --anatomy-shade-3: #ffb59f;
+  --anatomy-hi: #75382b;
+  --anatomy-mid: #75382b;
+  --anatomy-lo: #75382b;
+  --anatomy-dot: #75382b;
 }
 .program-mechanism .mechanism-route .iso-top {
   fill: #0d9488;

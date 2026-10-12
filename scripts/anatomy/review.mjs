@@ -48,16 +48,16 @@ for (const theme of ['light', 'dark']) {
     await page.setViewportSize({ width, height: 1000 });
     await page.reload();
     await page.evaluate(() => document.fonts.ready);
-    await page
-      .locator('.transition-feature')
-      .screenshot({
-        path: `artifacts/anatomy/transition-${theme}-${width}.png`,
-      });
-    await page
-      .locator('.program-grid')
-      .screenshot({
-        path: `artifacts/anatomy/program-grid-${theme}-${width}.png`,
-      });
+    await page.locator('.transition-feature').screenshot({
+      path: `artifacts/anatomy/transition-${theme}-${width}.png`,
+      // Beyond-viewport captures can include the offscreen fixed skip link.
+      // Keep a focused skip link visible; hide only its offscreen resting state.
+      style: '.skip:not(:focus) { visibility: hidden; }',
+    });
+    await page.locator('.program-grid').screenshot({
+      path: `artifacts/anatomy/program-grid-${theme}-${width}.png`,
+      style: '.skip:not(:focus) { visibility: hidden; }',
+    });
   }
 }
 await browser.close();

@@ -10,14 +10,12 @@ await page
   .locator('.program-grid')
   .screenshot({ path: 'artifacts/anatomy/preview-grid.png' });
 console.log(
-  await page
-    .locator('[data-program-demo]')
-    .evaluateAll((nodes) =>
-      nodes.map((node) => ({
-        kind: node.dataset.programDemo,
-        parts: node.querySelectorAll('.iso-fill').length,
-        art: node.querySelector('svg').getBoundingClientRect().toJSON(),
-      })),
-    ),
+  await page.locator('[data-program-demo]').evaluateAll((nodes) =>
+    nodes.map((node) => ({
+      kind: node.dataset.programDemo,
+      parts: node.querySelectorAll('.iso-fill').length,
+      art: node.querySelector('svg').getBoundingClientRect().toJSON(),
+    })),
+  ),
 );
 await browser.close();
