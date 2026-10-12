@@ -9,7 +9,7 @@ import {
 import BrandBanner from '../components/BrandBanner.astro';
 import { brand } from '../data/brand-assets';
 import BaseLayout from '../layouts/BaseLayout.astro';
-import RetrievalWorkstation from '../components/RetrievalWorkstation.astro';
+import '../styles/program-discovery.css';
 import FeaturedTransitionProgram from '../components/FeaturedTransitionProgram.astro';
 import ArchitectureDiagram from '../components/ArchitectureDiagram.astro';
 import ArticleCard from '../components/ArticleCard.astro';
@@ -43,43 +43,14 @@ const symbols = ['ƒ(x)', 'Σ', 'Aa', '◈', '↗', '⊞'];
 ---
 
 <BaseLayout
-  title="Your Next Career Starts with Understanding AI."
+  title="Choose the work you want to build."
   description="Explore free learning resources and guided programs—from your first steps in AI to advanced engineering specializations. Find a direction that fits your background and career goals."
 >
-  <section class="hero career-hero">
-    <div>
-      <p class="eyebrow">Artificial intelligence · Engineering · Research</p>
-      <h1>
-        Your Next Career Starts with <em>Understanding AI.</em>
-      </h1>
-      <p class="lead">
-        Explore free learning resources and guided programs—from your first
-        steps in AI to advanced engineering specializations. Find a direction
-        that fits your background and career goals.
-      </p>
-      <div class="hero-actions">
-        <a class="button primary" href="#programs">
-          Explore Our Programs <span aria-hidden="true">↓</span>
-        </a>
-        <a
-          class="button"
-          href={siteConfig.enquiryForm}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Get Career Guidance <span aria-hidden="true">↗</span>
-        </a>
-      </div>
-      <a
-        class="text-link hero-website"
-        href={siteConfig.mainSite}
-        target="_blank"
-        rel="noopener noreferrer"
-      >
-        Visit Our Website <span aria-hidden="true">↗</span>
-      </a>
-    </div>
-    <RetrievalWorkstation />
+  <section class="discovery-hero">
+    <p class="eyebrow">TheJobPoolConsultants · Blogs &amp; Knowledge Hub</p>
+    <h1>Choose the work you want to build.</h1>
+    <p class="lead">Explore AI applications, infrastructure and systems performance.</p>
+    <div class="hero-actions"><a class="text-link" href="#programs">Explore specialist programs ↓</a><a class="text-link" href="#transition-program-title">Start with foundations ↓</a></div>
   </section>
   <FeaturedTransitionProgram />
   <ProgramsSection />
