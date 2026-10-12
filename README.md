@@ -76,7 +76,15 @@ For a custom domain, change origin and base in site.config.mjs, configure DNS/Pa
 
 See [SEO guide](SEO_GUIDE.md), [editorial guide](EDITORIAL_GUIDE.md), [brand voice](BRAND_VOICE.md), [content strategy](CONTENT_STRATEGY.md), and [contributing](CONTRIBUTING.md). Initial coverage is deliberately small. Planned collections and path stages are labeled.
 
-Newsletter and analytics are absent. A future integration belongs in the shared layout and needs a real provider, privacy review, and documented configuration. Never show simulated subscription success.
+Newsletter updates are optional through the external enquiry form; visitors must explicitly opt in on that form. The blog does not submit enquiries or track subscription status. Analytics are absent. Never show simulated subscription success.
+
+## Guided programs and enquiry links
+
+`site.config.mjs` centrally configures `mainSite`, `programsPath`, and `enquiryForm`. The current form URL was found in the sibling main-website project and verified publicly. Program copy, ordering, website fallback links, and article recommendation rules are in `src/data/programs.ts`. Keep individual program paths empty until those pages are live and verified; the current public programs page is the fallback.
+
+The homepage preserves its free learning paths and adds the consolidated career transition pathway, nine specialist programs, individual guidance, and an optional free-updates invitation. Recommendations at the end of articles stay outside the search index.
+
+With the production preview on port 4321, run `node scripts/programs-qa.mjs` to check responsive columns, keyboard actions, article recommendations, safe external links, search, light/dark accessibility, and live external destinations. Evidence is saved under `artifacts/programs/`. The Archify workflow source is `docs/design/program-discovery.workflow.json`; the delivered diagram and its browser receipt are in `artifacts/programs/`.
 
 ## License
 

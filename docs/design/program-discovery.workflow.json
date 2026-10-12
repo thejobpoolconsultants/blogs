@@ -1,0 +1,132 @@
+{
+  "schema_version": 2,
+  "diagram_type": "workflow",
+  "meta": {
+    "title": "TheJobPoolConsultants learning and program discovery",
+    "quality_profile": "showcase",
+    "locale": "en"
+  },
+  "lanes": [
+    { "id": "knowledge-hub", "label": "Blogs & Knowledge Hub" },
+    { "id": "external-guidance", "label": "Website and enquiry form" },
+    {
+      "id": "individual-guidance",
+      "label": "Individual guidance and optional updates"
+    }
+  ],
+  "mainPath": [
+    "free-learning",
+    "program-discovery",
+    "enquiry-form",
+    "team-guidance"
+  ],
+  "nodes": [
+    {
+      "id": "free-learning",
+      "lane": "knowledge-hub",
+      "col": 0,
+      "type": "frontend",
+      "label": "Free learning",
+      "sublabel": "Articles and learning paths",
+      "width": 168
+    },
+    {
+      "id": "program-discovery",
+      "lane": "knowledge-hub",
+      "col": 1,
+      "type": "frontend",
+      "label": "Discover programs",
+      "sublabel": "Transition and specialist paths",
+      "width": 180
+    },
+    {
+      "id": "enquiry-form",
+      "lane": "external-guidance",
+      "col": 2,
+      "type": "external",
+      "label": "Google enquiry form",
+      "sublabel": "Share background and goals",
+      "width": 180
+    },
+    {
+      "id": "team-guidance",
+      "lane": "individual-guidance",
+      "col": 3,
+      "type": "external",
+      "label": "Team guidance",
+      "sublabel": "Program information and next steps",
+      "width": 180
+    },
+    {
+      "id": "main-website",
+      "lane": "external-guidance",
+      "col": 1,
+      "type": "external",
+      "label": "Main website",
+      "sublabel": "Explore the programs page",
+      "width": 168
+    },
+    {
+      "id": "free-updates-consent",
+      "lane": "individual-guidance",
+      "col": 1,
+      "type": "external",
+      "label": "Free updates opt-in",
+      "sublabel": "Newsletter and webinar invitations",
+      "width": 180
+    }
+  ],
+  "cards": [
+    {
+      "dot": "cyan",
+      "title": "Guided recommendations",
+      "items": [
+        "Articles recommend programs by topic; the team shares further details after an enquiry."
+      ]
+    },
+    {
+      "dot": "amber",
+      "title": "Optional free updates",
+      "items": [
+        "Newsletter and webinar updates require explicit consent on the form."
+      ]
+    }
+  ],
+  "edges": [
+    {
+      "id": "learn-discover",
+      "from": "free-learning",
+      "to": "program-discovery",
+      "label": "Explore next steps",
+      "role": "main"
+    },
+    {
+      "id": "discover-enquire",
+      "from": "program-discovery",
+      "to": "enquiry-form",
+      "label": "Enquire",
+      "role": "main"
+    },
+    {
+      "id": "enquiry-guidance",
+      "from": "enquiry-form",
+      "to": "team-guidance",
+      "label": "Team responds",
+      "role": "main"
+    },
+    {
+      "id": "discover-website",
+      "from": "program-discovery",
+      "to": "main-website",
+      "label": "Explore details",
+      "role": "branch"
+    },
+    {
+      "id": "optional-free-updates",
+      "from": "enquiry-form",
+      "to": "free-updates-consent",
+      "label": "Explicit consent",
+      "role": "branch"
+    }
+  ]
+}

@@ -1,0 +1,209 @@
+---
+import {
+  specialistPrograms,
+  transitionProgram,
+  programWebsite,
+} from '../data/programs';
+import { siteConfig } from '../utils/urls';
+import ProgramIcon from './ProgramIcon.astro';
+---
+
+<section
+  id="programs"
+  class="section programs-section"
+  aria-labelledby="programs-title"
+  data-pagefind-ignore
+>
+  <div class="learning-program-bridge">
+    <p class="eyebrow">Your next step</p>
+    <h2 id="programs-title">Ready to Turn Learning into Practice?</h2>
+    <p class="lead">
+      Our free learning paths help you explore concepts at your own pace. Our
+      guided programs add practical projects, mentor feedback and individual
+      career guidance.
+    </p>
+  </div>
+  <article
+    class="transition-program"
+    aria-labelledby="transition-program-title"
+  >
+    <div>
+      <p class="eyebrow">Featured pathway · Find your starting point</p>
+      <h3 id="transition-program-title">{transitionProgram.title}</h3>
+      <p class="transition-tagline">{transitionProgram.tagline}</p>
+      <p>{transitionProgram.description}</p>
+      <p class="program-audience">
+        <strong>Best suited to:</strong> Beginners, career switchers and
+        professionals moving into AI.
+      </p>
+      <div class="program-actions">
+        <a
+          class="button primary"
+          href={siteConfig.enquiryForm}
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          Enquire About This Program <span aria-hidden="true">↗</span>
+        </a>
+        <a
+          class="text-link"
+          href={siteConfig.mainSite}
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          Explore Our Website <span aria-hidden="true">↗</span>
+        </a>
+      </div>
+    </div>
+    <div
+      class="transition-steps"
+      aria-label="A progressive pathway with a starting point based on your background"
+    >
+      <p class="meta">One program. A progressive pathway.</p>
+      <ol>
+        <li>
+          <span aria-hidden="true">01</span>
+          <div>
+            <strong>AI foundations</strong>
+            <small>Build your understanding</small>
+          </div>
+        </li>
+        <li>
+          <span aria-hidden="true">02</span>
+          <div>
+            <strong>Applied AI</strong>
+            <small>Develop practical skills</small>
+          </div>
+        </li>
+        <li>
+          <span aria-hidden="true">03</span>
+          <div>
+            <strong>Advanced concepts</strong>
+            <small>Explore what comes next</small>
+          </div>
+        </li>
+      </ol>
+      <p>Your background helps us find a suitable starting point.</p>
+    </div>
+  </article>
+  <div class="section-heading specialist-heading">
+    <div>
+      <p class="eyebrow">Go further in your field</p>
+      <h2 id="specialists-title">Specialist programs.</h2>
+    </div>
+    <p class="muted">
+      Nine pathways into the systems, engineering and leadership behind AI.
+    </p>
+  </div>
+  <div class="program-grid" aria-labelledby="specialists-title">
+    {specialistPrograms.map((program) => (
+      <article
+        class="program-card"
+        id={program.id}
+        aria-labelledby={`${program.id}-title`}
+      >
+        <div class="program-card-top">
+          <span class="meta">Program {program.number}</span>
+          <ProgramIcon kind={program.icon} />
+        </div>
+        <h3 id={`${program.id}-title`}>{program.title}</h3>
+        <p>{program.benefit}</p>
+        <div class="program-card-actions">
+          <a
+            class="button"
+            href={siteConfig.enquiryForm}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label={`Enquire About This Program — ${program.title}`}
+          >
+            Enquire About This Program <span aria-hidden="true">↗</span>
+          </a>
+          <a
+            class="text-link"
+            href={programWebsite(program.id)}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label={`Explore on Our Website — ${program.title}`}
+          >
+            Explore on Our Website <span aria-hidden="true">↗</span>
+          </a>
+        </div>
+      </article>
+    ))}
+  </div>
+  <p class="program-details-note muted">
+    Detailed curricula, prerequisites, fees and schedules will be shared in
+    response to enquiries.
+  </p>
+</section>
+<section
+  class="guidance-section"
+  aria-labelledby="guidance-title"
+  data-pagefind-ignore
+>
+  <div class="guidance-intro">
+    <p class="eyebrow">Individual career guidance</p>
+    <h2 id="guidance-title">
+      Limited Seats.
+      <br />
+      Focused Guidance.
+      <br />
+      <em>Your Next Step.</em>
+    </h2>
+  </div>
+  <div>
+    <p>
+      We accept a limited number of learners per cohort so we can focus on
+      individual career guidance, practical progress and each learner’s
+      transition.
+    </p>
+    <p>
+      Not sure which program fits your background? Share your experience and
+      goals through our enquiry form. Our team will respond with guidance,
+      program information and next steps.
+    </p>
+    <div class="program-actions">
+      <a
+        class="button primary"
+        href={siteConfig.enquiryForm}
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        Find My Learning Path <span aria-hidden="true">↗</span>
+      </a>
+      <a
+        class="text-link"
+        href={siteConfig.mainSite}
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        Visit TheJobPoolConsultants Website <span aria-hidden="true">↗</span>
+      </a>
+    </div>
+  </div>
+</section>
+<section
+  class="section updates-section"
+  aria-labelledby="updates-title"
+  data-pagefind-ignore
+>
+  <div>
+    <p class="eyebrow">Optional · Free learning updates</p>
+    <h2 id="updates-title">Keep Learning with Us</h2>
+    <p class="muted">
+      Receive free AI learning updates, newsletters and webinar invitations.
+    </p>
+    <p class="updates-note muted">
+      Free updates are separate from program enquiries. You’ll only be
+      subscribed if you explicitly opt in on the form.
+    </p>
+  </div>
+  <a
+    class="button"
+    href={siteConfig.enquiryForm}
+    target="_blank"
+    rel="noopener noreferrer"
+  >
+    Register for Free Updates <span aria-hidden="true">↗</span>
+  </a>
+</section>

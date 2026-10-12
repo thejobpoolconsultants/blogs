@@ -2,6 +2,7 @@
 import '../styles/global.css';
 import '../styles/editorial.css';
 import '../styles/brand-assets.css';
+import '../styles/programs.css';
 import { brand } from '../data/brand-assets';
 import { editorialQuotes } from '../data/editorial-quotes';
 import Brand from '../components/Brand.astro';
@@ -121,8 +122,24 @@ const nav = [
         <Brand />
         <div class="header-tools">
           <a href={url('learn/')}>Learning paths ↗</a>
-          <a href={siteConfig.mainSite} class="platform-link">
-            Main website ↗
+          <a class="programs-nav-link" href={url('#programs')}>
+            Programs
+          </a>
+          <a
+            href={siteConfig.mainSite}
+            class="platform-link"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Visit Our Website ↗
+          </a>
+          <a
+            class="header-enquire"
+            href={siteConfig.enquiryForm}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Enquire ↗
           </a>
           <a
             class="search-link"
@@ -220,7 +237,21 @@ const nav = [
             ))}
             <a href={url('learn/')}>Learning paths</a>
             <a href={url('series/')}>Series</a>
-            <a href={siteConfig.mainSite}>Main website ↗</a>
+            <a href={url('#programs')}>Programs</a>
+            <a
+              href={siteConfig.mainSite}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Visit Our Website ↗
+            </a>
+            <a
+              href={siteConfig.enquiryForm}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Enquire ↗
+            </a>
             <a href={url('about/')}>About</a>
           </nav>
         </details>
@@ -251,9 +282,27 @@ const nav = [
           <h2>Publication</h2>
           <a href={url('about/')}>About & editorial values</a>
           <a href={url('learn/')}>Learning paths</a>
+          <a href={url('#programs')}>Programs</a>
           <a href={url('authors/thejobpoolconsultants/')}>Contributors</a>
-          <a href={siteConfig.mainSite}>Main website ↗</a>
-          <a href="https://github.com/thejobpoolconsultants/blogs">
+          <a
+            href={siteConfig.mainSite}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Visit Our Website ↗
+          </a>
+          <a
+            href={siteConfig.enquiryForm}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Enquire ↗
+          </a>
+          <a
+            href="https://github.com/thejobpoolconsultants/blogs"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
             Source on GitHub ↗
           </a>
         </nav>
@@ -272,6 +321,11 @@ const nav = [
       menu
         .querySelectorAll('.menu-close, .menu-scrim')
         .forEach((button) => button.addEventListener('click', closeMenu));
+      menu.querySelectorAll('nav a').forEach((link) => {
+        link.addEventListener('click', () => {
+          menu.open = false;
+        });
+      });
       menu.addEventListener('toggle', () => {
         document.body.classList.toggle('menu-open', menu.open);
         document

@@ -8,6 +8,7 @@ import {
 } from '../../data/research-editorial';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import ArticleCard from '../../components/ArticleCard.astro';
+import ProgramRecommendation from '../../components/ProgramRecommendation.astro';
 import { publishedArticles, readingTime, dateLabel } from '../../utils/content';
 import { topicSequences, sectionPath } from '../../data/topic-sequences';
 import { topicById } from '../../data/topics';
@@ -249,7 +250,13 @@ const json = {
                       data-source-role={source.role}
                       data-source-kind={source.kind}
                     >
-                      <a href={source.url}>{source.title} ↗</a>
+                      <a
+                        href={source.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        {source.title} ↗
+                      </a>
                       <p class="source-scope">{source.supports}</p>
                     </li>
                   ))}
@@ -263,12 +270,15 @@ const json = {
           </p>
         </section>
         {paperBased && <ResearchEditorialNote />}
+        <ProgramRecommendation article={data} />
         <div class="share" data-pagefind-ignore>
           <strong>Share this idea</strong>
           <button id="copy-link" data-url={canonical}>
             Copy link
           </button>
           <a
+            target="_blank"
+            rel="noopener noreferrer"
             href={
               'https://www.linkedin.com/sharing/share-offsite/?url=' +
               encodeURIComponent(canonical)
@@ -277,6 +287,8 @@ const json = {
             LinkedIn
           </a>
           <a
+            target="_blank"
+            rel="noopener noreferrer"
             href={
               'https://twitter.com/intent/tweet?url=' +
               encodeURIComponent(canonical) +

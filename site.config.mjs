@@ -5,6 +5,8 @@ export const siteConfig = {
   origin: 'https://thejobpoolconsultants.github.io',
   base: '/blogs/',
   mainSite: 'https://the-job-pool-consultants-website.vercel.app',
+  programsPath: '/programs',
+  enquiryForm: 'https://forms.gle/xKnthSKP753dorxd6',
 };
 export function url(path = '') {
   return `${siteConfig.base.replace(/\/$/, '')}/${path.replace(/^\//, '')}`;

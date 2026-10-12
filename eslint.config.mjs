@@ -4,7 +4,15 @@ import astro from 'eslint-plugin-astro';
 import { defineConfig } from 'eslint/config';
 import globals from 'globals';
 export default defineConfig(
-  { ignores: ['dist/**', '.astro/**', 'node_modules/**', 'artifacts/**'] },
+  {
+    ignores: [
+      'dist/**',
+      '.astro/**',
+      'node_modules/**',
+      'artifacts/**',
+      '.agents/**',
+    ],
+  },
   js.configs.recommended,
   ...ts.configs.recommended,
   ...astro.configs.recommended,

@@ -14,10 +14,11 @@ import ArchitectureDiagram from '../components/ArchitectureDiagram.astro';
 import ArticleCard from '../components/ArticleCard.astro';
 import ArticleList from '../components/ArticleList.astro';
 import LearningPathCard from '../components/LearningPathCard.astro';
+import ProgramsSection from '../components/ProgramsSection.astro';
 import { publishedArticles } from '../utils/content';
 import { topics } from '../data/topics';
 import { learningPaths } from '../data/learning-paths';
-import { url } from '../utils/urls';
+import { url, siteConfig } from '../utils/urls';
 const articles = await publishedArticles();
 const featured = articles.find((a) => a.data.featured)!;
 const explore = topics.filter((t) =>
@@ -40,31 +41,47 @@ const mechanismSlugs = [
 const symbols = ['ƒ(x)', 'Σ', 'Aa', '◈', '↗', '⊞'];
 ---
 
-<BaseLayout>
-  <section class="hero">
+<BaseLayout
+  title="Learn AI. Build Practical Skills. Shape Your Next Career."
+  description="Explore free AI articles and learning paths, then take your next step with guided programs and individual career guidance from TheJobPoolConsultants."
+>
+  <section class="hero career-hero">
     <div>
       <p class="eyebrow">Artificial intelligence · Engineering · Research</p>
       <h1>
-        <span class="hero-line">Understand</span>{' '}
-        <span class="hero-line">intelligence.</span>
-        <span class="hero-build">
-          Build <em>what’s next.</em>
-        </span>
+        Learn AI.
+        <br />
+        Build Practical Skills.
+        <br />
+        <em>Shape Your Next Career.</em>
       </h1>
-      <EditorialStatement
-        quote={editorialQuotes[homepageEditorial.hero]}
-        variant="inline"
-        as="p"
-        label=""
-      />
+      <p class="lead">
+        Explore free articles and learning paths, then take your next step with
+        guided programs from TheJobPoolConsultants. Whether you are
+        transitioning from a non-technical background or developing advanced
+        engineering skills, find a pathway aligned with your goals.
+      </p>
       <div class="hero-actions">
-        <a class="button primary" href={url('topics/')}>
-          Explore AI <span aria-hidden="true">↗</span>
+        <a class="button primary" href="#programs">
+          Explore Our Programs <span aria-hidden="true">↓</span>
         </a>
-        <a class="button" href={url('learn/')}>
-          Start a learning path <span aria-hidden="true">→</span>
+        <a
+          class="button"
+          href={siteConfig.enquiryForm}
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          Get Career Guidance <span aria-hidden="true">↗</span>
         </a>
       </div>
+      <a
+        class="text-link hero-website"
+        href={siteConfig.mainSite}
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        Visit Our Website <span aria-hidden="true">↗</span>
+      </a>
     </div>
     <IntelligenceMap />
   </section>
@@ -292,6 +309,7 @@ const symbols = ['ƒ(x)', 'Σ', 'Aa', '◈', '↗', '⊞'];
       ))}
     </div>
   </section>
+  <ProgramsSection />
   <section
     class="section publication-feature"
     aria-labelledby="publication-title"

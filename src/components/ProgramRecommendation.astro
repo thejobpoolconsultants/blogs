@@ -1,0 +1,43 @@
+---
+import { recommendProgram, programWebsite } from '../data/programs';
+import { siteConfig } from '../utils/urls';
+interface Props {
+  article: Parameters<typeof recommendProgram>[0];
+}
+const program = recommendProgram(Astro.props.article);
+---
+
+<aside
+  class="program-recommendation"
+  aria-labelledby="recommended-program-title"
+  data-pagefind-ignore
+>
+  <p class="eyebrow">Put this learning into practice</p>
+  <p class="meta muted">
+    {'number' in program ? `Program ${program.number}` : 'Your entry pathway'}
+  </p>
+  <h2 id="recommended-program-title">{program.title}</h2>
+  <p>
+    {'benefit' in program
+      ? program.benefit
+      : 'Explore a guided pathway through AI foundations, applied AI and advanced concepts, with a starting point based on your background.'}
+  </p>
+  <div class="program-actions">
+    <a
+      class="button primary"
+      href={siteConfig.enquiryForm}
+      target="_blank"
+      rel="noopener noreferrer"
+    >
+      Enquire About This Program <span aria-hidden="true">↗</span>
+    </a>
+    <a
+      class="text-link"
+      href={programWebsite(program.id)}
+      target="_blank"
+      rel="noopener noreferrer"
+    >
+      Explore on Our Website <span aria-hidden="true">↗</span>
+    </a>
+  </div>
+</aside>
