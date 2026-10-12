@@ -1,3 +1,8 @@
+---
+title: 'How a Forward Deployed Engineer Turns a Customer Problem into a Working System.'
+status: draft
+---
+
 A fictional operations team says it cannot find current internal procedures. “Build an AI assistant” is one possible implementation, but it is not yet a problem definition. A forward deployed engineer needs to understand the workflow, available information and how the customer will judge a useful result.
 
 ## Agree on the problem before choosing the technology

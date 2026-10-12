@@ -1,4 +1,9 @@
-Imagine a fictional team training an image classifier on an approved dataset. The job needs more than an accelerator: files must arrive, examples must be decoded, work must be placed, results must be exchanged and heat must leave the equipment. Infrastructure engineering follows that chain rather than treating the rack as a single magic box.
+---
+title: 'What Happens Inside the Infrastructure Behind an AI Workload.'
+status: draft
+---
+
+Imagine a fictional team training an image classifier on an approved dataset. A graphics processing unit (GPU) can execute suitable parallel work, but the job needs more than an accelerator: files must arrive, examples must be decoded, work must be placed, results must be exchanged and heat must leave the equipment. Infrastructure engineering follows that chain rather than treating the rack as a single magic box.
 
 ## Follow one workload through the system
 

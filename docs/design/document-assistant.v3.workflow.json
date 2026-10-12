@@ -1,0 +1,167 @@
+{
+  "schema_version": 2,
+  "diagram_type": "workflow",
+  "meta": {
+    "title": "A permission-filtered document answer",
+    "quality_profile": "showcase",
+    "locale": "en",
+    "legend": {
+      "mode": "auto",
+      "entries": {
+        "frontend": {
+          "label": "User interface"
+        },
+        "security": {
+          "label": "Access policy"
+        },
+        "database": {
+          "label": "Index and evidence"
+        },
+        "backend": {
+          "label": "Generation"
+        },
+        "external": {
+          "label": "Approved source"
+        }
+      }
+    }
+  },
+  "lanes": [
+    {
+      "id": "preparation",
+      "label": "Document preparation, separate from request-time generation"
+    },
+    {
+      "id": "request",
+      "label": "Request-time example: prepared documents are already indexed"
+    }
+  ],
+  "mainPath": ["question", "retrieval", "evidence", "context", "answer"],
+  "nodes": [
+    {
+      "id": "question",
+      "lane": "request",
+      "col": 0,
+      "type": "frontend",
+      "label": "User question",
+      "sublabel": "Identity verified",
+      "width": 112
+    },
+    {
+      "id": "retrieval",
+      "lane": "request",
+      "col": 1,
+      "type": "security",
+      "label": "Scoped search",
+      "sublabel": "Only allowed sources",
+      "width": 112
+    },
+    {
+      "id": "evidence",
+      "lane": "request",
+      "col": 2,
+      "type": "database",
+      "label": "Evidence",
+      "sublabel": "Passages with IDs",
+      "width": 112
+    },
+    {
+      "id": "context",
+      "lane": "request",
+      "col": 3,
+      "type": "backend",
+      "label": "Language model",
+      "sublabel": "Question + evidence",
+      "width": 112
+    },
+    {
+      "id": "answer",
+      "lane": "request",
+      "col": 4,
+      "type": "frontend",
+      "label": "Cited answer",
+      "sublabel": "Verify source support",
+      "width": 112
+    },
+    {
+      "id": "approved-documents",
+      "lane": "preparation",
+      "col": 0,
+      "width": 112,
+      "type": "external",
+      "label": "Approved docs",
+      "sublabel": "Owner + access rules"
+    },
+    {
+      "id": "passage-index",
+      "lane": "preparation",
+      "col": 1,
+      "width": 112,
+      "type": "database",
+      "label": "Passage index",
+      "sublabel": "Sections + access"
+    }
+  ],
+  "edges": [
+    {
+      "id": "ask",
+      "from": "question",
+      "to": "retrieval",
+      "label": "Search",
+      "role": "main"
+    },
+    {
+      "id": "select",
+      "from": "retrieval",
+      "to": "evidence",
+      "label": "Select passages",
+      "role": "main"
+    },
+    {
+      "id": "provide",
+      "from": "evidence",
+      "to": "context",
+      "label": "Provide context",
+      "role": "main"
+    },
+    {
+      "id": "generate",
+      "from": "context",
+      "to": "answer",
+      "label": "Generate",
+      "role": "main"
+    },
+    {
+      "id": "prepare-passages",
+      "from": "approved-documents",
+      "to": "passage-index",
+      "label": "Prepare",
+      "role": "branch"
+    },
+    {
+      "id": "search-index",
+      "from": "passage-index",
+      "to": "retrieval",
+      "label": "Provide index",
+      "role": "branch",
+      "fromSide": "bottom",
+      "toSide": "top"
+    }
+  ],
+  "cards": [
+    {
+      "dot": "amber",
+      "title": "Evidence boundary",
+      "items": [
+        "If no permitted passage supports the question, explain the gap instead of inventing policy."
+      ]
+    },
+    {
+      "dot": "cyan",
+      "title": "Separate preparation",
+      "items": [
+        "Preparation splits approved documents into passages and builds an index. Retrieval at request time does not train the model."
+      ]
+    }
+  ]
+}

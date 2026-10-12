@@ -1,0 +1,102 @@
+---
+interface Props {
+  kind: 'infrastructure' | 'hardware';
+}
+const { kind } = Astro.props;
+const parts =
+  kind === 'infrastructure'
+    ? [
+        [
+          'Compute',
+          'Accelerators execute prepared work; they connect to host memory and the network. Inspect execution time and resource use for a specified workload. Waiting for inputs is a representative bottleneck.',
+        ],
+        [
+          'Networking',
+          'Links connect participating machines and storage paths. Inspect communication volume, link behavior and collective-operation time. Congestion or a failed link can interrupt distributed work.',
+        ],
+        [
+          'Storage',
+          'Storage supplies datasets and retains checkpoints. Inspect read latency, useful throughput and access patterns. Many small-file reads can hold up a loader.',
+        ],
+        [
+          'Cooling',
+          'The thermal system removes heat from powered equipment. Inspect approved temperature, flow and thermal-limit evidence. An interrupted loop can restrict safe operation; the drawing is not a facility specification.',
+        ],
+      ]
+    : [
+        [
+          'Compute array',
+          'Compute units execute mapped arithmetic. They depend on operands arriving from the stated memory hierarchy. Inspect operation count and achieved execution behavior; a Roofline ceiling is not achieved throughput.',
+        ],
+        [
+          'Memory hierarchy',
+          'Local and external memory hold operands and results at different boundaries. Inspect bytes transferred and reuse. Capacity and access pattern can constrain execution.',
+        ],
+        [
+          'Interconnect',
+          'The interconnect carries data between components and the host interface. Inspect the defined transfer path, synchronization and communication needs. This conceptual drawing is not a vendor chip layout.',
+        ],
+      ];
+---
+
+<section
+  class="calculated-chart"
+  data-inspector
+  data-inspector-kind={kind}
+  aria-label={kind + ' component inspector'}
+>
+  <h3>Inspect the parts and their roles.</h3>
+  <div class="scenario-buttons">
+    {parts.map(([name, detail], i) => (
+      <button
+        type="button"
+        aria-pressed={i === 0 ? 'true' : 'false'}
+        data-detail={detail}
+        data-part={
+          kind === 'infrastructure'
+            ? ['compute', 'network', 'storage', 'cooling'][i]
+            : ['compute', 'memory', 'board.bus|board.connector'][i]
+        }
+      >
+        {name}
+      </button>
+    ))}
+  </div>
+  <p class="scenario-output" aria-live="polite">
+    {parts[0][1]}
+  </p>
+</section>
+<script>
+  for (const root of document.querySelectorAll<HTMLElement>(
+    '[data-inspector]',
+  )) {
+    root.addEventListener('click', (event) => {
+      const button = (event.target as HTMLElement).closest<HTMLButtonElement>(
+        '[data-detail]',
+      );
+      if (!button) return;
+      root
+        .querySelectorAll('button')
+        .forEach((item) =>
+          item.setAttribute('aria-pressed', String(item === button)),
+        );
+      root.querySelector('.scenario-output')!.textContent =
+        button.dataset.detail || '';
+      const figure = root
+        .closest('.detail-section')
+        ?.querySelector<HTMLElement>(
+          '[data-program-demo="' + root.dataset.inspectorKind + '"]',
+        );
+      figure
+        ?.querySelectorAll<SVGGElement>('[data-part-name]')
+        .forEach((part) => {
+          const active = (button.dataset.part || '')
+            .split('|')
+            .some((prefix) => (part.dataset.partName || '').startsWith(prefix));
+          part.classList.toggle('mechanism-active', active);
+          part.classList.toggle('mechanism-muted', !active);
+          part.classList.toggle('inspector-selected', active);
+        });
+    });
+  }
+</script>

@@ -1,3 +1,8 @@
+---
+title: 'How a Robot Turns Sensor Information into Physical Action.'
+status: draft
+---
+
 A small warehouse robot needs to reach a destination without entering an occupied cell. That sounds simple until its map omits a crate. The robot must connect observations to a state estimate, a route and physical action, then check what happened.
 
 ## Each stage answers a different question

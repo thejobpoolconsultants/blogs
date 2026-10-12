@@ -1,3 +1,8 @@
+---
+title: 'How Staff AI Architects Make Decisions Across Teams and Systems.'
+status: draft
+---
+
 Two fictional product teams need document assistance. One proposal gives both teams a shared AI platform. Another lets each team operate its own service. A staff architect’s task is to explain which design fits the constraints, who will own it and what consequences follow.
 
 ## Begin with the decision context

@@ -1,3 +1,8 @@
+---
+title: 'Why Faster Model Serving Requires More Than a Faster GPU.'
+status: draft
+---
+
 A fictional document service receives four requests almost together. Its accelerator is powerful, but some users still wait. To understand why, separate arrival, queueing, scheduled execution and completion. Buying faster hardware does not tell you which part of that path is responsible.
 
 ## Define the measurement before comparing configurations

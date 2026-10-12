@@ -1,0 +1,87 @@
+{
+  "schema_version": 2,
+  "diagram_type": "workflow",
+  "meta": {
+    "title": "Identity, policy and application routing",
+    "quality_profile": "showcase",
+    "locale": "en"
+  },
+  "lanes": [
+    {
+      "id": "access-lane",
+      "label": "Hypothetical teaching architecture"
+    }
+  ],
+  "mainPath": ["access-n0", "access-n1", "access-n2", "access-n3"],
+  "nodes": [
+    {
+      "id": "access-n0",
+      "lane": "access-lane",
+      "col": 0,
+      "width": 160,
+      "type": "security",
+      "label": "Authenticate",
+      "sublabel": "Validate caller identity"
+    },
+    {
+      "id": "access-n1",
+      "lane": "access-lane",
+      "col": 1,
+      "width": 160,
+      "type": "security",
+      "label": "Authorize operation",
+      "sublabel": "Enforce application policy"
+    },
+    {
+      "id": "access-n2",
+      "lane": "access-lane",
+      "col": 2,
+      "width": 160,
+      "type": "backend",
+      "label": "Application service",
+      "sublabel": "Read permitted procedures"
+    },
+    {
+      "id": "access-n3",
+      "lane": "access-lane",
+      "col": 3,
+      "width": 160,
+      "type": "backend",
+      "label": "Model context",
+      "sublabel": "Generate supported answer"
+    }
+  ],
+  "edges": [
+    {
+      "id": "access-e0",
+      "from": "access-n0",
+      "to": "access-n1",
+      "label": "Pass identity",
+      "role": "main"
+    },
+    {
+      "id": "access-e1",
+      "from": "access-n1",
+      "to": "access-n2",
+      "label": "Allow operation",
+      "role": "main"
+    },
+    {
+      "id": "access-e2",
+      "from": "access-n2",
+      "to": "access-n3",
+      "label": "Supply evidence",
+      "role": "main"
+    }
+  ],
+  "cards": [
+    {
+      "dot": "amber",
+      "title": "Scope and boundary",
+      "items": [
+        "Missing identity stops at authentication; employee write requests stop at application authorization.",
+        "The service reads scoped data and emits operational logs. Kubernetes API authorization is a separate boundary."
+      ]
+    }
+  ]
+}

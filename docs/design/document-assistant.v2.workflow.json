@@ -1,0 +1,126 @@
+{
+  "schema_version": 2,
+  "diagram_type": "workflow",
+  "meta": {
+    "title": "A permission-filtered document answer",
+    "quality_profile": "showcase",
+    "locale": "en",
+    "legend": {
+      "mode": "auto",
+      "entries": {
+        "frontend": {
+          "label": "User interface"
+        },
+        "security": {
+          "label": "Access policy"
+        },
+        "database": {
+          "label": "Evidence"
+        },
+        "backend": {
+          "label": "Generation"
+        }
+      }
+    }
+  },
+  "lanes": [
+    {
+      "id": "request",
+      "label": "Request-time example: prepared documents are already indexed"
+    }
+  ],
+  "mainPath": ["question", "retrieval", "evidence", "context", "answer"],
+  "nodes": [
+    {
+      "id": "question",
+      "lane": "request",
+      "col": 0,
+      "type": "frontend",
+      "label": "Employee question",
+      "sublabel": "Authenticated identity",
+      "width": 152
+    },
+    {
+      "id": "retrieval",
+      "lane": "request",
+      "col": 1,
+      "type": "security",
+      "label": "Filtered retrieval",
+      "sublabel": "Only permitted documents",
+      "width": 152
+    },
+    {
+      "id": "evidence",
+      "lane": "request",
+      "col": 2,
+      "type": "database",
+      "label": "Evidence passages",
+      "sublabel": "Document and section IDs",
+      "width": 152
+    },
+    {
+      "id": "context",
+      "lane": "request",
+      "col": 3,
+      "type": "backend",
+      "label": "Language model",
+      "sublabel": "Question plus evidence context",
+      "width": 152
+    },
+    {
+      "id": "answer",
+      "lane": "request",
+      "col": 4,
+      "type": "frontend",
+      "label": "Answer with references",
+      "sublabel": "Check claims against sources",
+      "width": 152
+    }
+  ],
+  "edges": [
+    {
+      "id": "ask",
+      "from": "question",
+      "to": "retrieval",
+      "label": "Search",
+      "role": "main"
+    },
+    {
+      "id": "select",
+      "from": "retrieval",
+      "to": "evidence",
+      "label": "Select passages",
+      "role": "main"
+    },
+    {
+      "id": "provide",
+      "from": "evidence",
+      "to": "context",
+      "label": "Provide context",
+      "role": "main"
+    },
+    {
+      "id": "generate",
+      "from": "context",
+      "to": "answer",
+      "label": "Generate",
+      "role": "main"
+    }
+  ],
+  "cards": [
+    {
+      "dot": "amber",
+      "title": "Evidence boundary",
+      "items": [
+        "If no permitted passage supports the question, explain the gap instead of inventing policy."
+      ]
+    },
+    {
+      "dot": "cyan",
+      "title": "Separate preparation",
+      "items": [
+        "Preparation splits approved documents into passages and builds an index. Retrieval at request time does not train the model."
+      ]
+    }
+  ]
+}

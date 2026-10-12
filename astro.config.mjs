@@ -12,7 +12,12 @@ export default defineConfig({
   integrations: [
     mdx(),
     sitemap({
-      filter: (page) => !page.endsWith('/404/') && !page.endsWith('/search/'),
+      filter: (page) =>
+        !page.endsWith('/404/') &&
+        !page.endsWith('/search/') &&
+        !page.includes('/programs/') &&
+        !page.includes('/guides/') &&
+        !page.includes('/diagrams/'),
     }),
   ],
   vite: { plugins: [tailwindcss()] },

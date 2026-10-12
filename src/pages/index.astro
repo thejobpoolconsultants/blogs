@@ -19,7 +19,7 @@ import ProgramsSection from '../components/ProgramsSection.astro';
 import { publishedArticles } from '../utils/content';
 import { topics } from '../data/topics';
 import { learningPaths } from '../data/learning-paths';
-import { url, siteConfig } from '../utils/urls';
+import { url } from '../utils/urls';
 const articles = await publishedArticles();
 const featured = articles.find((a) => a.data.featured)!;
 const explore = topics.filter((t) =>
@@ -47,10 +47,10 @@ const symbols = ['ƒ(x)', 'Σ', 'Aa', '◈', '↗', '⊞'];
   description="Explore free learning resources and guided programs—from your first steps in AI to advanced engineering specializations. Find a direction that fits your background and career goals."
 >
   <section class="discovery-hero">
-    <p class="eyebrow">TheJobPoolConsultants · Blogs &amp; Knowledge Hub</p>
     <h1>Choose the work you want to build.</h1>
-    <p class="lead">Explore AI applications, infrastructure and systems performance.</p>
-    <div class="hero-actions"><a class="text-link" href="#programs">Explore specialist programs ↓</a><a class="text-link" href="#transition-program-title">Start with foundations ↓</a></div>
+    <p class="lead">
+      Explore AI applications, infrastructure and systems performance.
+    </p>
   </section>
   <FeaturedTransitionProgram />
   <ProgramsSection />

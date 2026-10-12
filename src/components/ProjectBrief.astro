@@ -1,0 +1,77 @@
+---
+interface Props {
+  kind: 'leadership' | 'deployment';
+}
+const { kind } = Astro.props;
+---
+
+<aside class="calculated-chart" aria-label="Example project artifact">
+  <p class="eyebrow">Fictional working document</p>
+  <h3>
+    {kind === 'leadership'
+      ? 'Architecture decision record'
+      : 'Customer problem brief'}
+  </h3>
+  {kind === 'leadership' ? (
+    <dl class="brief-fields">
+      <dt>Context</dt>
+      <dd>
+        Two application teams need procedure assistance with distinct data
+        boundaries and release needs.
+      </dd>
+      <dt>Alternatives</dt>
+      <dd>
+        A shared platform with an explicit service contract; or independently
+        operated team services.
+      </dd>
+      <dt>Ownership</dt>
+      <dd>
+        Application teams own workflows. The platform team owns the shared
+        interface and operation. Document owners maintain approved sources.
+      </dd>
+      <dt>Decision evidence</dt>
+      <dd>
+        Record residency requirements, interface dependencies, incident
+        ownership and a cost model with stated assumptions.
+      </dd>
+      <dt>Review trigger</dt>
+      <dd>
+        A new region requirement or an incompatible consumer contract prompts a
+        review.
+      </dd>
+    </dl>
+  ) : (
+    <dl class="brief-fields">
+      <dt>User</dt>
+      <dd>A fictional operations employee looking for current procedures.</dd>
+      <dt>Problem</dt>
+      <dd>
+        The employee cannot reliably locate the approved section for a recurring
+        question.
+      </dd>
+      <dt>Approved input</dt>
+      <dd>
+        A small procedure collection with section IDs, owners, versions and
+        access rules.
+      </dd>
+      <dt>Acceptance</dt>
+      <dd>
+        Answers cite the correct current section; unsupported questions disclose
+        missing evidence; denied documents remain unavailable.
+      </dd>
+      <dt>Discovery finding</dt>
+      <dd>
+        Incomplete procedures narrow the prototype scope before implementation.
+      </dd>
+      <dt>Handoff</dt>
+      <dd>
+        Define the service owner, integration contract, refresh process,
+        rollback and validation report.
+      </dd>
+    </dl>
+  )}
+  <p class="chart-note">
+    An example artifact to challenge and revise, not a customer result or an
+    official course deliverable.
+  </p>
+</aside>

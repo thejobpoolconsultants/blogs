@@ -113,18 +113,34 @@ const nav = [
     ></script>
     <slot name="head" />
   </head>
-  <body>
+  <body class:list={{ 'discovery-page': Astro.url.pathname === url() }}>
     <a class="skip" href="#main">
       Skip to content
     </a>
     <header data-pagefind-ignore>
       <div class="container masthead">
-        <Brand />
+        {Astro.url.pathname === url() ? (
+          <a
+            class="discovery-brand"
+            href={url()}
+            aria-label="TheJobPoolConsultants Blogs Knowledge Hub home"
+          >
+            TheJobPoolConsultants
+          </a>
+        ) : (
+          <Brand />
+        )}
         <div class="header-tools">
           <a href={url('learn/')}>Learning paths ↗</a>
           <a class="programs-nav-link" href={url('#programs')}>
             Programs
           </a>
+          {Astro.url.pathname === url() && (
+            <>
+              <a href={url('topics/')}>Blogs</a>
+              <a href="#updates-title">Webinars</a>
+            </>
+          )}
           <a
             href={siteConfig.mainSite}
             class="platform-link"

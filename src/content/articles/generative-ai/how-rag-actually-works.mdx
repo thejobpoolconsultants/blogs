@@ -8,7 +8,7 @@ tags: ['RAG', 'Evaluation', 'Context Engineering']
 series: 'generative-ai-systems'
 type: 'explainer'
 publishedAt: '2026-09-20'
-updatedAt: '2026-09-20'
+updatedAt: '2026-10-12'
 status: 'published'
 difficulty: 'beginner'
 authors: ['thejobpoolconsultants']
@@ -76,6 +76,8 @@ A model is asked about a procedure updated yesterday. Its parameters may not con
 The preparation pipeline collects documents, extracts text, preserves metadata, splits material into useful units, and builds an index.
 
 The request pipeline interprets a question, retrieves candidates, optionally reranks them, selects context, and asks a model to produce an answer. The answer can include source references for inspection.
+
+In a document assistant, enforce the caller's access rules before a passage enters the model context. Searching an index and supplying context do not train the model or grant permission to execute a tool. When no permitted passage supports the question, make that missing evidence visible.
 
 <ArchitectureDiagram
   mode="rag"

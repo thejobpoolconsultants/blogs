@@ -12,13 +12,7 @@
       "label": "Request-time example: prepared documents are already indexed"
     }
   ],
-  "mainPath": [
-    "question",
-    "retrieval",
-    "evidence",
-    "context",
-    "answer"
-  ],
+  "mainPath": ["question", "retrieval", "evidence", "context", "answer"],
   "nodes": [
     {
       "id": "question",
@@ -27,7 +21,7 @@
       "type": "frontend",
       "label": "Employee question",
       "sublabel": "Authenticated identity",
-      "width": 180
+      "width": 152
     },
     {
       "id": "retrieval",
@@ -36,7 +30,7 @@
       "type": "security",
       "label": "Filtered retrieval",
       "sublabel": "Only permitted documents",
-      "width": 180
+      "width": 152
     },
     {
       "id": "evidence",
@@ -45,7 +39,7 @@
       "type": "database",
       "label": "Evidence passages",
       "sublabel": "Document and section IDs",
-      "width": 180
+      "width": 152
     },
     {
       "id": "context",
@@ -54,7 +48,7 @@
       "type": "backend",
       "label": "Language model",
       "sublabel": "Question plus evidence context",
-      "width": 180
+      "width": 152
     },
     {
       "id": "answer",
@@ -63,7 +57,7 @@
       "type": "frontend",
       "label": "Answer with references",
       "sublabel": "Check claims against sources",
-      "width": 180
+      "width": 152
     }
   ],
   "edges": [

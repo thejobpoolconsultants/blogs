@@ -1,0 +1,101 @@
+{
+  "schema_version": 2,
+  "diagram_type": "workflow",
+  "meta": {
+    "title": "Inputs, compute and distributed work",
+    "quality_profile": "showcase",
+    "locale": "en",
+    "legend": {
+      "mode": "auto",
+      "entries": {
+        "database": {
+          "label": "Storage"
+        },
+        "backend": {
+          "label": "Execution"
+        },
+        "messagebus": {
+          "label": "Communication"
+        }
+      }
+    }
+  },
+  "lanes": [
+    {
+      "id": "workload-lane",
+      "label": "Hypothetical teaching architecture"
+    }
+  ],
+  "mainPath": ["workload-n0", "workload-n1", "workload-n2", "workload-n3"],
+  "nodes": [
+    {
+      "id": "workload-n0",
+      "lane": "workload-lane",
+      "col": 0,
+      "width": 160,
+      "type": "database",
+      "label": "Approved storage",
+      "sublabel": "Dataset and checkpoints"
+    },
+    {
+      "id": "workload-n1",
+      "lane": "workload-lane",
+      "col": 1,
+      "width": 160,
+      "type": "backend",
+      "label": "Host loader",
+      "sublabel": "Read and prepare inputs"
+    },
+    {
+      "id": "workload-n2",
+      "lane": "workload-lane",
+      "col": 2,
+      "width": 160,
+      "type": "backend",
+      "label": "Accelerator compute",
+      "sublabel": "Execute model operations"
+    },
+    {
+      "id": "workload-n3",
+      "lane": "workload-lane",
+      "col": 3,
+      "width": 160,
+      "type": "messagebus",
+      "label": "Network exchange",
+      "sublabel": "Distributed communication"
+    }
+  ],
+  "edges": [
+    {
+      "id": "workload-e0",
+      "from": "workload-n0",
+      "to": "workload-n1",
+      "label": "Load inputs",
+      "role": "main"
+    },
+    {
+      "id": "workload-e1",
+      "from": "workload-n1",
+      "to": "workload-n2",
+      "label": "Submit work",
+      "role": "main"
+    },
+    {
+      "id": "workload-e2",
+      "from": "workload-n2",
+      "to": "workload-n3",
+      "label": "Exchange data",
+      "role": "main"
+    }
+  ],
+  "cards": [
+    {
+      "dot": "amber",
+      "title": "Scope and boundary",
+      "items": [
+        "Generic logical path: cooling and power support the equipment but are not data-flow services.",
+        "A job may save checkpoints back to storage; this diagram focuses on the input and communication path."
+      ]
+    }
+  ]
+}

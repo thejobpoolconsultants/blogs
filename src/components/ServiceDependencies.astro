@@ -1,0 +1,78 @@
+---
+interface Props {
+  kind: 'cloud' | 'leadership';
+}
+const { kind } = Astro.props;
+---
+
+<section class="calculated-chart" aria-label="Example system relationships">
+  <h3>
+    {kind === 'cloud'
+      ? 'The platform boundary and its dependencies.'
+      : 'Systems and ownership in the shared alternative.'}
+  </h3>
+  <div class="dependency-nodes">
+    <div data-system="applications">
+      <strong>
+        {kind === 'cloud'
+          ? 'Caller → authenticated gateway'
+          : 'Application A + Application B'}
+      </strong>
+      <small>
+        {kind === 'cloud'
+          ? 'Identity validation precedes operation authorization.'
+          : 'Each application team owns its user workflow.'}
+      </small>
+    </div>
+    <div data-system="interface">
+      <strong>
+        {kind === 'cloud'
+          ? 'Application authorization → service route'
+          : 'Shared AI interface'}
+      </strong>
+      <small>
+        {kind === 'cloud'
+          ? 'Read is allowed; employee write is denied before routing.'
+          : 'The platform team owns the contract and service operation.'}
+      </small>
+    </div>
+    <div data-system="platform">
+      <strong>
+        {kind === 'cloud'
+          ? 'Kubernetes workload boundary'
+          : 'Shared model service'}
+      </strong>
+      <small>
+        {kind === 'cloud'
+          ? 'Separate application and model-serving workloads; container images define processes.'
+          : 'Applications depend on the platform’s availability and supported interface.'}
+      </small>
+    </div>
+    <div data-system="data">
+      <strong>Scoped procedure data</strong>
+      <small>
+        Document owners maintain versions and access rules. The application only
+        supplies permitted evidence.
+      </small>
+    </div>
+    {kind === 'cloud' && (
+      <div data-system="observability">
+        <strong>Observability and operating owner</strong>
+        <small>
+          Gateway and services emit decision and execution evidence. Define
+          incident response and recovery separately.
+        </small>
+      </div>
+    )}
+  </div>
+  <p class="chart-note">
+    Relationships:{' '}
+    {kind === 'cloud'
+      ? 'caller → gateway → application policy → application service; application → procedure data and model service; gateway and services → observability. Identity controls apply at entry; application policy controls operations; Kubernetes API permissions are separate.'
+      : 'application A and application B → shared AI interface → model service; the shared application layer reads scoped procedure data. Ownership boundaries do not remove these dependencies.'}
+  </p>
+  <p class="chart-note">
+    Hypothetical example topology. A container or cluster boundary alone does
+    not enforce every data or application permission.
+  </p>
+</section>

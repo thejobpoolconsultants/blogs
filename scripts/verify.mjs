@@ -13,7 +13,20 @@ async function walk(dir) {
   return result;
 }
 const files = await walk('dist');
-const pages = files.filter((f) => f.endsWith('.html'));
+// Standalone Archify viewers have a separately validated document contract.
+const viewerPages = new Set([
+  'document-assistant.html',
+  'ai-workload.html',
+  'application-access.html',
+]);
+const pages = files.filter(
+  (f) =>
+    f.endsWith('.html') &&
+    !(
+      path.dirname(path.relative('dist', f)) === 'diagrams' &&
+      viewerPages.has(path.basename(f))
+    ),
+);
 const errors = [];
 let links = 0;
 const parsed = new Map();

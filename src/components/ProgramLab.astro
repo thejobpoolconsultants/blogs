@@ -1,24 +1,533 @@
 ---
-import { weightStorage, servingTimeline, plannedRoute, seededTraining, roofline, type Point } from '../data/program-labs';
+import {
+  weightStorage,
+  servingTimeline,
+  plannedRoute,
+  seededTraining,
+  roofline,
+} from '../data/program-labs';
 import { discovery } from '../data/program-discovery';
-interface Props { kind: keyof typeof discovery; }
+interface Props {
+  kind: keyof typeof discovery;
+}
 const { kind } = Astro.props;
-const weights = [32,16,8,4].map(bits => ({ bits, ...weightStorage(7,bits) }));
+const weights = [32, 16, 8, 4].map((bits) => ({
+  bits,
+  ...weightStorage(7, bits),
+}));
 const timeline = servingTimeline(false);
 const route = plannedRoute();
 const training = seededTraining();
-const points = training.returns.map((value, i) => `${40 + i * 5.8},${160 - value * .6}`).join(' ');
+const returnY = (value: number) => 30 + ((20 - value) / 70) * 230;
+const points = training.returns
+  .map((value, i) => `${40 + i * 3.7},${returnY(value)}`)
+  .join(' ');
 ---
-<section class="calculated-chart" data-lab={kind} aria-label="Teaching experiment">
-  {kind === 'agents' && <><h3>Evidence and permission are separate checks.</h3><p>Fictional policy §1: “A manager must review remote-work requests.” Preparation: approved document → passages → index. Request-time retrieval only reads permitted passages.</p><div class="scenario-buttons"><button type="button" data-scenario="evidence" aria-pressed="true">Evidence available</button><button type="button" data-scenario="missing" aria-pressed="false">Missing evidence</button><button type="button" data-scenario="denied" aria-pressed="false">Denied action</button></div><p class="scenario-output" aria-live="polite">The assistant can cite §1 and prepare a draft. Submission requires a separate permitted tool and human review.</p><p class="chart-note">Authored local demonstration; no model call, training or external action.</p></>}
-  {kind === 'infrastructure' && <><h3>How much storage do the model weights need?</h3><label>Parameter count<select data-parameters><option value="1">1 billion</option><option value="7" selected>7 billion</option><option value="13">13 billion</option><option value="70">70 billion</option></select></label><p class="chart-note">Calculated: parameters × bits per parameter ÷ 8. GB = 10⁹ bytes; GiB = 2³⁰ bytes. Uniform precision and ideal packed storage.</p><div data-weight-bars>{weights.map(w => <div><span>{w.bits}-bit: <span data-weight-value={w.bits}>{w.gb.toFixed(2)} GB / {w.gib.toFixed(2)} GiB</span></span><div class="chart-bar"><span data-weight-bar={w.bits} style={`width:${w.gb/28*100}%`}></span></div></div>)}</div><label>Inspect one precision<select data-bits><option value="32">32-bit</option><option value="16" selected>16-bit</option><option value="8">8-bit</option><option value="4">4-bit packed</option></select></label><output class="chart-output" aria-live="polite" data-weight-output>7 billion × 16 bits ÷ 8 = 14.00 GB / 13.04 GiB.</output><p class="chart-note">Weight storage only. Excludes runtime memory, key-value cache, activations, gradients, optimizer states and quantization metadata. This does not establish whether a model fits on a GPU.</p></>}
-  {kind === 'performance' && <><h3>When does batching add waiting?</h3><p class="chart-note">SIMULATION. Four requests arrive at 0, 1, 2, 3 ms. One worker. Setup takes 4 ms per batch; each request adds 1 ms. A batch of four starts at 3 ms, finishes at 11 ms, and returns all outputs together. No overlap, variable lengths or GPU measurements.</p><div class="scenario-buttons"><button type="button" data-policy="individual" aria-pressed="true">Individual</button><button type="button" data-policy="batch" aria-pressed="false">Batch of four</button></div><div data-timeline>{timeline.requests.map(r => <div class="request-row"><span>Request {r.id}</span><div class="request-track" aria-label={`Arrives ${r.arrival} ms, waits ${r.wait} ms, processes ${r.finish-r.start} ms, completes ${r.finish} ms`}><span class="request-wait" style={`left:${r.arrival/20*100}%;width:${r.wait/20*100}%`}></span><span class="request-compute" style={`left:${r.start/20*100}%;width:${(r.finish-r.start)/20*100}%`}></span></div></div>)}</div><div class="timeline-axis"><span>0</span><span>5</span><span>10</span><span>15</span><span>20 ms</span></div><p class="chart-note">Amber = waiting; violet = processing. The text alternative includes each duration.</p><output class="chart-output" data-timeline-output aria-live="polite">Individual: 200 requests/s; mean latency 11.00 ms; first response 5 ms. Calculated from this finite workload.</output></>}
-  {kind === 'robotics' && <><h3>A map is an estimate of the environment.</h3><p>Prepared 4 × 4 grid. A breadth-first search finds a shortest route using four-direction moves. Coordinates are grid cells, not metres. A simulated robot stops if its next cell is occupied.</p><div class="scenario-buttons"><button type="button" data-map="known" aria-pressed="true">Known obstacles</button><button type="button" data-map="moved" aria-pressed="false">Move an obstacle</button><button type="button" data-map="missing" aria-pressed="false">Incomplete map</button></div><svg class="map-svg" viewBox="0 0 300 300" role="img" aria-label="Planned and simulated route on a four by four grid"><g>{Array.from({length:16},(_,i)=><rect x={40+(i%4)*55} y={205-Math.floor(i/4)*55} width="50" height="50" fill="none" stroke="currentColor" opacity=".25"/>)}</g><g data-obstacles>{[[1,1],[2,1],[1,3]].map(([x,y])=><rect x={40+x*55} y={205-y*55} width="50" height="50" fill="#d97706"/>)}</g><polyline data-route points={route.map(([x,y])=>`${65+x*55},${230-y*55}`).join(' ')} stroke="#7c3aed" stroke-width="6" stroke-dasharray="8 4" fill="none"/><polyline data-actual points={route.map(([x,y])=>`${65+x*55},${230-y*55}`).join(' ')} stroke="#0d9488" stroke-width="3" fill="none"/>{[0,1,2,3].map(i=><><text x={65+i*55} y="275" fill="currentColor" font-size="12">{i}</text><text x="20" y={234-i*55} fill="currentColor" font-size="12">{i}</text></>)}<text x="145" y="295" fill="currentColor" font-size="12">x (cells)</text><text x="5" y="15" fill="currentColor" font-size="12">y (cells)</text></svg><p class="scenario-output" aria-live="polite">Known map: planned route and simulated trajectory reach (3,3) from (0,0). Violet dashes = plan; teal line = simulated trajectory.</p><p class="chart-note">This discrete simulation omits inertia, sensing uncertainty and stopping distance. It does not demonstrate real-world safety.</p></>}
-  {kind === 'research' && <><h3>What did the training actually record?</h3><p class="chart-note">Local tabular Q-learning, 4 × 4 grid, seed 17, 80 episodes, up to 40 steps each. Learning rate 0.5; discount 0.9; exploration probability 0.25. Reward: −1 per move, −4 extra for collision, +20 extra at the goal. Terminal goal has no bootstrapped value.</p><svg class="map-svg" viewBox="0 0 540 310" role="img" aria-label="Recorded episode returns from seeded Q-learning; values fluctuate"><path d="M40 30V270H515" stroke="currentColor" fill="none"/>{[-160,-80,0,20].map(v=><text x="4" y={164-v*.6} font-size="11" fill="currentColor">{v}</text>)}<polyline points={points} fill="none" stroke="#7c3aed" stroke-width="2"/><text x="45" y="290" fill="currentColor" font-size="12">1</text><text x="490" y="290" fill="currentColor" font-size="12">80</text><text x="230" y="305" fill="currentColor" font-size="12">Episode</text><text x="45" y="20" fill="currentColor" font-size="12">Return (reward units)</text></svg><details><summary>Read all recorded returns</summary><p>{training.returns.map((r,i)=>`${i+1}: ${r}`).join('; ')}</p></details><p>The graph is generated by the same seeded learning model in the source. Its exploration decisions can make later episodes worse; a smooth rising curve would hide that behavior.</p><div class="scenario-buttons"><button type="button" data-reward="goal" aria-pressed="true">Reward reaching the goal</button><button type="button" data-reward="steps" aria-pressed="false">Reward every step</button></div><p class="scenario-output" aria-live="polite">With −1 per move and +20 at the goal, a six-move route returns 14. Finishing sooner avoids extra movement penalties.</p></>}
-  {kind === 'cloud' && <><h3>Identity does not grant every permission.</h3><p>Fictional application policy: the employee role may read procedures, but only the publisher role may update them. The application gateway authenticates the token; a separate authorization middleware evaluates role and requested operation before service routing.</p><div class="scenario-buttons"><button type="button" data-access="read" aria-pressed="true">Employee reads</button><button type="button" data-access="write" aria-pressed="false">Employee writes</button><button type="button" data-access="anonymous" aria-pressed="false">Missing identity</button></div><p class="scenario-output" aria-live="polite">Authenticated employee, GET procedures: policy allows the read. Route to procedure service → model context → answer; observability records the decision.</p><p class="chart-note">Application authorization is separate from Kubernetes API authorization. Network boundaries and locks in the artwork do not prove security or compliance.</p></>}
-  {kind === 'hardware' && <><h3>Which ceiling limits this hypothetical workload?</h3><p class="chart-note">Calculated Roofline ceiling: min(peak compute, bandwidth × operational intensity). Authored device assumptions: 100 GFLOP/s compute and 10 GB/s memory bandwidth. Operational intensity counts FLOPs per byte transferred from the specified external memory. No measured performance.</p><svg class="map-svg" viewBox="0 0 540 310" role="img" aria-label="Hypothetical Roofline: linear bandwidth ceiling until 10 FLOP per byte, then compute ceiling 100 GFLOP per second"><path d="M50 30V260H510" stroke="currentColor" fill="none"/><polyline points={[0,2,4,6,8,10,16,24,32].map(i=>`${50+i/32*450},${260-roofline(i)/100*210}`).join(' ')} fill="none" stroke="#7c3aed" stroke-width="4"/>{[0,8,16,24,32].map(i=><text x={50+i/32*450} y="280" text-anchor="middle" font-size="12" fill="currentColor">{i}</text>)}<text x="8" y="55" fill="currentColor" font-size="12">100</text><text x="22" y="260" fill="currentColor" font-size="12">0</text><text x="55" y="18" fill="currentColor" font-size="12">Ceiling (GFLOP/s)</text><text x="160" y="305" fill="currentColor" font-size="12">Operational intensity (FLOP/byte)</text></svg><label>Inspect operational intensity<select data-intensity>{[1,4,8,10,16,32].map(i=><option value={i} selected={i===4}>{i} FLOP/byte</option>)}</select></label><output class="chart-output" data-roof-output aria-live="polite">4 FLOP/byte × 10 GB/s = 40 GFLOP/s ceiling; limited by data movement.</output><p class="chart-note">Real performance can be below either ceiling. Cache reuse, precision, access pattern and synchronization change the model inputs. FLOP means floating-point operation.</p></>}
-  {kind === 'leadership' && <><h3>Compare ownership before choosing a platform.</h3><label>Which constraint matters most?<select data-constraint><option value="autonomy">Team autonomy</option><option value="residency">Data residency</option><option value="integration">Integration complexity</option></select></label><table class="architecture-matrix"><caption>Hypothetical alternatives, not measured rankings</caption><thead><tr><th>Decision</th><th>Shared platform</th><th>Team-owned systems</th></tr></thead><tbody><tr><th>Ownership</th><td>Platform team owns shared service; application teams own use cases.</td><td>Each team owns its service, releases and incident response.</td></tr><tr><th>Integration</th><td>Common contract; changes require cross-team coordination.</td><td>Independent contracts; duplicated integration work is possible.</td></tr><tr><th>Data boundary</th><td>Requires scoped access and permitted deployment regions.</td><td>Local boundaries can simplify isolation but still need governance.</td></tr></tbody></table><p class="scenario-output" aria-live="polite">Team autonomy: examine the application teams’ release dependencies and support ownership. Neither design removes the need for a shared data contract.</p><p class="chart-note">Record context, decision, alternatives, consequences and a review trigger. No readiness score or unsupported cost advantage.</p></>}
-  {kind === 'deployment' && <><h3>Follow a customer-delivery example.</h3><p>Fictional operations team cannot find current internal procedures. The acceptance check is agreed before implementing a search prototype.</p><label>Inspect a delivery stage<select data-delivery><option value="0">1 · Problem statement</option><option value="1">2 · Data assessment</option><option value="2">3 · Acceptance criteria</option><option value="3">4 · Prototype</option><option value="4">5 · Deployment plan</option><option value="5">6 · Validation report</option></select></label><div class="scenario-buttons"><button type="button" data-finding="available" aria-pressed="true">Approved data available</button><button type="button" data-finding="missing" aria-pressed="false">Procedures are incomplete</button></div><p class="scenario-output" aria-live="polite">Problem statement: procedure lookup is difficult. Confirm which users need which documents and how a useful answer will be checked.</p><p class="chart-note">No real client outcome or time-saving claim. Feedback can change the problem scope, not just tune a model.</p></>}
+
+<section
+  class="calculated-chart"
+  data-lab={kind}
+  aria-label="Teaching experiment"
+>
+  {kind === 'agents' && (
+    <>
+      <h3>Evidence and permission are separate checks.</h3>
+      <p>
+        Fictional policy §1: “A manager must review remote-work requests.”
+        Preparation: approved document → passages → index. Request-time
+        retrieval only reads permitted passages.
+      </p>
+      <div class="scenario-buttons">
+        <button type="button" data-scenario="evidence" aria-pressed="true">
+          Evidence available
+        </button>
+        <button type="button" data-scenario="missing" aria-pressed="false">
+          Missing evidence
+        </button>
+        <button type="button" data-scenario="denied" aria-pressed="false">
+          Denied action
+        </button>
+      </div>
+      <p class="scenario-output" aria-live="polite">
+        The assistant can cite §1 and prepare a draft. Submission requires a
+        separate permitted tool and human review.
+      </p>
+      <p class="chart-note">
+        Authored local demonstration; no model call, training or external
+        action.
+      </p>
+    </>
+  )}
+  {kind === 'infrastructure' && (
+    <>
+      <h3>How much storage do the model weights need?</h3>
+      <label>
+        Parameter count
+        <select data-parameters>
+          <option value="1">1 billion</option>
+          <option value="7" selected>
+            7 billion
+          </option>
+          <option value="13">13 billion</option>
+          <option value="70">70 billion</option>
+        </select>
+      </label>
+      <p class="chart-note">
+        Calculated: parameters × bits per parameter ÷ 8. GB = 10⁹ bytes; GiB =
+        2³⁰ bytes. Uniform precision and ideal packed storage. Bar length is
+        relative to 32-bit storage at the selected parameter count.
+      </p>
+      <div data-weight-bars>
+        {weights.map((w) => (
+          <div>
+            <span>
+              {w.bits}-bit:{' '}
+              <span data-weight-value={w.bits}>
+                {w.gb.toFixed(2)} GB / {w.gib.toFixed(2)} GiB
+              </span>
+            </span>
+            <div class="chart-bar">
+              <span
+                data-weight-bar={w.bits}
+                style={`width:${(w.gb / 28) * 100}%`}
+              ></span>
+            </div>
+          </div>
+        ))}
+      </div>
+      <label>
+        Inspect one precision
+        <select data-bits>
+          <option value="32">32-bit</option>
+          <option value="16" selected>
+            16-bit
+          </option>
+          <option value="8">8-bit</option>
+          <option value="4">4-bit packed</option>
+        </select>
+      </label>
+      <output class="chart-output" aria-live="polite" data-weight-output>
+        7 billion × 16 bits ÷ 8 = 14.00 GB / 13.04 GiB.
+      </output>
+      <p class="chart-note">
+        Weight storage only. Excludes runtime memory, key-value cache,
+        activations, gradients, optimizer states and quantization metadata. This
+        does not establish whether a model fits on a GPU.
+      </p>
+    </>
+  )}
+  {kind === 'performance' && (
+    <>
+      <h3>When does batching add waiting?</h3>
+      <p class="chart-note">
+        SIMULATION. Four requests arrive at 0, 1, 2, 3 ms. One worker. Setup
+        takes 4 ms per batch; each request adds 1 ms. A batch of four starts at
+        3 ms, finishes at 11 ms, and returns all outputs together. No overlap,
+        variable lengths or GPU measurements.
+      </p>
+      <div class="scenario-buttons">
+        <button type="button" data-policy="individual" aria-pressed="true">
+          Individual
+        </button>
+        <button type="button" data-policy="batch" aria-pressed="false">
+          Batch of four
+        </button>
+      </div>
+      <div data-timeline>
+        {timeline.requests.map((r) => (
+          <div class="request-row">
+            <span>Request {r.id}</span>
+            <div
+              class="request-track"
+              role="img"
+              aria-label={`Arrives ${r.arrival} ms, waits ${r.wait} ms, processes ${r.finish - r.start} ms, completes ${r.finish} ms`}
+            >
+              <span
+                class="request-wait"
+                style={`left:${(r.arrival / 20) * 100}%;width:${(r.wait / 20) * 100}%`}
+              ></span>
+              <span
+                class="request-compute"
+                style={`left:${(r.start / 20) * 100}%;width:${((r.finish - r.start) / 20) * 100}%`}
+              ></span>
+            </div>
+          </div>
+        ))}
+      </div>
+      <div class="timeline-axis">
+        <span>0</span>
+        <span>5</span>
+        <span>10</span>
+        <span>15</span>
+        <span>20 ms</span>
+      </div>
+      <p class="chart-note">
+        Amber = waiting; violet = processing. The text alternative includes each
+        duration.
+      </p>
+      <output class="chart-output" data-timeline-output aria-live="polite">
+        Individual: 200 requests/s; mean latency 11.00 ms; first response 5 ms.
+        Calculated from this finite workload.
+      </output>
+    </>
+  )}
+  {kind === 'robotics' && (
+    <>
+      <h3>A map is an estimate of the environment.</h3>
+      <p>
+        Prepared 4 × 4 grid. A breadth-first search finds a shortest route using
+        four-direction moves. Coordinates are grid cells, not metres. A
+        simulated robot stops if its next cell is occupied.
+      </p>
+      <div class="scenario-buttons">
+        <button type="button" data-map="known" aria-pressed="true">
+          Known obstacles
+        </button>
+        <button type="button" data-map="moved" aria-pressed="false">
+          Move an obstacle
+        </button>
+        <button type="button" data-map="missing" aria-pressed="false">
+          Incomplete map
+        </button>
+      </div>
+      <svg
+        class="map-svg"
+        viewBox="0 0 300 300"
+        role="img"
+        aria-label="Planned and simulated route on a four by four grid"
+      >
+        <g>
+          {Array.from({ length: 16 }, (_, i) => (
+            <rect
+              x={40 + (i % 4) * 55}
+              y={205 - Math.floor(i / 4) * 55}
+              width="50"
+              height="50"
+              fill="none"
+              stroke="currentColor"
+              opacity=".25"
+            />
+          ))}
+        </g>
+        <g data-obstacles>
+          {[
+            [1, 1],
+            [2, 1],
+            [1, 3],
+          ].map(([x, y]) => (
+            <rect
+              x={40 + x * 55}
+              y={205 - y * 55}
+              width="50"
+              height="50"
+              fill="#d97706"
+            />
+          ))}
+        </g>
+        <polyline
+          data-route
+          points={route
+            .map(([x, y]) => `${65 + x * 55},${230 - y * 55}`)
+            .join(' ')}
+          stroke="#7c3aed"
+          stroke-width="6"
+          stroke-dasharray="8 4"
+          fill="none"
+        />
+        <polyline
+          data-actual
+          points={route
+            .map(([x, y]) => `${65 + x * 55},${230 - y * 55}`)
+            .join(' ')}
+          stroke="#0d9488"
+          stroke-width="3"
+          fill="none"
+        />
+        {[0, 1, 2, 3].map((i) => (
+          <>
+            <text x={65 + i * 55} y="275" fill="currentColor" font-size="12">
+              {i}
+            </text>
+            <text x="20" y={234 - i * 55} fill="currentColor" font-size="12">
+              {i}
+            </text>
+          </>
+        ))}
+        <text x="145" y="295" fill="currentColor" font-size="12">
+          x (cells)
+        </text>
+        <text x="5" y="15" fill="currentColor" font-size="12">
+          y (cells)
+        </text>
+      </svg>
+      <p class="scenario-output" aria-live="polite">
+        Known map: planned route and simulated trajectory reach (3,3) from
+        (0,0). Violet dashes = plan; teal line = simulated trajectory.
+      </p>
+      <p class="chart-note">
+        This discrete simulation omits inertia, sensing uncertainty and stopping
+        distance. It does not demonstrate real-world safety.
+      </p>
+    </>
+  )}
+  {kind === 'research' && (
+    <>
+      <h3>What did the training actually record?</h3>
+      <p class="chart-note">
+        Local tabular Q-learning, 4 × 4 grid, seed 17, 80 episodes, up to 40
+        steps each. Learning rate 0.5; discount 0.9; exploration probability
+        0.25. Reward: −1 per move, −4 extra for collision, +20 extra at the
+        goal. Terminal goal has no bootstrapped value.
+      </p>
+      <svg
+        class="map-svg"
+        viewBox="0 0 360 310"
+        role="img"
+        aria-label="Recorded episode returns from seeded Q-learning; values fluctuate"
+      >
+        <path d="M40 30V260H340" stroke="currentColor" fill="none" />
+        {[-50, -25, 0, 20].map((v) => (
+          <text x="4" y={returnY(v) + 4} font-size="11" fill="currentColor">
+            {v}
+          </text>
+        ))}
+        <polyline
+          points={points}
+          fill="none"
+          stroke="#7c3aed"
+          stroke-width="2"
+        />
+        <text x="45" y="290" fill="currentColor" font-size="12">
+          1
+        </text>
+        <text x="310" y="290" fill="currentColor" font-size="12">
+          80
+        </text>
+        <text x="160" y="305" fill="currentColor" font-size="12">
+          Episode
+        </text>
+        <text x="45" y="20" fill="currentColor" font-size="12">
+          Return (reward units)
+        </text>
+      </svg>
+      <details>
+        <summary>Read all recorded returns</summary>
+        <p>{training.returns.map((r, i) => `${i + 1}: ${r}`).join('; ')}</p>
+      </details>
+      <p>
+        The graph is generated by the same seeded learning model in the source.
+        Its exploration decisions can make later episodes worse; a smooth rising
+        curve would hide that behavior.
+      </p>
+      <div class="scenario-buttons">
+        <button type="button" data-reward="goal" aria-pressed="true">
+          Reward reaching the goal
+        </button>
+        <button type="button" data-reward="steps" aria-pressed="false">
+          Reward every step
+        </button>
+      </div>
+      <p class="scenario-output" aria-live="polite">
+        With −1 per move and +20 at the goal, a six-move route returns 14.
+        Finishing sooner avoids extra movement penalties.
+      </p>
+    </>
+  )}
+  {kind === 'cloud' && (
+    <>
+      <h3>Identity does not grant every permission.</h3>
+      <p>
+        Fictional application policy: the employee role may read procedures, but
+        only the publisher role may update them. The application gateway
+        authenticates the token; a separate authorization middleware evaluates
+        role and requested operation before service routing.
+      </p>
+      <div class="scenario-buttons">
+        <button type="button" data-access="read" aria-pressed="true">
+          Employee reads
+        </button>
+        <button type="button" data-access="write" aria-pressed="false">
+          Employee writes
+        </button>
+        <button type="button" data-access="anonymous" aria-pressed="false">
+          Missing identity
+        </button>
+      </div>
+      <p class="scenario-output" aria-live="polite">
+        Authenticated employee, GET procedures: policy allows the read. Route to
+        procedure service → model context → answer; observability records the
+        decision.
+      </p>
+      <p class="chart-note">
+        Application authorization is separate from Kubernetes API authorization.
+        Network boundaries and locks in the artwork do not prove security or
+        compliance.
+      </p>
+    </>
+  )}
+  {kind === 'hardware' && (
+    <>
+      <h3>Which ceiling limits this hypothetical workload?</h3>
+      <p class="chart-note">
+        Calculated Roofline ceiling: min(peak compute, bandwidth × operational
+        intensity). Authored device assumptions: 100 GFLOP/s compute and 10 GB/s
+        memory bandwidth. Operational intensity counts FLOPs per byte
+        transferred from the specified external memory. No measured performance.
+      </p>
+      <svg
+        class="map-svg"
+        viewBox="0 0 360 310"
+        role="img"
+        aria-label="Hypothetical Roofline: linear bandwidth ceiling until 10 FLOP per byte, then compute ceiling 100 GFLOP per second"
+      >
+        <path d="M50 30V260H340" stroke="currentColor" fill="none" />
+        <polyline
+          points={[0, 2, 4, 6, 8, 10, 16, 24, 32]
+            .map(
+              (i) =>
+                `${50 + (i / 32) * 280},${260 - (roofline(i) / 100) * 210}`,
+            )
+            .join(' ')}
+          fill="none"
+          stroke="#7c3aed"
+          stroke-width="4"
+        />
+        {[0, 8, 16, 24, 32].map((i) => (
+          <text
+            x={50 + (i / 32) * 280}
+            y="280"
+            text-anchor="middle"
+            font-size="12"
+            fill="currentColor"
+          >
+            {i}
+          </text>
+        ))}
+        <text x="8" y="55" fill="currentColor" font-size="12">
+          100
+        </text>
+        <text x="22" y="260" fill="currentColor" font-size="12">
+          0
+        </text>
+        <text x="55" y="18" fill="currentColor" font-size="12">
+          Ceiling (GFLOP/s)
+        </text>
+        <text x="50" y="305" fill="currentColor" font-size="12">
+          Operational intensity (FLOP/byte)
+        </text>
+      </svg>
+      <label>
+        Inspect operational intensity
+        <select data-intensity>
+          {[1, 4, 8, 10, 16, 32].map((i) => (
+            <option value={i} selected={i === 4}>
+              {i} FLOP/byte
+            </option>
+          ))}
+        </select>
+      </label>
+      <output class="chart-output" data-roof-output aria-live="polite">
+        4 FLOP/byte × 10 GB/s = 40 GFLOP/s ceiling; limited by data movement.
+      </output>
+      <p class="chart-note">
+        Real performance can be below either ceiling. Cache reuse, precision,
+        access pattern and synchronization change the model inputs. FLOP means
+        floating-point operation.
+      </p>
+    </>
+  )}
+  {kind === 'leadership' && (
+    <>
+      <h3>Compare ownership before choosing a platform.</h3>
+      <label>
+        Which constraint matters most?
+        <select data-constraint>
+          <option value="autonomy">Team autonomy</option>
+          <option value="residency">Data residency</option>
+          <option value="integration">Integration complexity</option>
+        </select>
+      </label>
+      <table class="architecture-matrix">
+        <caption>Hypothetical alternatives, not measured rankings</caption>
+        <thead>
+          <tr>
+            <th>Decision</th>
+            <th>Shared platform</th>
+            <th>Team-owned systems</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th>Ownership</th>
+            <td>
+              Platform team owns shared service; application teams own use
+              cases.
+            </td>
+            <td>Each team owns its service, releases and incident response.</td>
+          </tr>
+          <tr>
+            <th>Integration</th>
+            <td>Common contract; changes require cross-team coordination.</td>
+            <td>
+              Independent contracts; duplicated integration work is possible.
+            </td>
+          </tr>
+          <tr>
+            <th>Data boundary</th>
+            <td>Requires scoped access and permitted deployment regions.</td>
+            <td>
+              Local boundaries can simplify isolation but still need governance.
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <p class="scenario-output" aria-live="polite">
+        Team autonomy: examine the application teams’ release dependencies and
+        support ownership. Neither design removes the need for a shared data
+        contract.
+      </p>
+      <p class="chart-note">
+        Record context, decision, alternatives, consequences and a review
+        trigger. No readiness score or unsupported cost advantage.
+      </p>
+    </>
+  )}
+  {kind === 'deployment' && (
+    <>
+      <h3>Follow a customer-delivery example.</h3>
+      <p>
+        Fictional operations team cannot find current internal procedures. The
+        acceptance check is agreed before implementing a search prototype.
+      </p>
+      <label>
+        Inspect a delivery stage
+        <select data-delivery>
+          <option value="0">1 · Problem statement</option>
+          <option value="1">2 · Data assessment</option>
+          <option value="2">3 · Acceptance criteria</option>
+          <option value="3">4 · Prototype</option>
+          <option value="4">5 · Deployment plan</option>
+          <option value="5">6 · Validation report</option>
+        </select>
+      </label>
+      <div class="scenario-buttons">
+        <button type="button" data-finding="available" aria-pressed="true">
+          Approved data available
+        </button>
+        <button type="button" data-finding="missing" aria-pressed="false">
+          Procedures are incomplete
+        </button>
+      </div>
+      <p class="scenario-output" aria-live="polite">
+        Problem statement: procedure lookup is difficult. Confirm which users
+        need which documents and how a useful answer will be checked.
+      </p>
+      <p class="chart-note">
+        No real client outcome or time-saving claim. Feedback can change the
+        problem scope, not just tune a model.
+      </p>
+    </>
+  )}
 </section>
 <script>
   import { mountProgramLabs } from '../scripts/program-labs';

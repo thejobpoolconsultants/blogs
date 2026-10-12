@@ -1,0 +1,70 @@
+{
+  "mode": "Built-in Imagegen; one independently generated artwork per program",
+  "visualReference": "User-attached redesigned three-card preview",
+  "commonDirection": "Dense close-framed isometric editorial technical render, coherent perspective, brushed silver and matte navy materials, soft studio lighting, restrained violet/teal/amber accents, no baked text or vendor logos. Native HTML titles, labels and links overlay separate accessible assets.",
+  "assets": [
+    {
+      "kind": "agents",
+      "objective": "Documents, retrieved evidence, assistant and controlled tools",
+      "parts": "Document cabinet, evidence chamber, laptop, database, draft tool, locked action module",
+      "palette": "Lavender/violet; teal knowledge; blue tools",
+      "analogy": "Physical workstation is not a literal model architecture."
+    },
+    {
+      "kind": "infrastructure",
+      "objective": "Compute, network, storage and cooling working together",
+      "parts": "Detailed GPU racks, accelerator trays, cable-routing tray, switch, storage array, copper liquid loop, heat exchanger",
+      "palette": "Cyan/teal with copper heat removal",
+      "analogy": "Generic equipment; not a vendor deployment specification."
+    },
+    {
+      "kind": "performance",
+      "objective": "Request queue, scheduling, compute and outputs",
+      "parts": "Incoming blue tiles, waiting tray, batching carriage, violet processing chamber, output conveyor",
+      "palette": "Blue requests, amber waiting, violet compute",
+      "analogy": "Conveyor illustrates scheduling rather than GPU construction."
+    },
+    {
+      "kind": "robotics",
+      "objective": "A mobile robot senses an obstacle and follows a route",
+      "parts": "Wheeled robot, camera/lidar mast, crate obstacle, floor route, destination bay, separate digital map",
+      "palette": "Teal perception, violet planning, amber action",
+      "analogy": "Authored warehouse scene; no physical safety validation."
+    },
+    {
+      "kind": "research",
+      "objective": "Agent, state, actions, policy and reward feedback",
+      "parts": "Grid environment, agent, obstacles, goal, directional policy selector, observation screen, feedback dial",
+      "palette": "Teal environment, violet policy, amber feedback",
+      "analogy": "Learning relationships represented by an instrument; graph uses actual seeded simulation records."
+    },
+    {
+      "kind": "cloud",
+      "objective": "Application services and defined access boundaries",
+      "parts": "Gateway, identity check, operation policy, container cabinets, model service, data service, observability console",
+      "palette": "Blue platform, teal permitted traffic, amber boundary",
+      "analogy": "Access boundary is explanatory, not a compliance claim."
+    },
+    {
+      "kind": "hardware",
+      "objective": "Inside a conceptual AI accelerator",
+      "parts": "Compute array, local/external memory, copper interconnect, host interface, package substrate, heat spreader",
+      "palette": "Copper/amber structure, blue data, violet compute",
+      "analogy": "Conceptual cutaway, not a commercial chip floorplan."
+    },
+    {
+      "kind": "leadership",
+      "objective": "Enterprise systems, ownership and architectural dependencies",
+      "parts": "Two application districts, shared platform, data services, distinct ownership boundaries, decision console",
+      "palette": "Navy/indigo systems, teal shared services, bronze decisions",
+      "analogy": "Hypothetical alternatives have qualitative consequences, not invented numerical rankings."
+    },
+    {
+      "kind": "deployment",
+      "objective": "Customer workflow from discovery to validated implementation",
+      "parts": "Problem brief, procedure desk, prototype, integration bridge, deployed service, acceptance station, feedback connection",
+      "palette": "Teal customer context, violet implementation, amber review",
+      "analogy": "Fictional delivery scenario; no client outcome or ROI claim."
+    }
+  ]
+}

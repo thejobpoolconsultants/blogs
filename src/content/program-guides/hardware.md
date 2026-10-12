@@ -1,3 +1,8 @@
+---
+title: 'What Happens Inside an AI Accelerator.'
+status: draft
+---
+
 A matrix operation describes a result, but hardware must arrange computation and move the operands needed to produce it. Studying an accelerator means following both paths. A fast compute array can still wait for data.
 
 ## Follow one operation from software to hardware

@@ -115,4 +115,10 @@ With the production preview on port 4321, run `node scripts/redesign-qa.mjs` for
 
 All 12 supplied logo images have been semantically renamed and archived; optimized active assets are under `public/brand/thejobpoolconsultants/knowledge-hub/`. See the [source mapping](docs/design/09-blog-brand-assets-audit.md) and [asset usage and verification report](docs/design/10-brand-asset-usage.md). Paths are centralized in `src/data/brand-assets.ts`. Regenerate with `node scripts/prepare-brand-assets.mjs`, format the generated file, and verify against the running preview with `node scripts/brand-assets-qa.mjs`.
 
-The header and footer use dedicated transparent light/dark logos. See the [theme-aware logo report](docs/design/11-theme-aware-logo.md) for paths, generation provenance and verification. Run `node scripts/theme-logo-qa.mjs` for theme-switching checks.
+Article headers and the footer use dedicated transparent light/dark logos. The program-discovery homepage uses a native text wordmark matching the supplied preview. See the [theme-aware logo report](docs/design/11-theme-aware-logo.md) for the original asset provenance.
+
+## Program discovery and article previews
+
+The [program redesign delivery notes](docs/design/program-redesign-delivery.md) document nine distinct illustrations, twelve complete article drafts, deeper teaching labs, editable graphics, source checks and remaining curriculum questions. The cards use static optimized artwork; interaction belongs in program previews. The beginner route is separate and appears before the specialist grid.
+
+With the local production preview on port 4321, run `npm run test:programs` for responsive, accessibility, interaction and CPU-exercise checks, or `npm run test:anatomy` to include the installed skill's 18 pose/line checks. `npm run test:browser` covers the existing knowledge hub. Run `node scripts/redesign/export-graphics.mjs` after building to refresh standalone graph SVGs and recorded learning data. Preview drafts have noindex and are excluded from the sitemap, RSS and search; publishing is a separate editorial step.

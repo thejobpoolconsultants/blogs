@@ -1,3 +1,8 @@
+---
+title: 'How AI Assistants Work with Knowledge and Tools.'
+status: draft
+---
+
 An operations employee asks, “What approval do I need to request remote work?” A useful assistant should find the current policy, show the supporting section and explain what can happen next. A fluent answer alone is not enough: the employee needs evidence, and the application must control any action.
 
 ## Knowledge arrives through a separate preparation process

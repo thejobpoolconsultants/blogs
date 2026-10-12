@@ -1,15 +1,37 @@
 ---
 import { discovery } from '../data/program-discovery';
 import { url } from '../utils/urls';
-interface Props { kind: keyof typeof discovery; priority?: boolean; }
+interface Props {
+  kind: keyof typeof discovery;
+  priority?: boolean;
+}
 const { kind, priority = false } = Astro.props;
 const info = discovery[kind];
-const image = (width: number, format: string) => url(`illustrations/programs/${kind}-${width}.${format}`);
+const image = (width: number, format: string) =>
+  url(`illustrations/programs/${kind}-${width}.${format}`);
 ---
+
 <figure class={`program-artwork art-${kind}`}>
   <picture>
-    <source type="image/avif" srcset={`${image(480,'avif')} 480w, ${image(960,'avif')} 960w`} sizes="(min-width: 1101px) 30vw, (min-width: 601px) 45vw, 92vw" />
-    <img src={image(960,'webp')} srcset={`${image(480,'webp')} 480w, ${image(960,'webp')} 960w`} sizes="(min-width: 1101px) 30vw, (min-width: 601px) 45vw, 92vw" width="960" height="960" loading={priority ? 'eager' : 'lazy'} fetchpriority={priority ? 'high' : 'auto'} decoding="async" alt={info.alt} />
+    <source
+      type="image/avif"
+      srcset={`${image(480, 'avif')} 480w, ${image(960, 'avif')} 960w`}
+      sizes="(min-width: 1101px) 30vw, (min-width: 601px) 45vw, 92vw"
+    />
+    <img
+      src={image(960, 'webp')}
+      srcset={`${image(480, 'webp')} 480w, ${image(960, 'webp')} 960w`}
+      sizes="(min-width: 1101px) 30vw, (min-width: 601px) 45vw, 92vw"
+      width="960"
+      height="960"
+      loading={priority ? 'eager' : 'lazy'}
+      fetchpriority={priority ? 'high' : 'auto'}
+      decoding="async"
+      alt={info.alt}
+    />
   </picture>
-  <figcaption><span>{info.labels[0]}</span><span>{info.labels[1]}</span></figcaption>
+  <figcaption>
+    <span>{info.labels[0]}</span>
+    <span>{info.labels[1]}</span>
+  </figcaption>
 </figure>

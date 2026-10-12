@@ -107,4 +107,11 @@ const articles = defineCollection({
           });
     }),
 });
-export const collections = { articles };
+const programGuides = defineCollection({
+  loader: glob({ pattern: '*.md', base: './src/content/program-guides' }),
+  schema: z.object({
+    title: z.string().min(8).max(140),
+    status: z.literal('draft'),
+  }),
+});
+export const collections = { articles, programGuides };

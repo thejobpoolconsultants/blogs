@@ -8,3 +8,5 @@ scripts/anatomy/vendor
 public/illustrations/anatomy
 src/data/generated
 src/styles/anatomy-materials.css
+public/diagrams
+public/illustrations/program-guides

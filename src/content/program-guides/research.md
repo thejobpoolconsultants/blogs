@@ -1,3 +1,8 @@
+---
+title: 'How Reinforcement Learning Turns Feedback into Better Decisions.'
+status: draft
+---
+
 An agent in a small grid must choose between moving toward a destination and exploring an unfamiliar direction. It receives feedback after each action. Reinforcement learning studies how such interaction can shape a policy: a rule for choosing actions.
 
 ## Define the environment before discussing learning
@@ -14,7 +19,7 @@ The browser graph runs actual tabular Q-learning with seed 17. It updates an act
 
 Exploration chooses a random action with probability 0.25; otherwise the agent selects its highest current estimate. It can therefore make a worse choice even after finding a useful route. The recorded eighty episode returns fluctuate. The graph shows generated records, not an attractive invented learning curve.
 
-The [Sutton and Barto textbook](http://incompleteideas.net/book/the-book-2nd.html) develops action values, exploration and temporal-difference learning in detail. This tiny fully observed grid is much simpler than language-model post-training or a research-scale environment.
+The [Sutton and Barto textbook](https://mitpress.mit.edu/9780262039246/reinforcement-learning/) develops action values, exploration and temporal-difference learning in detail. This tiny fully observed grid is much simpler than language-model post-training or a research-scale environment.
 
 ## A poorly chosen reward can reward the wrong behavior
 

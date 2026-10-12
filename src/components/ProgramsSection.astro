@@ -4,31 +4,71 @@ import { discovery } from '../data/program-discovery';
 import { url, siteConfig } from '../utils/urls';
 import ProgramArtwork from './ProgramArtwork.astro';
 ---
-<section id="programs" class="section programs-section" aria-labelledby="programs-title" data-pagefind-ignore>
+
+<section
+  id="programs"
+  class="section programs-section"
+  aria-labelledby="programs-title"
+  data-pagefind-ignore
+>
   <div class="section-heading specialist-heading">
-    <div><p class="eyebrow">Go further in your field</p><h2 id="programs-title">Nine specialist programs.</h2></div>
-    <p class="muted">Explore a pathway. Build a project. Understand the system.</p>
+    <div>
+      <p class="eyebrow">Go further in your field</p>
+      <h2 id="programs-title">Nine specialist programs.</h2>
+    </div>
+    <p class="muted">
+      Explore a pathway. Build a project. Understand the system.
+    </p>
   </div>
   <div class="program-grid" aria-labelledby="programs-title">
     {specialistPrograms.map((program) => {
       const info = discovery[program.icon];
       const detail = url('programs/' + program.id + '/');
-      return <article class="program-card" id={program.id} aria-labelledby={program.id + '-title'}>
-        <div class="program-card-top"><span class="meta">Program {program.number}</span></div>
-        <h3 id={program.id + '-title'}>{program.title}</h3>
-        <ProgramArtwork kind={program.icon} />
-        <p class="program-sentence">{info.sentence}</p>
-        <p class="program-concepts">{info.concepts}</p>
-        <p class="program-project"><a href={detail + '#project'}>Project example</a> · {info.project}</p>
-        <p class="entry-note muted">Prerequisites: request current requirements.</p>
-        <div class="program-card-actions">
-          <a class="button primary" href={detail} aria-label={'Explore Program — ' + program.title}>Explore Program <span aria-hidden="true">→</span></a>
-          <a class="button" href={siteConfig.enquiryForm} target="_blank" rel="noopener noreferrer" aria-label={'Enquire — ' + program.title}>Enquire <span aria-hidden="true">↗</span></a>
-        </div>
-      </article>;
+      return (
+        <article
+          class="program-card"
+          id={program.id}
+          aria-labelledby={program.id + '-title'}
+        >
+          <div class="program-card-top">
+            <span class="meta">Program {program.number}</span>
+          </div>
+          <h3 id={program.id + '-title'}>{program.title}</h3>
+          <ProgramArtwork kind={program.icon} />
+          <p class="program-sentence">{info.sentence}</p>
+          <p class="program-concepts">{info.concepts}</p>
+          <p class="program-project">
+            <a href={detail + '#project'}>Project example</a> · {info.project}
+          </p>
+          <p class="entry-note muted">
+            Prerequisites: request current requirements.
+          </p>
+          <div class="program-card-actions">
+            <a
+              class="button primary"
+              href={detail}
+              aria-label={'Explore Program — ' + program.title}
+            >
+              Explore Program <span aria-hidden="true">→</span>
+            </a>
+            <a
+              class="button"
+              href={siteConfig.enquiryForm}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label={'Enquire — ' + program.title}
+            >
+              Enquire <span aria-hidden="true">↗</span>
+            </a>
+          </div>
+        </article>
+      );
     })}
   </div>
-  <p class="program-details-note muted">These project examples introduce each field. Confirm the current curriculum, prerequisites, fees and schedule with the team.</p>
+  <p class="program-details-note muted">
+    These project examples introduce each field. Confirm the current curriculum,
+    prerequisites, fees and schedule with the team.
+  </p>
 </section>
 <section
   class="guidance-section"

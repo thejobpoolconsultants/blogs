@@ -3,18 +3,62 @@ import { transitionProgram, programWebsite } from '../data/programs';
 import { starterGuides } from '../data/program-discovery';
 import { url, siteConfig } from '../utils/urls';
 ---
-<section class="transition-feature" aria-labelledby="transition-program-title" data-pagefind-ignore>
-  <article class="transition-program">
-    <div>
-      <p class="eyebrow">New to AI? Start here.</p>
+
+<section
+  class="transition-feature"
+  aria-labelledby="transition-program-title"
+  data-pagefind-ignore
+>
+  <details class="foundation-disclosure">
+    <summary>
+      <span class="eyebrow">New to AI? Start here.</span>
       <h2 id="transition-program-title">{transitionProgram.title}</h2>
-      <p class="transition-tagline">From Non-Tech to Tech — Your Guided Path into AI</p>
-      <p>Start with a familiar problem, build your foundations and test a small project. This beginner pathway is separate from the nine specialist programs below.</p>
-      <p class="program-audience"><strong>For:</strong> Beginners, career switchers and professionals exploring AI. The team can help identify a starting point from your background.</p>
-      <div class="program-actions"><a class="button primary" href={programWebsite(transitionProgram.id)} target="_blank" rel="noopener noreferrer">Explore Program ↗</a><a class="text-link" href={siteConfig.enquiryForm} target="_blank" rel="noopener noreferrer">Get career guidance ↗</a></div>
-    </div>
-    <nav class="foundation-list" aria-label="Foundation article drafts">
-      {starterGuides.map((guide, index) => <a href={url('guides/' + guide.id + '/')}><small>Start {index + 1} · Editorial preview</small>{guide.title}</a>)}
-    </nav>
-  </article>
+      <span class="foundation-prompt">
+        Foundations &amp; starter articles <span aria-hidden="true">+</span>
+      </span>
+    </summary>
+    <article class="transition-program">
+      <div>
+        <p class="transition-tagline">
+          From Non-Tech to Tech — Your Guided Path into AI
+        </p>
+        <p>
+          Start with a familiar problem, build your foundations and test a small
+          project. This beginner pathway is separate from the nine specialist
+          programs below.
+        </p>
+        <p class="program-audience">
+          <strong>For:</strong> Beginners, career switchers and professionals
+          exploring AI. The team can help identify a starting point from your
+          background.
+        </p>
+        <div class="program-actions">
+          <a
+            class="button primary"
+            href={programWebsite(transitionProgram.id)}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Explore Program ↗
+          </a>
+          <a
+            class="text-link"
+            href={siteConfig.enquiryForm}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Get career guidance ↗
+          </a>
+        </div>
+      </div>
+      <nav class="foundation-list" aria-label="Foundation article drafts">
+        {starterGuides.map((guide, index) => (
+          <a href={url('guides/' + guide.id + '/')}>
+            <small>Start {index + 1} · Editorial preview</small>
+            {guide.title}
+          </a>
+        ))}
+      </nav>
+    </article>
+  </details>
 </section>
