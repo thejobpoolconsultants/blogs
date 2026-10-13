@@ -5,7 +5,7 @@ export function initKnowledgeBook(root: HTMLElement) {
     ? JSON.parse(legacy.textContent || '{}')
     : {};
   function selectConcept(focus = false) {
-    let hash = '';
+    let hash: string;
     try {
       hash = decodeURIComponent(location.hash.slice(1));
     } catch {
