@@ -13,84 +13,48 @@
       "type": "external",
       "label": "Question",
       "sublabel": "Authenticate requester",
-      "pos": [
-        40,
-        120
-      ],
-      "size": [
-        180,
-        76
-      ]
+      "pos": [40, 120],
+      "size": [180, 76]
     },
     {
       "id": "step-2",
       "type": "security",
       "label": "Scope resolver",
       "sublabel": "Resolve policy and versions",
-      "pos": [
-        400,
-        120
-      ],
-      "size": [
-        180,
-        76
-      ]
+      "pos": [400, 120],
+      "size": [180, 76]
     },
     {
       "id": "step-3",
       "type": "database",
       "label": "Answer cache",
       "sublabel": "Look up complete scoped key",
-      "pos": [
-        760,
-        120
-      ],
-      "size": [
-        180,
-        76
-      ]
+      "pos": [760, 120],
+      "size": [180, 76]
     },
     {
       "id": "step-4",
       "type": "backend",
       "label": "Fresh answer",
       "sublabel": "On miss: retrieve and generate",
-      "pos": [
-        760,
-        340
-      ],
-      "size": [
-        180,
-        76
-      ]
+      "pos": [760, 340],
+      "size": [180, 76]
     },
     {
       "id": "step-5",
       "type": "security",
       "label": "Validity gate",
       "sublabel": "Recheck before use or store",
-      "pos": [
-        400,
-        340
-      ],
-      "size": [
-        180,
-        76
-      ]
+      "pos": [400, 340],
+      "size": [180, 76]
     },
     {
       "id": "step-6",
       "type": "frontend",
       "label": "Response",
       "sublabel": "Current authorized evidence",
-      "pos": [
-        40,
-        340
-      ],
-      "size": [
-        180,
-        76
-      ]
+      "pos": [40, 340],
+      "size": [180, 76]
     }
   ],
   "connections": [
@@ -138,18 +102,9 @@
       "fromSide": "left",
       "toSide": "top",
       "via": [
-        [
-          670,
-          158
-        ],
-        [
-          670,
-          260
-        ],
-        [
-          490,
-          260
-        ]
+        [670, 158],
+        [670, 260],
+        [490, 260]
       ]
     }
   ],

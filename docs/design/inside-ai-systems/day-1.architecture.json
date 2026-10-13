@@ -13,84 +13,48 @@
       "type": "external",
       "label": "Client",
       "sublabel": "Start a request timer",
-      "pos": [
-        40,
-        120
-      ],
-      "size": [
-        180,
-        76
-      ]
+      "pos": [40, 120],
+      "size": [180, 76]
     },
     {
       "id": "step-2",
       "type": "security",
       "label": "Gateway",
       "sublabel": "Validate; attach trace ID",
-      "pos": [
-        400,
-        120
-      ],
-      "size": [
-        180,
-        76
-      ]
+      "pos": [400, 120],
+      "size": [180, 76]
     },
     {
       "id": "step-3",
       "type": "messagebus",
       "label": "Bounded queue",
       "sublabel": "Measure admission and wait",
-      "pos": [
-        760,
-        120
-      ],
-      "size": [
-        180,
-        76
-      ]
+      "pos": [760, 120],
+      "size": [180, 76]
     },
     {
       "id": "step-4",
       "type": "backend",
       "label": "Model replica",
       "sublabel": "Measure prefill and decode",
-      "pos": [
-        760,
-        340
-      ],
-      "size": [
-        180,
-        76
-      ]
+      "pos": [760, 340],
+      "size": [180, 76]
     },
     {
       "id": "step-5",
       "type": "backend",
       "label": "Response stream",
       "sublabel": "Record first token and end",
-      "pos": [
-        400,
-        340
-      ],
-      "size": [
-        180,
-        76
-      ]
+      "pos": [400, 340],
+      "size": [180, 76]
     },
     {
       "id": "step-6",
       "type": "frontend",
       "label": "Client display",
       "sublabel": "Measure received output",
-      "pos": [
-        40,
-        340
-      ],
-      "size": [
-        180,
-        76
-      ]
+      "pos": [40, 340],
+      "size": [180, 76]
     }
   ],
   "connections": [
@@ -134,9 +98,7 @@
     {
       "dot": "cyan",
       "title": "The practical problem",
-      "items": [
-        "Responses slow down after a webinar brings a traffic spike."
-      ]
+      "items": ["Responses slow down after a webinar brings a traffic spike."]
     },
     {
       "dot": "emerald",

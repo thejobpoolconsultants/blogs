@@ -13,84 +13,48 @@
       "type": "external",
       "label": "Client",
       "sublabel": "Send request and deadline",
-      "pos": [
-        40,
-        120
-      ],
-      "size": [
-        180,
-        76
-      ]
+      "pos": [40, 120],
+      "size": [180, 76]
     },
     {
       "id": "step-2",
       "type": "security",
       "label": "Admission gate",
       "sublabel": "Reject when budget is full",
-      "pos": [
-        400,
-        120
-      ],
-      "size": [
-        180,
-        76
-      ]
+      "pos": [400, 120],
+      "size": [180, 76]
     },
     {
       "id": "step-3",
       "type": "messagebus",
       "label": "Waiting queue",
       "sublabel": "Bound size; expire old work",
-      "pos": [
-        760,
-        120
-      ],
-      "size": [
-        180,
-        76
-      ]
+      "pos": [760, 120],
+      "size": [180, 76]
     },
     {
       "id": "step-4",
       "type": "backend",
       "label": "Scheduler",
       "sublabel": "Select eligible live request",
-      "pos": [
-        760,
-        340
-      ],
-      "size": [
-        180,
-        76
-      ]
+      "pos": [760, 340],
+      "size": [180, 76]
     },
     {
       "id": "step-5",
       "type": "backend",
       "label": "Serving worker",
       "sublabel": "Generate within budget",
-      "pos": [
-        400,
-        340
-      ],
-      "size": [
-        180,
-        76
-      ]
+      "pos": [400, 340],
+      "size": [180, 76]
     },
     {
       "id": "step-6",
       "type": "frontend",
       "label": "Response",
       "sublabel": "Success or explicit timeout",
-      "pos": [
-        40,
-        340
-      ],
-      "size": [
-        180,
-        76
-      ]
+      "pos": [40, 340],
+      "size": [180, 76]
     }
   ],
   "connections": [

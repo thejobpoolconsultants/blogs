@@ -13,84 +13,48 @@
       "type": "external",
       "label": "Question",
       "sublabel": "Resolve authenticated user",
-      "pos": [
-        40,
-        120
-      ],
-      "size": [
-        180,
-        76
-      ]
+      "pos": [40, 120],
+      "size": [180, 76]
     },
     {
       "id": "step-2",
       "type": "security",
       "label": "Access scope",
       "sublabel": "Server-owned permissions",
-      "pos": [
-        400,
-        120
-      ],
-      "size": [
-        180,
-        76
-      ]
+      "pos": [400, 120],
+      "size": [180, 76]
     },
     {
       "id": "step-3",
       "type": "database",
       "label": "Retriever",
       "sublabel": "Search authorized versions",
-      "pos": [
-        760,
-        120
-      ],
-      "size": [
-        180,
-        76
-      ]
+      "pos": [760, 120],
+      "size": [180, 76]
     },
     {
       "id": "step-4",
       "type": "backend",
       "label": "Evidence gate",
       "sublabel": "Check relevance and currency",
-      "pos": [
-        760,
-        340
-      ],
-      "size": [
-        180,
-        76
-      ]
+      "pos": [760, 340],
+      "size": [180, 76]
     },
     {
       "id": "step-5",
       "type": "backend",
       "label": "Generator",
       "sublabel": "Use selected source IDs",
-      "pos": [
-        400,
-        340
-      ],
-      "size": [
-        180,
-        76
-      ]
+      "pos": [400, 340],
+      "size": [180, 76]
     },
     {
       "id": "step-6",
       "type": "frontend",
       "label": "Answer review",
       "sublabel": "Check support or abstain",
-      "pos": [
-        40,
-        340
-      ],
-      "size": [
-        180,
-        76
-      ]
+      "pos": [40, 340],
+      "size": [180, 76]
     }
   ],
   "connections": [
@@ -134,9 +98,7 @@
     {
       "dot": "cyan",
       "title": "The practical problem",
-      "items": [
-        "A confident answer cites an outdated or inaccessible policy."
-      ]
+      "items": ["A confident answer cites an outdated or inaccessible policy."]
     },
     {
       "dot": "emerald",

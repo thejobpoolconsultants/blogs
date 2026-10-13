@@ -13,84 +13,48 @@
       "type": "database",
       "label": "Change bundle",
       "sublabel": "Prompt, model, index, policy",
-      "pos": [
-        40,
-        120
-      ],
-      "size": [
-        180,
-        76
-      ]
+      "pos": [40, 120],
+      "size": [180, 76]
     },
     {
       "id": "step-2",
       "type": "backend",
       "label": "Offline checks",
       "sublabel": "Task quality and security",
-      "pos": [
-        400,
-        120
-      ],
-      "size": [
-        180,
-        76
-      ]
+      "pos": [400, 120],
+      "size": [180, 76]
     },
     {
       "id": "step-3",
       "type": "security",
       "label": "Release gate",
       "sublabel": "Promote only if checks pass",
-      "pos": [
-        760,
-        120
-      ],
-      "size": [
-        180,
-        76
-      ]
+      "pos": [760, 120],
+      "size": [180, 76]
     },
     {
       "id": "step-4",
       "type": "cloud",
       "label": "Limited cohort",
       "sublabel": "Small controlled exposure",
-      "pos": [
-        760,
-        340
-      ],
-      "size": [
-        180,
-        76
-      ]
+      "pos": [760, 340],
+      "size": [180, 76]
     },
     {
       "id": "step-5",
       "type": "backend",
       "label": "Live review",
       "sublabel": "Compare quality and latency",
-      "pos": [
-        400,
-        340
-      ],
-      "size": [
-        180,
-        76
-      ]
+      "pos": [400, 340],
+      "size": [180, 76]
     },
     {
       "id": "step-6",
       "type": "frontend",
       "label": "Decision",
       "sublabel": "Expand, pause, or roll back",
-      "pos": [
-        40,
-        340
-      ],
-      "size": [
-        180,
-        76
-      ]
+      "pos": [40, 340],
+      "size": [180, 76]
     }
   ],
   "connections": [

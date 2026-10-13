@@ -1,4 +1,5 @@
 import { mkdir, writeFile } from 'node:fs/promises';
+import { format, resolveConfig } from 'prettier';
 import { insideAiLessons } from '../src/data/inside-ai-systems.ts';
 
 // Candidate files are authored teaching designs, not a map of this site's code.
@@ -11,6 +12,9 @@ const positions = [
   [40, 340],
 ];
 const stamp = '20261012-090000';
+const diagramFormat = await resolveConfig(
+  'docs/design/inside-ai-systems/day-1.architecture.json',
+);
 for (const [index, lesson] of insideAiLessons.entries()) {
   const day = index + 1;
   const directory = `.archify/architecture-inside-ai-day-${day}-${stamp}`;
@@ -90,7 +94,10 @@ for (const [index, lesson] of insideAiLessons.entries()) {
   await mkdir('docs/design/inside-ai-systems', { recursive: true });
   await writeFile(
     `docs/design/inside-ai-systems/day-${day}.architecture.json`,
-    JSON.stringify(candidate, null, 2) + '\n',
+    await format(JSON.stringify(candidate), {
+      ...diagramFormat,
+      filepath: `docs/design/inside-ai-systems/day-${day}.architecture.json`,
+    }),
   );
   await writeFile(
     `${directory}/candidate.json`,

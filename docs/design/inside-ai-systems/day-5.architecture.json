@@ -13,84 +13,48 @@
       "type": "external",
       "label": "Load signals",
       "sublabel": "Queue age and serving demand",
-      "pos": [
-        240,
-        120
-      ],
-      "size": [
-        180,
-        76
-      ]
+      "pos": [240, 120],
+      "size": [180, 76]
     },
     {
       "id": "step-2",
       "type": "backend",
       "label": "Scale controller",
       "sublabel": "Request target replica count",
-      "pos": [
-        600,
-        120
-      ],
-      "size": [
-        180,
-        76
-      ]
+      "pos": [600, 120],
+      "size": [180, 76]
     },
     {
       "id": "step-3",
       "type": "cloud",
       "label": "Provisioning",
       "sublabel": "Place workload on capacity",
-      "pos": [
-        960,
-        120
-      ],
-      "size": [
-        180,
-        76
-      ]
+      "pos": [960, 120],
+      "size": [180, 76]
     },
     {
       "id": "step-4",
       "type": "backend",
       "label": "Model startup",
       "sublabel": "Load weights; initialize",
-      "pos": [
-        960,
-        340
-      ],
-      "size": [
-        180,
-        76
-      ]
+      "pos": [960, 340],
+      "size": [180, 76]
     },
     {
       "id": "step-5",
       "type": "security",
       "label": "Readiness gate",
       "sublabel": "Admit only usable workers",
-      "pos": [
-        600,
-        340
-      ],
-      "size": [
-        180,
-        76
-      ]
+      "pos": [600, 340],
+      "size": [180, 76]
     },
     {
       "id": "step-6",
       "type": "backend",
       "label": "Ready pool",
       "sublabel": "Router sends live requests",
-      "pos": [
-        240,
-        340
-      ],
-      "size": [
-        180,
-        76
-      ]
+      "pos": [240, 340],
+      "size": [180, 76]
     }
   ],
   "connections": [
@@ -138,14 +102,8 @@
       "fromSide": "left",
       "toSide": "left",
       "via": [
-        [
-          80,
-          378
-        ],
-        [
-          80,
-          158
-        ]
+        [80, 378],
+        [80, 158]
       ]
     }
   ],
