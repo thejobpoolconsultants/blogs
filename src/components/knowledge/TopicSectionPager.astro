@@ -28,9 +28,9 @@ const next = sequence.sections[index + 1];
       <span>{next.title}</span>
     </a>
   ) : (
-    <a href={url('learn/' + sequence.learningPath.id + '/')}>
-      <span class="meta">Continue learning ↗</span>
-      <span>{sequence.learningPath.title}</span>
+    <a href={url(sectionPath(sequence))}>
+      <span class="meta">Topic overview ↗</span>
+      <span>{sequence.title}</span>
     </a>
   )}
 </nav>

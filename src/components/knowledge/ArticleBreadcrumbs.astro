@@ -1,0 +1,20 @@
+---
+import type { TopicNavigation } from '../../utils/topic-navigation';
+import { url } from '../../utils/urls';
+interface Props {
+  navigation: TopicNavigation;
+  section: TopicNavigation['sections'][number];
+  title: string;
+}
+const { navigation, section, title } = Astro.props;
+---
+
+<nav class="breadcrumb reader-breadcrumb" aria-label="Breadcrumb">
+  <a href={url('topics/')}>Knowledge Library</a>
+  <span aria-hidden="true">›</span>
+  <a href={url(navigation.path)}>{navigation.title}</a>
+  <span aria-hidden="true">›</span>
+  <a href={url(section.path)}>{section.title}</a>
+  <span aria-hidden="true">›</span>
+  <span aria-current="page">{title}</span>
+</nav>

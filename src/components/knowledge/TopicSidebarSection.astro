@@ -1,0 +1,47 @@
+---
+import type { TopicNavigation } from '../../utils/topic-navigation';
+import TopicArticleLink from './TopicArticleLink.astro';
+import { url } from '../../utils/urls';
+interface Props {
+  section: TopicNavigation['sections'][number];
+  selected?: string;
+  current?: string;
+}
+const { section, selected, current } = Astro.props;
+---
+
+<li class="reader-chapter">
+  <a
+    class="book-section-link"
+    href={url(section.path)}
+    aria-current={!current && selected === section.id ? 'page' : undefined}
+    data-chapter-link={section.id}
+  >
+    <span class="number">{section.number}</span>
+    <span>{section.title}</span>
+  </a>
+  <details
+    class="reader-section-disclosure chapter-disclosure"
+    data-chapter={section.id}
+    open={selected === section.id}
+  >
+    <summary aria-label={'Articles in ' + section.title}>
+      <span aria-hidden="true">▸</span>
+    </summary>
+    <ul class="reader-articles">
+      {section.articles.length ? (
+        section.articles.map((article) => (
+          <li>
+            <TopicArticleLink article={article} current={current} />
+          </li>
+        ))
+      ) : (
+        <li>
+          <a class="topic-article-link" href={url(section.path)}>
+            Browse section
+          </a>
+        </li>
+      )}
+    </ul>
+  </details>
+</li>

@@ -1,0 +1,31 @@
+---
+interface Props {
+  headings: { depth: number; slug: string; text: string }[];
+}
+const { headings } = Astro.props;
+---
+
+<aside class="reader-toc" data-article-toc data-pagefind-ignore>
+  <details open>
+    <summary>On this page</summary>
+    <nav aria-label="On this page">
+      {headings
+        .filter((heading) => heading.depth === 2 || heading.depth === 3)
+        .map((heading) => (
+          <a
+            class:list={{ 'toc-subheading': heading.depth === 3 }}
+            href={'#' + heading.slug}
+          >
+            {heading.text}
+          </a>
+        ))}
+      <a href="#sources">Sources</a>
+    </nav>
+  </details>
+</aside>
+<script>
+  import { initArticleToc } from '../../scripts/topic-reader';
+  document
+    .querySelectorAll<HTMLElement>('[data-article-toc]')
+    .forEach(initArticleToc);
+</script>

@@ -140,7 +140,7 @@ const ownArticles = articles.filter(
               class="button book-start"
               href={url(sectionPath(sequence, sequence.sections[0].slug))}
             >
-              Start from the beginning →
+              Browse {sequence.sections[0].title} →
             </a>
             <a
               class="text-link"
@@ -151,7 +151,7 @@ const ownArticles = articles.filter(
           </div>
           <ConceptFlow
             steps={sequence.flow}
-            caption="A conceptual learning progression. These methods coexist; later ideas do not make earlier ones obsolete."
+            caption="A conceptual sequence. These methods coexist; later ideas do not make earlier ones obsolete."
           />
           <div class="book-reading">
             <h3>Published in this topic</h3>
@@ -175,8 +175,8 @@ const ownArticles = articles.filter(
             </ol>
           </nav>
           <p class="book-coverage-note">
-            The sequence describes planned coverage, not a completed course. New
-            articles can be added without changing the order.
+            These sections organize published articles and planned coverage. New
+            articles can be added without changing the section order.
           </p>
         </section>
         <script

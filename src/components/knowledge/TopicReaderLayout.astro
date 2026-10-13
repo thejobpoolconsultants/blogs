@@ -1,0 +1,23 @@
+---
+import type { TopicNavigation } from '../../utils/topic-navigation';
+import TopicReaderSidebar from './TopicReaderSidebar.astro';
+import '../../styles/topic-reader.css';
+interface Props {
+  navigation: TopicNavigation;
+  selected?: string;
+  current?: string;
+}
+const { navigation, selected, current } = Astro.props;
+---
+
+<div class="topic-reader-layout">
+  <TopicReaderSidebar
+    navigation={navigation}
+    selected={selected}
+    current={current}
+  />
+  <div class="topic-reader-content">
+    <slot />
+  </div>
+  <slot name="toc" />
+</div>

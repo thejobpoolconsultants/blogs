@@ -1,0 +1,18 @@
+---
+import type { TopicArticle } from '../../utils/topic-navigation';
+import { url } from '../../utils/urls';
+interface Props {
+  article: TopicArticle;
+  current?: string;
+}
+const { article, current } = Astro.props;
+---
+
+<a
+  class="topic-article-link"
+  href={url(article.path)}
+  aria-current={article.slug === current ? 'page' : undefined}
+  data-topic-article={article.slug}
+>
+  {article.title}
+</a>

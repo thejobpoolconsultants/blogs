@@ -133,18 +133,8 @@
   gap: 8px;
   align-items: center;
 }
-.knowledge-status::before {
-  content: '';
-  width: 5px;
-  height: 5px;
-  border: 1px solid currentColor;
-  border-radius: 50%;
-}
 .knowledge-status.is-published {
   color: var(--evaluation);
-}
-.knowledge-status.is-published::before {
-  background: currentColor;
 }
 .knowledge-sequence-directory {
   margin-top: 48px;

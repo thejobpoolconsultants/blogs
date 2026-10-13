@@ -6,7 +6,7 @@ Keep one practical problem and one primary learning outcome. Aim for a substanti
 
 ## Metadata
 
-Use the existing article schema: unique slug, canonical topic/subtopics/tags, `series: inside-ai-systems`, next unique `seriesOrder`, exact existing program ID, difficulty, real local publication date, author `thejobpoolconsultants`, audience, prerequisites, learning outcomes, scoped source records, and valid related-article slugs. Keep a new article in draft until complete and reviewed.
+Use the existing article schema: unique slug, canonical topic/subtopics/tags, `series: inside-ai-systems`, next unique `seriesOrder`, exact existing program ID, difficulty, real local publication date, author `thejobpoolconsultants`, audience, prerequisites, learning outcomes, scoped source records, and valid related-article slugs. Assign the topic's existing `section` ID and an `order` within that section for the shared article sidebar. These fields organize content; they do not record reader state. Keep a new article in draft until complete and reviewed.
 
 ## The practical problem
 

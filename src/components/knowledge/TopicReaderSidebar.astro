@@ -1,0 +1,74 @@
+---
+import type { TopicNavigation } from '../../utils/topic-navigation';
+import TopicSidebarSection from './TopicSidebarSection.astro';
+import { url } from '../../utils/urls';
+import '../../styles/topic-books.css';
+import '../../styles/topic-reader.css';
+interface Props {
+  navigation: TopicNavigation;
+  selected?: string;
+  current?: string;
+}
+const { navigation, selected, current } = Astro.props;
+---
+
+<aside class="topic-reader-sidebar" data-reader-sidebar data-pagefind-ignore>
+  <button
+    type="button"
+    class="button browse-topic"
+    data-browse-topic
+    aria-haspopup="dialog"
+    aria-controls="topic-navigation-drawer"
+    hidden
+  >
+    Browse topic
+  </button>
+  <div data-sidebar-desktop>
+    <div class="topic-sidebar-panel" data-sidebar-navigation>
+      <div class="reader-sidebar-heading">
+        <p class="reader-topic-title">{navigation.title}</p>
+        <p class="meta">{navigation.sections.length} sections</p>
+        <a class="text-link reader-all-topics" href={url('topics/')}>
+          ← All topics
+        </a>
+      </div>
+      <nav
+        class="topic-sidebar-navigation"
+        data-sidebar-scroll
+        aria-label={navigation.title + ' articles and sections'}
+      >
+        <a
+          class="book-section-link"
+          href={url(navigation.path)}
+          aria-current={!current && !selected ? 'page' : undefined}
+        >
+          Overview
+        </a>
+        <ol class="reader-sections">
+          {navigation.sections.map((section) => (
+            <TopicSidebarSection
+              section={section}
+              selected={selected}
+              current={current}
+            />
+          ))}
+        </ol>
+      </nav>
+    </div>
+  </div>
+  <dialog
+    id="topic-navigation-drawer"
+    class="topic-navigation-drawer"
+    aria-label={navigation.title + ' navigation'}
+  >
+    <button type="button" class="button close-topic" data-close-topic>
+      Close <span aria-hidden="true">×</span>
+    </button>
+  </dialog>
+</aside>
+<script>
+  import { initTopicSidebar } from '../../scripts/topic-reader';
+  document
+    .querySelectorAll<HTMLElement>('[data-reader-sidebar]')
+    .forEach(initTopicSidebar);
+</script>

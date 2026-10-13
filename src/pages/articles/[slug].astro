@@ -10,7 +10,11 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import ArticleCard from '../../components/ArticleCard.astro';
 import ProgramRecommendation from '../../components/ProgramRecommendation.astro';
 import { publishedArticles, readingTime, dateLabel } from '../../utils/content';
-import { topicSequences, sectionPath } from '../../data/topic-sequences';
+import { topicNavigation } from '../../utils/topic-navigation';
+import TopicReaderLayout from '../../components/knowledge/TopicReaderLayout.astro';
+import ArticleBreadcrumbs from '../../components/knowledge/ArticleBreadcrumbs.astro';
+import ArticleTableOfContents from '../../components/knowledge/ArticleTableOfContents.astro';
+import ArticlePreviousNext from '../../components/knowledge/ArticlePreviousNext.astro';
 import { topicById } from '../../data/topics';
 import { series } from '../../data/series';
 import { insideAiSeriesId } from '../../data/inside-ai-systems';
@@ -35,18 +39,10 @@ const supportingSources = data.sources.filter(
 );
 const all = await publishedArticles();
 const topic = topicById(data.topic);
-const knowledgeEntry = topicSequences
-  .flatMap((sequence) =>
-    sequence.sections.flatMap((section) =>
-      section.concepts
-        .filter(
-          (concept) =>
-            concept.status === 'published' && concept.articleSlug === data.slug,
-        )
-        .map((concept) => ({ sequence, section, concept })),
-    ),
-  )
-  .at(0);
+const navigation = topicNavigation(data.topic, all);
+const articleSection = navigation.sections.find((section) =>
+  section.articles.some((entry) => entry.slug === data.slug),
+)!;
 const collection = series.find((s) => s.id === data.series);
 const siblings = all
   .filter((a) => a.data.series === data.series && data.series)
@@ -79,22 +75,9 @@ const json = {
     {
       '@type': 'BreadcrumbList',
       itemListElement: [
-        { name: siteConfig.name, item: absoluteUrl() },
-        { name: 'Topics', item: absoluteUrl('topics/') },
-        { name: topic.title, item: absoluteUrl('topics/' + topic.id + '/') },
-        ...(knowledgeEntry
-          ? [
-              {
-                name: knowledgeEntry.section.title,
-                item: absoluteUrl(
-                  sectionPath(
-                    knowledgeEntry.sequence,
-                    knowledgeEntry.section.slug,
-                  ),
-                ),
-              },
-            ]
-          : []),
+        { name: 'Knowledge Library', item: absoluteUrl('topics/') },
+        { name: topic.title, item: absoluteUrl(navigation.path) },
+        { name: articleSection.title, item: absoluteUrl(articleSection.path) },
         { name: data.title, item: canonical },
       ].map((item, index) => ({
         '@type': 'ListItem',
@@ -111,115 +94,90 @@ const json = {
   description={data.seo?.description || data.description}
   image={'social/' + data.slug + '.png'}
   article
+  reader
 >
   <script
     slot="head"
     type="application/ld+json"
     set:html={JSON.stringify(json).replace(/</g, '\\u003c')}
   ></script>
-  <nav class="breadcrumb" aria-label="Breadcrumb">
-    <a href={url()}>Home</a>
-    <span>/</span>
-    <a href={url('topics/')}>Topics</a>
-    <span>/</span>
-    <a href={url('topics/' + topic.id + '/')}>{topic.title}</a>
-    <span>/</span>
-    {knowledgeEntry && (
-      <>
-        <a
-          href={url(
-            sectionPath(knowledgeEntry.sequence, knowledgeEntry.section.slug),
-          )}
-        >
-          {knowledgeEntry.section.title}
-        </a>
-        <span>/</span>
-      </>
-    )}
-    <span aria-current="page">
-      {knowledgeEntry?.concept.title || 'Article'}
-    </span>
-  </nav>
-  <article data-pagefind-body data-paper-based={String(paperBased)}>
-    <header class="article-header">
-      {collection?.id === insideAiSeriesId && (
+  <ArticleBreadcrumbs
+    navigation={navigation}
+    section={articleSection}
+    title={data.title}
+  />
+  <TopicReaderLayout
+    navigation={navigation}
+    selected={articleSection.id}
+    current={data.slug}
+  >
+    <ArticleTableOfContents slot="toc" headings={headings} />
+    <article data-pagefind-body data-paper-based={String(paperBased)}>
+      <header class="article-header">
+        {collection?.id === insideAiSeriesId && (
+          <p class="eyebrow">
+            <a href={url('series/' + insideAiSeriesId + '/')}>
+              Inside AI Systems · Day {data.seriesOrder} of {siblings.length} →
+            </a>
+          </p>
+        )}
         <p class="eyebrow">
-          <a href={url('series/' + insideAiSeriesId + '/')}>
-            Inside AI Systems · Day {data.seriesOrder} of {siblings.length} →
-          </a>
+          {topic.title} / {articleTypeLabel(data.type)}
         </p>
-      )}
-      <p class="eyebrow">
-        {topic.title} / {articleTypeLabel(data.type)}
-      </p>
-      <h1 data-pagefind-meta="title">{data.title}</h1>
-      <p class="lead" data-pagefind-meta="description">
-        {data.subtitle || data.description}
-      </p>
-      <div class="article-meta">
-        {data.authors.map((id) => (
-          <a href={url('authors/' + id + '/')}>
-            {authors.find((a) => a.id === id)!.name}
-          </a>
-        ))}
-        <span>
-          Published{' '}
-          <time
-            datetime={data.publishedAt.toISOString()}
-            data-pagefind-meta="date"
-          >
-            {dateLabel(data.publishedAt)}
-          </time>
-        </span>
-        {data.updatedAt && (
+        <h1 data-pagefind-meta="title">{data.title}</h1>
+        <p class="lead" data-pagefind-meta="description">
+          {data.subtitle || data.description}
+        </p>
+        <div class="article-meta">
+          {data.authors.map((id) => (
+            <a href={url('authors/' + id + '/')}>
+              {authors.find((a) => a.id === id)!.name}
+            </a>
+          ))}
           <span>
-            Updated{' '}
-            <time datetime={data.updatedAt.toISOString()}>
-              {dateLabel(data.updatedAt)}
+            Published{' '}
+            <time
+              datetime={data.publishedAt.toISOString()}
+              data-pagefind-meta="date"
+            >
+              {dateLabel(data.publishedAt)}
             </time>
           </span>
-        )}
-        <span>Approx. {readingTime(article.body)} min read</span>
-        <span>{data.difficulty}</span>
-        <span>
-          {data.type === 'news-analysis' ? 'News / Analysis' : 'Evergreen'}
+          {data.updatedAt && (
+            <span>
+              Updated{' '}
+              <time datetime={data.updatedAt.toISOString()}>
+                {dateLabel(data.updatedAt)}
+              </time>
+            </span>
+          )}
+          <span>Approx. {readingTime(article.body)} min read</span>
+          <span>{data.difficulty}</span>
+          <span>
+            {data.type === 'news-analysis' ? 'News / Analysis' : 'Evergreen'}
+          </span>
+        </div>
+        <div class="pills">
+          {data.tags.map((t) => (
+            <a class="pill" href={url('tags/' + tagSlug(t) + '/')}>
+              {t}
+            </a>
+          ))}
+        </div>
+        <span hidden data-pagefind-meta="typeLabel">
+          {articleTypeLabel(data.type)}
         </span>
-      </div>
-      <div class="pills">
-        {data.tags.map((t) => (
-          <a class="pill" href={url('tags/' + tagSlug(t) + '/')}>
-            {t}
-          </a>
-        ))}
-      </div>
-      <span hidden data-pagefind-meta="typeLabel">
-        {articleTypeLabel(data.type)}
-      </span>
-      <span hidden data-pagefind-meta="topic" data-pagefind-filter="Topic">
-        {topic.title}
-      </span>
-      <span hidden data-pagefind-meta="type" data-pagefind-filter="Type">
-        {data.type}
-      </span>
-      <span class="meta muted" style="display:block;margin-top:18px">
-        {data.subtopics.join(' · ')}
-        {collection ? ' · ' + collection.title : ''}
-      </span>
-    </header>
-    <div class="article-layout">
-      <aside class="toc" data-pagefind-ignore>
-        <details open>
-          <summary>Contents</summary>
-          <nav aria-label="Table of contents">
-            {headings
-              .filter((h) => h.depth === 2)
-              .map((h) => (
-                <a href={'#' + h.slug}>{h.text}</a>
-              ))}
-            <a href="#sources">Sources</a>
-          </nav>
-        </details>
-      </aside>
+        <span hidden data-pagefind-meta="topic" data-pagefind-filter="Topic">
+          {topic.title}
+        </span>
+        <span hidden data-pagefind-meta="type" data-pagefind-filter="Type">
+          {data.type}
+        </span>
+        <span class="meta muted" style="display:block;margin-top:18px">
+          {data.subtopics.join(' · ')}
+          {collection ? ' · ' + collection.title : ''}
+        </span>
+      </header>
       <div class="prose">
         <aside class="callout">
           <strong>What you’ll take away</strong>
@@ -349,39 +307,10 @@ const json = {
             </div>
           </section>
         )}
+        <ArticlePreviousNext navigation={navigation} slug={data.slug} />
       </div>
-      <aside
-        class="reading-rail"
-        data-pagefind-ignore
-        aria-label="Reading context"
-      >
-        <p class="meta">Your coordinates</p>
-        <strong>{topic.title}</strong>
-        <dl>
-          <dt>Level</dt>
-          <dd>{data.difficulty}</dd>
-          <dt>Before you begin</dt>
-          <dd>{data.prerequisites.join('; ')}</dd>
-        </dl>
-        {collection && (
-          <>
-            <p class="meta">In this series</p>
-            <a href={url('series/' + collection.id + '/')}>
-              {collection.title} ↗
-            </a>
-          </>
-        )}
-        <p class="meta">Related concepts</p>
-        <div class="rail-concepts">
-          {data.subtopics.map((label) => (
-            <a href={url('search/') + '?q=' + encodeURIComponent(label)}>
-              {label} →
-            </a>
-          ))}
-        </div>
-      </aside>
-    </div>
-  </article>
+    </article>
+  </TopicReaderLayout>
   <section class="section">
     <h2>Keep the question going.</h2>
     <div class="article-grid">
@@ -394,28 +323,6 @@ const json = {
     </a>
   </section>
   <script>
-    const contents =
-      document.querySelector<HTMLDetailsElement>('.toc details')!;
-    const smallScreen = matchMedia('(max-width: 800px)');
-    contents.open = !smallScreen.matches;
-    smallScreen.addEventListener('change', (event) => {
-      contents.open = !event.matches;
-    });
-    const sections = document.querySelectorAll('.prose h2[id], #sources');
-    const observer = new IntersectionObserver(
-      (entries) => {
-        for (const entry of entries)
-          if (entry.isIntersecting) {
-            document.querySelectorAll('.toc a').forEach((link) => {
-              if (link.getAttribute('href') === '#' + entry.target.id)
-                link.setAttribute('aria-current', 'location');
-              else link.removeAttribute('aria-current');
-            });
-          }
-      },
-      { rootMargin: '-8% 0px -68% 0px' },
-    );
-    sections.forEach((section) => observer.observe(section));
     document
       .querySelector<HTMLButtonElement>('#copy-link')
       ?.addEventListener('click', async (event) => {

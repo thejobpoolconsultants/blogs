@@ -46,10 +46,10 @@ async function audit(label) {
 async function checkPanel(id) {
   await expect(page.locator('[data-book-panel]:visible')).toHaveCount(1);
   await expect(page.locator('#' + id)).toBeVisible();
-  await expect(
-    page.locator('.book-section-link[aria-current="location"]'),
-  ).toHaveAttribute('data-section', id);
-  assert((await page.locator('[data-concepts]:not([hidden])').count()) <= 1);
+  const current = page.locator('.book-section-link[aria-current="page"]');
+  await expect(current).toHaveCount(1);
+  if (id !== 'overview')
+    await expect(current).toHaveAttribute('data-chapter-link', id);
 }
 try {
   for (const theme of ['light', 'dark']) {
@@ -75,8 +75,8 @@ try {
         ) {
           await checkPanel('overview');
           assert.equal(
-            await page.locator('.book-menu').evaluate((menu) => menu.open),
-            width > 1000,
+            await page.locator('dialog').evaluate((menu) => menu.open),
+            false,
           );
         }
         report.responsive.push({ route, width, theme });
@@ -103,14 +103,17 @@ try {
       }
       await page.goto(base + 'topics/nlp/#text-processing');
       await checkPanel('text-processing');
-      if (width < 1000) await page.locator('.book-menu summary').click();
-      await page.locator('[data-section="transformers"]').focus();
+      if (width < 1000)
+        await page
+          .getByRole('button', { name: 'Browse topic', exact: true })
+          .click();
+      await page.locator('[data-chapter-link="transformers"]').focus();
       await page.keyboard.press('Enter');
       await checkPanel('transformers');
       await expect(page.locator('#transformers-title')).toBeFocused();
       if (width < 1000)
         assert.equal(
-          await page.locator('.book-menu').evaluate((menu) => menu.open),
+          await page.locator('dialog').evaluate((menu) => menu.open),
           false,
         );
       await audit('active section ' + width + ' ' + theme);
@@ -157,7 +160,7 @@ try {
   for (const topic of topics.filter((topic) => !sequenceFor(topic.id))) {
     await page.goto(base + 'topics/' + topic.id + '/');
     for (const section of sectionsFor(topic.id)) {
-      await page.locator('[data-section="' + section.id + '"]').click();
+      await page.locator('[data-chapter-link="' + section.id + '"]').click();
       await checkPanel(section.id);
       assert(
         await page.evaluate(
@@ -169,22 +172,23 @@ try {
   report.interactions.push({ checks: 'all 197 legacy section links' });
   await page.goto(base + 'topics/nlp/#transformers');
   await page.setViewportSize({ width: 375, height: 900 });
-  await expect(page.locator('.book-menu')).not.toHaveAttribute('open', '');
-  await page.locator('.book-menu summary').click();
+  await expect(page.locator('dialog')).not.toHaveAttribute('open', '');
+  await page.getByRole('button', { name: 'Browse topic', exact: true }).click();
   await audit('expanded mobile menu');
   await page.screenshot({ path: output + '/mobile-menu.png' });
-  await page.locator('[data-section="transformers"]').focus();
+  await page.locator('[data-chapter-link="transformers"]').focus();
   await page.keyboard.press('Escape');
-  await expect(page.locator('.book-menu summary')).toBeFocused();
+  await expect(
+    page.getByRole('button', { name: 'Browse topic', exact: true }),
+  ).toBeFocused();
   assert.equal(
-    await page.locator('.book-menu').evaluate((menu) => menu.open),
+    await page.locator('dialog').evaluate((menu) => menu.open),
     false,
   );
   await page.setViewportSize({ width: 1440, height: 960 });
-  assert.equal(
-    await page.locator('.book-menu').evaluate((menu) => menu.open),
-    true,
-  );
+  await expect(
+    page.locator('[data-sidebar-desktop] [data-sidebar-navigation]'),
+  ).toBeVisible();
   const noJS = await browser.newContext({
     javaScriptEnabled: false,
     viewport: { width: 375, height: 900 },
@@ -211,7 +215,7 @@ try {
       report.responsive.length +
       ' responsive states, ' +
       report.accessibility.length +
-      ' accessibility audits, all 208 legacy sections, history/deep links, mobile keyboard navigation, and no-JavaScript fallback.',
+      ' accessibility audits, all 197 legacy sections, history/deep links, mobile keyboard navigation, and no-JavaScript fallback.',
   );
 } finally {
   await writeFile(output + '/report.json', JSON.stringify(report, null, 2));

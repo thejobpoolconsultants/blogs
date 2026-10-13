@@ -5,6 +5,7 @@ import { topics } from './data/topics';
 import { series } from './data/series';
 import { authors } from './data/authors';
 import { specialistPrograms } from './data/programs';
+import { sectionsFor } from './data/topic-books';
 import { tags } from './data/tags';
 import { articleTypes, isPaperBased } from './data/research-editorial';
 const articles = defineCollection({
@@ -23,6 +24,8 @@ const articles = defineCollection({
         .string()
         .refine((v) => topics.some((t) => t.id === v), 'Unknown topic'),
       subtopics: z.array(z.string()).min(1),
+      section: z.string().optional(),
+      order: z.number().int().positive().optional(),
       tags: z
         .array(
           z
@@ -83,6 +86,14 @@ const articles = defineCollection({
       learningOutcomes: z.array(z.string()).min(1),
     })
     .superRefine((data, ctx) => {
+      if (
+        data.section &&
+        !sectionsFor(data.topic).some((section) => section.id === data.section)
+      )
+        ctx.addIssue({
+          code: 'custom',
+          message: 'Unknown article section: ' + data.section,
+        });
       if (
         data.status === 'published' &&
         isPaperBased(data) &&
