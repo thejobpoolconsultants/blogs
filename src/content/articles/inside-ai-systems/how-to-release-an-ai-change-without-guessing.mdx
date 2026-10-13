@@ -1,0 +1,165 @@
+---
+slug: 'how-to-release-an-ai-change-without-guessing'
+title: 'How to Release an AI Change Without Guessing'
+description: 'Build a versioned release bundle, quality gates, limited rollout, and rollback plan for an AI assistant. Compare task quality alongside latency and failures.'
+topic: 'mlops-llmops'
+subtopics:
+  [
+    'CI/CD',
+    'evaluation pipelines',
+    'prompt management',
+    'production reliability',
+  ]
+tags: ['Evaluation', 'Architecture']
+program: 'staff-ai-architect-leadership-cto'
+difficulty: 'intermediate'
+prerequisites:
+  [
+    'Days 1–6 or familiarity with serving, retrieval, and tool calls',
+    'Basic understanding of a software release',
+  ]
+learningOutcomes:
+  [
+    'Define an inspectable AI release bundle and task-level gates',
+    'Separate offline evidence from live rollout observations',
+    'Write a rollback decision with compatibility limits',
+  ]
+sources:
+  [
+    {
+      'role': 'supporting',
+      'kind': 'docs',
+      'title': 'Kubernetes: Deployments',
+      'url': 'https://kubernetes.io/docs/concepts/workloads/controllers/deployment/',
+      'supports': 'Deployment revisions, rolling updates, and rollback behavior for workload templates; not automatic rollback of external data or prompts.',
+    },
+    {
+      'role': 'supporting',
+      'kind': 'docs',
+      'title': 'OpenTelemetry: Traces',
+      'url': 'https://opentelemetry.io/docs/concepts/signals/traces/',
+      'supports': 'Spans, trace context, and tracing work across a distributed request path.',
+    },
+    {
+      'role': 'supporting',
+      'kind': 'docs',
+      'title': 'Prometheus: Instrumentation',
+      'url': 'https://prometheus.io/docs/practices/instrumentation/',
+      'supports': 'Metric types and why unbounded labels create excessive time-series cardinality.',
+    },
+  ]
+series: 'inside-ai-systems'
+seriesOrder: 7
+type: 'deep-dive'
+publishedAt: '2026-10-12'
+status: 'published'
+authors: ['thejobpoolconsultants']
+audience: ['Students learning AI systems engineering']
+relatedArticles:
+  [
+    'when-caching-makes-an-ai-answer-fast-and-wrong',
+    'your-ai-model-is-fast-why-are-users-still-waiting',
+  ]
+---
+
+import InsideAiArchitecture from '../../../components/InsideAiArchitecture.astro';
+
+## The practical problem
+
+An engineer shortens the student assistant's prompt and reduces retrieved context. A few sample questions still look good, and responses feel faster. The change is released to everyone.
+
+Soon, transfer-policy questions omit the review condition. Some support requests invoke the wrong tool. The optimization improved a local measurement while degrading the user's task.
+
+A release decision needs more than a convincing demonstration. This lesson proposes a versioned evaluation and rollout architecture. The sample criteria are teaching values, not universal production thresholds.
+
+## Name the system that is changing
+
+An AI answer depends on more than model weights. Record the model and serving configuration, prompt, tool definitions, retrieval/index version, access policy, output schema, application code, and relevant data contracts.
+
+A **release bundle** is an inspectable record of the compatible versions required to reproduce behavior. Some artifacts may be immutable snapshots; others may be external dependencies whose exact state cannot be frozen. Document that limit.
+
+For this assistant, “prompt v4” is not enough if the retrieval index and tool schema changed at the same time. Without the bundle, a failed question cannot be compared reliably with the baseline.
+
+## Follow the release architecture
+
+<InsideAiArchitecture day={7} />
+
+Offline checks evaluate the candidate bundle before exposure. A release gate stops candidates that fail essential task or security requirements. A limited cohort receives a passing candidate while the baseline remains available.
+
+Live review then compares user task outcomes and operational behavior. Expand exposure only when the agreed conditions hold. Otherwise pause, investigate, or return routing to the baseline.
+
+A deployment system can support part of this mechanism. [Kubernetes documents rolling updates and revision rollback for Deployments](https://kubernetes.io/docs/concepts/workloads/controllers/deployment/). That does not automatically restore an external retrieval index, undo a database migration, or reverse tickets created by an agent. The release bundle must cover those boundaries explicitly.
+
+## Build an evaluation set from actual requirements
+
+Use the failures from this week as test families:
+
+| Family             | Requirement to inspect                                                            |
+| ------------------ | --------------------------------------------------------------------------------- |
+| Traffic spike      | Accepted work meets the latency objective; exclusions remain visible              |
+| Missing evidence   | Assistant communicates insufficient support                                       |
+| Stale policy       | Current question uses current evidence                                            |
+| Forbidden document | Unauthorized text never enters context or answer                                  |
+| Lost tool reply    | One intent does not create additional effects under the supported action contract |
+| Cold startup       | Unready capacity receives no user traffic                                         |
+| Cache invalidation | Changed scope or evidence makes stale entries ineligible                          |
+
+Include straightforward successful cases too. A system that refuses every question can pass some safety checks while failing its purpose.
+
+Write the expected evidence and behavior before looking at candidate outputs. Preserve the case inputs, reference versions, and scoring rules. A vague judgment such as “seems helpful” makes comparisons difficult to reproduce.
+
+## A worked release decision
+
+Suppose an illustrative offline set contains 20 cases: 10 routine answers, 4 missing or conflicting evidence cases, 4 permission-boundary cases, and 2 tool-recovery cases.
+
+The baseline passes 18; the candidate also passes 18. These totals look equal, but the failures differ. The baseline misses two routine details. The candidate exposes one forbidden passage and duplicates one action in the simulated tool-recovery contract.
+
+1. Compare cases by requirement, not only aggregate pass count.
+2. Apply hard gates to the two boundary failures.
+3. Block the candidate despite its equal overall total and possible latency improvement.
+4. Fix the causes, rerun the affected cases, and rerun the full set because changes can affect other behavior.
+5. Preserve the failure examples in future evaluation.
+
+The counts are invented. They illustrate that not every failure has the same consequence. A small passing set also cannot establish complete coverage of real traffic.
+
+## Observe a limited rollout honestly
+
+For a passing candidate, choose an identifiable rollout cohort and an exposure cap appropriate to the product. Compare similar task populations and workload lengths. A candidate receiving easy questions cannot be credited with an improvement over a baseline receiving difficult ones.
+
+Inspect task success, refusal quality, citation support, forbidden-access incidents, tool outcomes, completion latency, first-token latency, failures, and resource cost. Report sample size and the time window.
+
+[OpenTelemetry's trace model](https://opentelemetry.io/docs/concepts/signals/traces/) supports connecting work across request stages. Attach version information in a bounded, useful way so an investigator can find the bundle used for a failure. [Prometheus's instrumentation guidance](https://prometheus.io/docs/practices/instrumentation/) helps avoid turning unique request IDs into high-cardinality metric labels.
+
+If using generated judgments, calibrate them against human-reviewed cases and inspect disagreements. A model-based evaluator is another fallible component, not a source of ground truth.
+
+## Decide rollback conditions before the rollout
+
+For this fictional assistant, any demonstrated cross-scope evidence exposure stops expansion and triggers investigation. A significant regression in tool outcomes also stops expansion. Latency limits need a workload-specific objective and enough observations to interpret them.
+
+A rollback plan specifies the known-good bundle, routing changes, cache invalidation, index compatibility, treatment of in-flight requests, and ownership of unresolved actions. Practice the sequence in a test environment.
+
+Do not roll back a tool schema while old in-flight operations still depend on it unless compatibility is handled. Do not claim that reverting a prompt can undo an already created ticket. Reconciliation or an explicitly authorized corrective action may be required.
+
+## Common mistakes and limitations
+
+Changing prompt, model, index, and scheduling together obscures the cause of a regression. Separate changes when practical and record the dependencies when they must move together.
+
+Testing only successful examples misses the boundary conditions that make the system reliable. Testing only failure cases misses whether it still helps learners.
+
+A limited rollout reduces exposure; it does not make every action harmless. Consequential writes may need stricter pre-release testing or human review. A short observation window can miss uncommon tasks and periodic workload patterns.
+
+Passing a fixed evaluation set is evidence about those cases. Continue adding newly observed failures and periodically review whether the set still reflects user needs.
+
+## Exercise and completion checkpoint
+
+Write a one-page release record for a fictional change from prompt v3 to v4. Include the bundle, seven requirement families, expected behavior, candidate-versus-baseline results, a limited-rollout rule, and the rollback sequence.
+
+Use invented results only if they are clearly labeled as a hypothetical decision exercise. Explain one case where the candidate should be blocked despite lower latency, and one case where more evidence is needed before expansion.
+
+The completion checkpoint is that another student can determine which version ran, why the decision was made, and what would happen after a boundary failure. If “revert it” is the entire recovery plan, identify the missing data and action dependencies.
+
+## One lesson to carry forward
+
+Release the system against explicit task and operational evidence. Across this first week, the same habit keeps recurring: trace the flow, name the boundary, test a concrete failure, and make the decision reviewable.
+
+For your capstone, combine the seven architectures into one student-assistant design. Keep the original requirements visible and explain how admission, evidence, permissions, actions, readiness, caching, and release control work together.

@@ -1,0 +1,159 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "Day 1: Your AI Model Is Fast. Why Are Users Still Waiting?",
+    "output": ".archify/architecture-inside-ai-day-1-20261012-090000/day-1.html",
+    "quality_profile": "showcase",
+    "locale": "en"
+  },
+  "components": [
+    {
+      "id": "step-1",
+      "type": "external",
+      "label": "Client",
+      "sublabel": "Start a request timer",
+      "pos": [
+        40,
+        120
+      ],
+      "size": [
+        180,
+        76
+      ]
+    },
+    {
+      "id": "step-2",
+      "type": "security",
+      "label": "Gateway",
+      "sublabel": "Validate; attach trace ID",
+      "pos": [
+        400,
+        120
+      ],
+      "size": [
+        180,
+        76
+      ]
+    },
+    {
+      "id": "step-3",
+      "type": "messagebus",
+      "label": "Bounded queue",
+      "sublabel": "Measure admission and wait",
+      "pos": [
+        760,
+        120
+      ],
+      "size": [
+        180,
+        76
+      ]
+    },
+    {
+      "id": "step-4",
+      "type": "backend",
+      "label": "Model replica",
+      "sublabel": "Measure prefill and decode",
+      "pos": [
+        760,
+        340
+      ],
+      "size": [
+        180,
+        76
+      ]
+    },
+    {
+      "id": "step-5",
+      "type": "backend",
+      "label": "Response stream",
+      "sublabel": "Record first token and end",
+      "pos": [
+        400,
+        340
+      ],
+      "size": [
+        180,
+        76
+      ]
+    },
+    {
+      "id": "step-6",
+      "type": "frontend",
+      "label": "Client display",
+      "sublabel": "Measure received output",
+      "pos": [
+        40,
+        340
+      ],
+      "size": [
+        180,
+        76
+      ]
+    }
+  ],
+  "connections": [
+    {
+      "id": "flow-1",
+      "from": "step-1",
+      "to": "step-2",
+      "label": "request",
+      "variant": "emphasis"
+    },
+    {
+      "id": "flow-2",
+      "from": "step-2",
+      "to": "step-3",
+      "label": "accepted",
+      "variant": "emphasis"
+    },
+    {
+      "id": "flow-3",
+      "from": "step-3",
+      "to": "step-4",
+      "label": "capacity ready",
+      "variant": "security"
+    },
+    {
+      "id": "flow-4",
+      "from": "step-4",
+      "to": "step-5",
+      "label": "tokens",
+      "variant": "emphasis"
+    },
+    {
+      "id": "flow-5",
+      "from": "step-5",
+      "to": "step-6",
+      "label": "deliver",
+      "variant": "emphasis"
+    }
+  ],
+  "cards": [
+    {
+      "dot": "cyan",
+      "title": "The practical problem",
+      "items": [
+        "Responses slow down after a webinar brings a traffic spike."
+      ]
+    },
+    {
+      "dot": "emerald",
+      "title": "Conditions and side paths",
+      "items": [
+        "Spans from gateway, queue, replica, and stream feed a telemetry collector.",
+        "The collector informs diagnosis and a separate autoscaling controller; it is not on the response path.",
+        "Only ready replicas accept work. Expired or rejected requests stop before serving."
+      ]
+    },
+    {
+      "dot": "rose",
+      "title": "One lesson",
+      "items": [
+        "Measure waiting, processing, generation, and delivery separately.",
+        "Proposed teaching design; not a measured deployment or benchmark."
+      ]
+    }
+  ]
+}

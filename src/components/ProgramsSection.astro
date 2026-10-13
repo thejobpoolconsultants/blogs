@@ -14,10 +14,11 @@ import ProgramArtwork from './ProgramArtwork.astro';
   <div class="section-heading specialist-heading">
     <div>
       <p class="eyebrow">Go further in your field</p>
-      <h2 id="programs-title">Nine specialist programs.</h2>
+      <h2 id="programs-title">Explore Blogs by Program</h2>
     </div>
     <p class="muted">
-      Explore a pathway. Build a project. Understand the system.
+      Nine specialist programs. Explore a pathway. Build a project. Understand
+      the system.
     </p>
   </div>
   <div class="program-grid" aria-labelledby="programs-title">
@@ -36,6 +37,9 @@ import ProgramArtwork from './ProgramArtwork.astro';
           <h3 id={program.id + '-title'}>{program.title}</h3>
           <ProgramArtwork kind={program.icon} />
           <p class="program-sentence">{info.sentence}</p>
+          <a class="text-link" href={detail + '#articles'}>
+            Read Articles →
+          </a>
           <p class="program-concepts">{info.concepts}</p>
           <p class="program-project">
             <a href={detail + '#project'}>Project example</a> · {info.project}

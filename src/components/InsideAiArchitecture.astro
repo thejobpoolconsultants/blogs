@@ -1,0 +1,88 @@
+---
+import { insideAiLessons } from '../data/inside-ai-systems';
+import { url } from '../utils/urls';
+interface Props {
+  day: number;
+}
+const { day } = Astro.props;
+const lesson = insideAiLessons[day - 1];
+if (!lesson) throw new Error('Unknown Inside AI Systems lesson');
+---
+
+<figure class="lesson-architecture" aria-labelledby={`architecture-${day}`}>
+  <figcaption id={`architecture-${day}`}>
+    <strong>Proposed architecture · Day {day}</strong>
+    <span>
+      A simplified teaching design. Follow the numbered path and its conditions.
+    </span>
+  </figcaption>
+  <ol class="architecture-steps">
+    {lesson.nodes.map(([name, detail], index) => (
+      <li>
+        <span class="meta">{String(index + 1).padStart(2, '0')}</span>
+        <strong>{name}</strong>
+        <span>{detail}</span>
+        {index < lesson.edges.length && (
+          <small>Next: {lesson.edges[index]}</small>
+        )}
+      </li>
+    ))}
+  </ol>
+  <ul class="architecture-notes">
+    {lesson.notes.map((note) => (
+      <li>{note}</li>
+    ))}
+  </ul>
+  <a class="text-link" href={url(`diagrams/inside-ai-systems/day-${day}.html`)}>
+    Explore the full architecture and export a diagram →
+  </a>
+</figure>
+
+<style>
+  .lesson-architecture {
+    padding: clamp(16px, 3vw, 28px);
+    background: var(--surface);
+    border: 1px solid var(--border-default);
+    border-radius: var(--radius-panel);
+  }
+  figcaption {
+    display: grid;
+    gap: 8px;
+  }
+  figcaption span,
+  .architecture-steps li > span:not(.meta) {
+    color: var(--muted);
+  }
+  .architecture-steps {
+    padding: 0;
+    margin: 24px 0;
+    list-style: none;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 14px;
+  }
+  .architecture-steps li {
+    margin: 0;
+    display: grid;
+    align-content: start;
+    gap: 8px;
+    padding: 16px;
+    background: var(--wash);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+  }
+  .architecture-steps strong {
+    font-size: 1.1rem;
+  }
+  .architecture-steps small {
+    color: var(--accent);
+  }
+  .architecture-notes {
+    padding-left: 20px;
+  }
+  @media (max-width: 600px) {
+    .architecture-steps {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

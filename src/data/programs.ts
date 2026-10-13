@@ -88,12 +88,17 @@ export const specialistPrograms = [
 
 // Specific subject signals take precedence over a broad topic recommendation.
 export function recommendProgram(article: {
+  program?: string;
   topic: string;
   title: string;
   slug: string;
   tags: string[];
   subtopics: string[];
 }) {
+  const assigned = specialistPrograms.find(
+    (program) => program.id === article.program,
+  );
+  if (assigned) return assigned;
   const subject = [
     article.title,
     article.slug,

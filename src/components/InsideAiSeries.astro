@@ -1,0 +1,136 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import {
+  insideAiLessons,
+  insideAiSeriesTitle,
+  insideAiSeriesId,
+} from '../data/inside-ai-systems';
+import { readingTime } from '../utils/content';
+import { specialistPrograms } from '../data/programs';
+import { url } from '../utils/urls';
+interface Props {
+  articles: CollectionEntry<'articles'>[];
+  compact?: boolean;
+}
+const { articles, compact = false } = Astro.props;
+const lessons = insideAiLessons.map((lesson, index) => ({
+  ...lesson,
+  day: index + 1,
+  article: articles.find(
+    (article) =>
+      article.data.slug === lesson.slug &&
+      article.data.series === insideAiSeriesId,
+  ),
+  programInfo: specialistPrograms.find(
+    (program) => program.id === lesson.program,
+  )!,
+}));
+const available = lessons.filter((lesson) => lesson.article);
+---
+
+<section
+  class:list={['inside-series', { section: compact }]}
+  aria-labelledby={compact ? 'inside-series-heading' : 'inside-lessons-heading'}
+>
+  {compact ? (
+    <>
+      <p class="eyebrow">A daily educational blog series</p>
+      <h2 id="inside-series-heading">{insideAiSeriesTitle}</h2>
+      <p class="lead">
+        One practical problem. Trace the system. Test your understanding.
+      </p>
+      <p class="muted">
+        {available.length} complete lessons · Read one per day at your own pace
+        · No GPU required
+      </p>
+      <a class="button primary" href={url('series/' + insideAiSeriesId + '/')}>
+        Explore the daily series →
+      </a>
+    </>
+  ) : (
+    <>
+      <h2 id="inside-lessons-heading">Your first week inside an AI system.</h2>
+      <p class="muted">
+        Follow an AI student assistant from its first traffic spike to a
+        controlled release. All {available.length} complete lessons are
+        available now. “Day” is a suggested reading pace.
+      </p>
+      <ol class="daily-lessons">
+        {lessons.map((lesson) => (
+          <li>
+            <p class="eyebrow">
+              Day {String(lesson.day).padStart(2, '0')} · Program{' '}
+              {lesson.programInfo.number}
+            </p>
+            <h3>
+              {lesson.article ? (
+                <a href={url('articles/' + lesson.slug + '/')}>
+                  {lesson.title} →
+                </a>
+              ) : (
+                lesson.title
+              )}
+            </h3>
+            <p>
+              <strong>The problem:</strong> {lesson.problem}
+            </p>
+            <p>
+              <strong>The lesson:</strong> {lesson.lesson}
+            </p>
+            {lesson.article ? (
+              <span class="meta">
+                {readingTime(lesson.article.body)} min read ·{' '}
+                {lesson.article.data.difficulty} · Architecture + exercise
+              </span>
+            ) : (
+              <span class="meta">Coming soon</span>
+            )}
+          </li>
+        ))}
+      </ol>
+      <aside class="callout">
+        <strong>A useful daily routine</strong>
+        <p>
+          Read the problem, redraw the architecture without looking, and
+          complete the exercise. Keep one page of notes: the requirement, the
+          failure, the design decision, and evidence that would change your
+          mind.
+        </p>
+      </aside>
+    </>
+  )}
+</section>
+
+<style>
+  .inside-series {
+    max-width: 100%;
+  }
+  .inside-series.section {
+    padding: clamp(24px, 4vw, 48px);
+    border: 1px solid var(--border-default);
+    border-radius: var(--radius-panel);
+    background: var(--surface);
+  }
+  h2 {
+    max-width: 30ch;
+    text-wrap: balance;
+  }
+  .daily-lessons {
+    list-style: none;
+    margin: 28px 0;
+    padding: 0;
+    display: grid;
+    gap: 16px;
+  }
+  .daily-lessons li {
+    border-top: 1px solid var(--line);
+    padding: 24px 0;
+  }
+  .daily-lessons h3 {
+    font-size: clamp(1.25rem, 2.5vw, 1.65rem);
+    margin: 8px 0 16px;
+  }
+  .daily-lessons p {
+    max-width: 75ch;
+  }
+</style>

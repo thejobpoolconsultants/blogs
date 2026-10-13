@@ -1,0 +1,159 @@
+---
+slug: 'when-caching-makes-an-ai-answer-fast-and-wrong'
+title: 'When Caching Makes an AI Answer Fast and Wrong'
+description: 'Design scoped, versioned answer-cache keys and invalidation rules. Learn how stale evidence, permission changes, and concurrent fills affect correctness.'
+topic: 'ai-engineering'
+subtopics: ['caching', 'security', 'reliability', 'production architecture']
+tags: ['Architecture', 'RAG', 'Evaluation']
+program: 'cloud-kubernetes-ai-security'
+difficulty: 'intermediate'
+prerequisites:
+  [
+    'Day 3: authorization and evidence versions',
+    'Basic key/value lookup concepts',
+  ]
+learningOutcomes:
+  [
+    'Explain the correctness contract of an answer cache',
+    'Design a key that preserves scope and artifact versions',
+    'Test invalidation and permission changes rather than hit rate alone',
+  ]
+sources:
+  [
+    {
+      'role': 'supporting',
+      'kind': 'docs',
+      'title': 'Redis: Client-side caching reference',
+      'url': 'https://redis.io/docs/latest/develop/reference/client-side-caching/',
+      'supports': 'Client-side caching, invalidation messages, and why cache coherence requires more than a successful lookup.',
+    },
+    {
+      'role': 'supporting',
+      'kind': 'docs',
+      'title': 'vLLM: Automatic Prefix Caching',
+      'url': 'https://docs.vllm.ai/en/latest/features/automatic_prefix_caching/',
+      'supports': 'Reuse of shared-prefix computation and the distinction between prefill reuse and output generation.',
+    },
+    {
+      'role': 'supporting',
+      'kind': 'docs',
+      'title': 'PostgreSQL: Row security policies',
+      'url': 'https://www.postgresql.org/docs/current/ddl-rowsecurity.html',
+      'supports': 'Row-level access policies, default deny, and exceptions including privileged roles and table owners.',
+    },
+  ]
+series: 'inside-ai-systems'
+seriesOrder: 6
+type: 'deep-dive'
+publishedAt: '2026-10-12'
+status: 'published'
+authors: ['thejobpoolconsultants']
+audience: ['Students learning AI systems engineering']
+relatedArticles:
+  [
+    'why-more-ai-replicas-do-not-immediately-fix-a-spike',
+    'how-to-release-an-ai-change-without-guessing',
+  ]
+---
+
+import InsideAiArchitecture from '../../../components/InsideAiArchitecture.astro';
+
+## The practical problem
+
+The student assistant caches an answer to “Can I transfer cohorts?” The response becomes almost instant. Later, the public policy changes, but the cached answer continues to describe the old process.
+
+A second failure is more serious: a staff member asks a question, receives an answer based on private notes, and that answer is cached under only the question text. A learner asks the same question and receives the staff answer.
+
+Both failures come from an incomplete cache contract. A hit means an entry exists. It does not establish that the entry is still valid for this requester.
+
+## Define what is being reused
+
+An **answer cache** reuses a generated answer or another application result. A **retrieval cache** reuses selected passages. A **model prefix cache** reuses computation for shared input prefixes. These are different objects with different invalidation rules.
+
+[vLLM's prefix-caching documentation](https://docs.vllm.ai/en/latest/features/automatic_prefix_caching/) describes reuse of shared-prefix computation, which can reduce prefill work. It does not imply reuse of a completed answer or avoidance of output-token generation.
+
+This lesson focuses on an application answer cache for fictional policies. The proposed key and validation design are teaching choices, not a claim that Redis or a model server automatically enforces them.
+
+## Follow the cache path
+
+<InsideAiArchitecture day={6} />
+
+Identity and access scope are resolved before lookup. The key describes the context in which the answer is reusable. A valid hit skips generation but passes a validity gate before delivery. A miss produces a fresh answer under the same evidence and permission checks used on Day 3.
+
+Store evidence references with the cached answer so the system can check which versions it depends on. Recheck relevant access conditions before returning or storing the result, because permissions may change while generation is running.
+
+The hit path is an optimization within the answer contract. It must not become a shortcut around authorization.
+
+## Work through a key, step by step
+
+Consider this **conceptual record, not executable code**:
+
+| Key dimension             | Fictional value           | Why it matters                           |
+| ------------------------- | ------------------------- | ---------------------------------------- |
+| Tenant                    | student-library           | Separates organizational data            |
+| Effective access scope    | public-policy-scope-v4    | Prevents private-to-public reuse         |
+| User identity when needed | learner-42                | Separates personalized answers           |
+| Question representation   | cohort-transfer-question  | Identifies the requested information     |
+| Evidence/index version    | policy-index-v12          | Changes when searchable evidence changes |
+| Prompt version            | answer-prompt-v3          | Captures answer instructions             |
+| Model version             | serving-model-v2          | Captures generation behavior             |
+| Output contract           | learner-policy-summary-v1 | Distinguishes format and task            |
+
+1. The application resolves the learner's effective scope.
+2. It selects the active evidence/index version.
+3. It constructs a key from the applicable dimensions.
+4. It finds a candidate entry and validates its referenced sources.
+5. It checks that the answer is reusable for the current requester.
+6. It returns the answer or falls back to a fresh path.
+
+Not every field belongs in every cache. The purpose is to expose dependencies. If personalization affects the answer, sharing by a coarse public scope is insufficient. If the cache uses approximate semantic matching, it also needs evaluation for questions that sound similar but require different answers.
+
+## Invalidation is part of the design
+
+A **Time to Live (TTL)** limits how long an entry remains eligible. A short TTL can reduce staleness, but still permits stale answers within the interval. It does not immediately revoke access.
+
+Versioned keys prevent new requests from hitting an old version once the active version changes. Event-driven invalidation can remove entries when documents are deleted, policies change, or permissions are revoked. These mechanisms can be combined.
+
+[Redis's client-side caching reference describes invalidation as part of maintaining a local cache](https://redis.io/docs/latest/develop/reference/client-side-caching/). That mechanism is not a complete answer to application-level policy changes; the assistant still needs a definition of which entries depend on which evidence and scopes.
+
+For this design, a permission revocation should make an entry ineligible even if its TTL remains valid. Establish how quickly changes reach scope resolution and the cache. A stated propagation delay is a material limit of the system.
+
+## What if the policy changes during generation?
+
+Suppose a miss begins under policy-index-v12. While the model is generating, ingestion promotes v13 and removes the supporting passage.
+
+At write-back, store the result only under the version that actually produced it. Do not label it v13 merely because v13 is now active. Before delivery, decide whether the old-version answer remains acceptable for the task.
+
+For a general current-policy question, the proposed behavior is to re-evaluate or return a clear refresh-needed response. For an explicitly historical question, an old-version answer may be appropriate. The product contract determines which behavior is correct.
+
+This race is why recording versions only in the cache key is insufficient if version selection and response validation are separated by a long computation.
+
+## Prevent a cache miss from becoming another burst
+
+If many learners ask the same question after expiry, they may all launch an expensive fresh generation. This is often called a cache stampede.
+
+For the same complete scoped key, a proposed fill coordinator can let one request generate while others wait within their deadlines. Bound that waiting, handle failure of the fill owner, and ensure any lock or lease cannot remain indefinitely after a crash.
+
+Do not coalesce across tenants, personalized contexts, or incompatible permission scopes. Deduplicating cost must preserve the same information boundaries as deduplicating results.
+
+## Common mistakes and limitations
+
+Hit rate alone rewards reuse even when the result is wrong. Measure stale-hit failures, authorization violations, task correctness, latency, and generation avoided.
+
+Caching an error indefinitely can make a transient failure persistent. Decide which errors may be cached and for how long. Caching sensitive answers also creates a new storage and retention obligation.
+
+A semantic cache can merge “transfer before enrollment” with “transfer after enrollment.” Similar wording does not prove identical intent. Begin with exact scoped matching if its reuse is sufficient.
+
+No cache can ensure freshness beyond the freshness of its source system. Document the upstream update and deletion contract.
+
+## Exercise and completion checkpoint
+
+Construct six paper test cases: identical public question, staff-versus-learner question, new policy version, revoked access, changed prompt version, and similar wording with different intent.
+
+For each case, choose hit, miss, or reject/revalidate, and explain the key or validity check that determines the decision. Then simulate a document change while a fresh answer is being produced.
+
+The completion checkpoint is a key specification, an invalidation table, and no cross-scope reuse in the test cases. State which stale answers remain possible under the chosen propagation and TTL policy.
+
+## One lesson to carry forward
+
+Fast reuse is useful only when the reused result remains authorized and appropriate. Tomorrow, combine the week's lessons into a controlled release decision.

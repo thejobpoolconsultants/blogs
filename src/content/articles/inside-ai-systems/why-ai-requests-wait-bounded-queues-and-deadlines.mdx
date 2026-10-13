@@ -1,0 +1,135 @@
+---
+slug: 'why-ai-requests-wait-bounded-queues-and-deadlines'
+title: 'Why AI Requests Wait: Bounded Queues and Deadlines'
+description: 'Use a worked queue example to understand overload, admission limits, deadlines, retries, and the difference between offered and successful throughput.'
+topic: 'ai-engineering'
+subtopics: ['queues', 'serving', 'reliability', 'scalability']
+tags: ['Architecture', 'Fundamentals']
+program: 'ai-systems-performance'
+difficulty: 'intermediate'
+prerequisites:
+  ['Day 1: latency measurements', 'Basic rates and elapsed-time arithmetic']
+learningOutcomes:
+  [
+    'Calculate queue growth in a simplified capacity model',
+    'Explain admission limits and propagated deadlines',
+    'Design an overload exercise that accounts for rejected and expired requests',
+  ]
+sources:
+  [
+    {
+      'role': 'supporting',
+      'kind': 'docs',
+      'title': 'Amazon Builders’ Library: Timeouts, retries, and backoff with jitter',
+      'url': 'https://aws.amazon.com/builders-library/timeouts-retries-and-backoff-with-jitter/',
+      'supports': 'Timeouts, retry amplification, backoff, jitter, and the need to limit retry work.',
+    },
+    {
+      'role': 'supporting',
+      'kind': 'docs',
+      'title': 'Prometheus: Instrumentation',
+      'url': 'https://prometheus.io/docs/practices/instrumentation/',
+      'supports': 'Metric types and why unbounded labels create excessive time-series cardinality.',
+    },
+  ]
+series: 'inside-ai-systems'
+seriesOrder: 2
+type: 'deep-dive'
+publishedAt: '2026-10-12'
+status: 'published'
+authors: ['thejobpoolconsultants']
+audience: ['Students learning AI systems engineering']
+relatedArticles:
+  [
+    'your-ai-model-is-fast-why-are-users-still-waiting',
+    'when-a-document-assistant-answers-without-evidence',
+  ]
+---
+
+import InsideAiArchitecture from '../../../components/InsideAiArchitecture.astro';
+
+## The practical problem
+
+Yesterday, the student assistant's traces showed that requests were waiting before generation. A tempting response is to keep every request in a queue until a worker becomes available. That makes the service appear accommodating, but it can preserve a burst long after the burst ends.
+
+Imagine arriving at a help desk after the event is over and discovering that several minutes of old work remain ahead of you. Some of those learners have already closed the page. The system is spending scarce capacity on answers nobody will read.
+
+This lesson proposes an admission and scheduling design. The numbers are a deliberately simplified capacity model, not a language-model benchmark.
+
+## What a queue actually buys you
+
+A queue separates the time work arrives from the time a worker can start it. It can absorb a short mismatch between demand and capacity. It cannot create capacity.
+
+Distinguish **waiting requests** from **in-flight requests**. An in-flight request occupies some resource, such as a worker slot, connection, or model state. A queue may be empty while every worker is busy. Conversely, a large waiting queue may consume memory and user time even before model execution begins.
+
+For this example, assume identical requests and a fixed aggregate completion rate of 10 requests per second. Real model serving violates both assumptions: prompt lengths differ, outputs differ, and batching changes capacity.
+
+## The architecture and its stopping rules
+
+<InsideAiArchitecture day={2} />
+
+The admission gate checks identity, per-user limits, a system-wide waiting budget, and whether there is enough time left to make useful progress. A denied request returns an explicit overload response without occupying the waiting queue.
+
+A scheduler starts only live, eligible work. Before expensive processing begins, it checks the remaining time budget again. Cancellation removes waiting work and asks the worker to stop active work where the implementation supports it. Cancellation is cooperative; do not assume an already running accelerator kernel can always stop immediately.
+
+The architecture needs a separate policy for interactive requests and background jobs. A long report might belong in an asynchronous job system with a durable job ID. Moving it there changes the user contract and requires status, retention, and retry rules.
+
+## A queue-growth example, step by step
+
+Suppose a burst offers 30 requests per second for four seconds. The worker pool completes 10 per second. Begin with an empty queue, constant rates, and no startup delay.
+
+1. The gap between arrival and completion is 20 requests per second.
+2. Over four seconds, approximately 80 requests accumulate.
+3. The burst ends, and arrivals return to 5 requests per second.
+4. The worker pool now has only 5 requests per second of spare capacity.
+5. Draining the backlog takes approximately 80 ÷ 5 = **16 seconds**.
+
+This fluid approximation ignores individual arrival timing, initial in-flight work, scheduling overhead, and variable service times. It shows why a four-second burst can produce a much longer period of degraded service.
+
+At the burst peak, 80 waiting requests represent roughly eight seconds of work at the assumed full rate. If an interactive request has only three seconds left, admitting it to the back of that queue cannot satisfy its deadline under these assumptions.
+
+## Bound work deliberately
+
+A queue limit of 20 waiting requests would constrain the waiting backlog to roughly two seconds of full-rate work in this toy model. It would also reject some burst traffic. That is a conscious tradeoff: preserve useful responses for accepted work while clearly reporting insufficient capacity.
+
+The limit is not a universal recommendation. Derive it from measured service-time distributions, available memory, a waiting-time objective, and the work's value. A single large prompt may consume more resources than many small ones; request counts alone can therefore be an inadequate admission budget.
+
+Measure rejected work. A dashboard that shows excellent latency only for accepted requests can conceal a poor experience for most users. Report offered, admitted, completed, rejected, expired, and cancelled work over compatible windows.
+
+## Deadlines travel with the request
+
+A **timeout** limits one operation's wait. An **end-to-end deadline** expresses how much total time remains for the user task. Giving each downstream stage a fresh three-second timeout can turn a three-second promise into a much longer response.
+
+For a fictional three-second budget, the gateway spends 100 ms and the queue spends 900 ms. Roughly two seconds remain for retrieval, generation, and delivery. Pass the remaining budget downstream and reserve time for returning an understandable result.
+
+This is conceptual budgeting rather than a runnable implementation. Define behavior for clock differences, transport overhead, and cancellation propagation in the actual system.
+
+## Why retries can deepen overload
+
+A client might retry because its first request timed out, even though the worker is still generating the original response. Now there are two expensive requests for the same user intent.
+
+[The Amazon Builders' Library explains why retries require timeouts, limits, backoff, and jitter](https://aws.amazon.com/builders-library/timeouts-retries-and-backoff-with-jitter/). Apply a retry policy at a chosen layer and account for retries already performed by libraries.
+
+For this assistant, retry transient read failures only within the remaining budget. Respect an overload response and any retry guidance. Do not retry an action that changes external state unless its idempotency contract is understood. Day 4 examines that case.
+
+## Common mistakes and limitations
+
+An unbounded queue shifts failure from a clear admission response to unpredictable delay and resource exhaustion. A bounded queue without honest rejected-request metrics simply hides demand.
+
+First-in, first-out is easy to explain, but one slow request can delay short requests. Alternative scheduling policies need fairness analysis; prioritizing only short work may starve long work.
+
+Batching can increase aggregate serving efficiency while changing individual latency. Test the scheduling policy with representative request lengths rather than assuming the fixed-rate arithmetic above remains true.
+
+A fixed number of test clients that wait for responses reduces its own arrival rate as the system slows. Use an arrival-rate-controlled workload when investigating overload, and record achieved offered load when the test generator itself reaches a limit.
+
+## Exercise and completion checkpoint
+
+Repeat the toy calculation with a two-second burst at 24 requests per second, capacity of 12, and a return to 8 arrivals per second. The simplified backlog is **24 requests** and its drain time is **6 seconds**.
+
+Then draw two timelines: an unbounded waiting queue and a queue capped at 12 requests. Explain where rejections occur and which admitted requests can meet a two-second waiting objective. Exact rejection counts require specifying discrete arrivals and initial in-flight work; do not infer them from the fluid estimate alone.
+
+The completion checkpoint is a page containing the assumptions, both calculations, a queue policy, deadline propagation, and metrics that include excluded work. If you cannot explain what happens to an expired request, the design is unfinished.
+
+## One lesson to carry forward
+
+Accept work you can meaningfully serve, and preserve the user's remaining time budget. Tomorrow, the same assistant faces a different failure: a quick answer with no trustworthy evidence.

@@ -2,6 +2,12 @@
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import ArticleCard from '../../components/ArticleCard.astro';
 import { publishedArticles } from '../../utils/content';
+import {
+  specialistPrograms,
+  transitionProgram,
+  recommendProgram,
+} from '../../data/programs';
+import { topics } from '../../data/topics';
 const articles = await publishedArticles();
 ---
 
@@ -17,9 +23,142 @@ const articles = await publishedArticles();
       {articles.length} articles to explore.
     </p>
   </div>
-  <div class="article-grid">
+  <fieldset id="article-filters" class="article-filters" hidden>
+    <legend>Filter educational articles</legend>
+    <label>
+      Program
+      <select id="program-filter">
+        <option value="">All programs</option>
+        {[transitionProgram, ...specialistPrograms].map((program) => (
+          <option value={program.id}>{program.title}</option>
+        ))}
+      </select>
+    </label>
+    <label>
+      Topic
+      <select id="article-topic-filter">
+        <option value="">All topics</option>
+        {topics.map((topic) => (
+          <option value={topic.id}>{topic.title}</option>
+        ))}
+      </select>
+    </label>
+    <label>
+      Learning level
+      <select id="level-filter">
+        <option value="">All levels</option>
+        {['beginner', 'intermediate', 'advanced'].map((level) => (
+          <option value={level}>{level}</option>
+        ))}
+      </select>
+    </label>
+    <button class="button" type="button" id="clear-filters">
+      Clear filters
+    </button>
+  </fieldset>
+  <p id="article-filter-status" role="status" aria-live="polite">
+    {articles.length} articles
+  </p>
+  <div class="article-grid" id="filtered-articles">
     {articles.map((article, index) => (
-      <ArticleCard article={article} index={index} art />
+      <div
+        data-article-program={recommendProgram(article.data).id}
+        data-article-topic={article.data.topic}
+        data-article-level={article.data.difficulty}
+      >
+        <ArticleCard article={article} index={index} art />
+      </div>
     ))}
   </div>
+  <p id="article-filter-empty" hidden>
+    No articles match these filters. Try another program, topic, or learning
+    level.
+  </p>
+  <script>
+    const program =
+      document.querySelector<HTMLSelectElement>('#program-filter')!;
+    const topic = document.querySelector<HTMLSelectElement>(
+      '#article-topic-filter',
+    )!;
+    const level = document.querySelector<HTMLSelectElement>('#level-filter')!;
+    const cards = Array.from(
+      document.querySelectorAll<HTMLElement>('[data-article-program]'),
+    );
+    const status = document.querySelector<HTMLElement>(
+      '#article-filter-status',
+    )!;
+    const empty = document.querySelector<HTMLElement>('#article-filter-empty')!;
+    const update = () => {
+      let count = 0;
+      for (const card of cards) {
+        const match =
+          (!program.value || card.dataset.articleProgram === program.value) &&
+          (!topic.value || card.dataset.articleTopic === topic.value) &&
+          (!level.value || card.dataset.articleLevel === level.value);
+        card.hidden = !match;
+        if (match) count++;
+      }
+      status.textContent = `${count} ${count === 1 ? 'article' : 'articles'} match your filters.`;
+      empty.hidden = count > 0;
+      const address = new URL(location.href);
+      for (const [key, value] of [
+        ['program', program.value],
+        ['topic', topic.value],
+        ['level', level.value],
+      ]) {
+        if (value) address.searchParams.set(key, value);
+        else address.searchParams.delete(key);
+      }
+      history.replaceState(null, '', address);
+    };
+    const initial = new URLSearchParams(location.search);
+    program.value = initial.get('program') || '';
+    topic.value = initial.get('topic') || '';
+    level.value = initial.get('level') || '';
+    document.querySelector<HTMLElement>('#article-filters')!.hidden = false;
+    [program, topic, level].forEach((control) =>
+      control.addEventListener('change', update),
+    );
+    document
+      .querySelector<HTMLButtonElement>('#clear-filters')!
+      .addEventListener('click', () => {
+        program.value = topic.value = level.value = '';
+        update();
+      });
+    update();
+  </script>
+  <style>
+    .article-filters:not([hidden]) {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr)) auto;
+      gap: 16px;
+      align-items: end;
+      margin: 0 0 24px;
+      padding: 20px;
+      border: 1px solid var(--border-default);
+      border-radius: var(--radius);
+    }
+    label {
+      display: grid;
+      gap: 8px;
+      min-width: 0;
+    }
+    select {
+      width: 100%;
+      min-height: 44px;
+      padding: 10px;
+      color: var(--ink);
+      background: var(--surface);
+      border: 1px solid var(--border-default);
+      border-radius: var(--radius);
+    }
+    #filtered-articles > div:not([hidden]) {
+      min-width: 0;
+    }
+    @media (max-width: 800px) {
+      .article-filters:not([hidden]) {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
 </BaseLayout>

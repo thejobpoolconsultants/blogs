@@ -1,0 +1,137 @@
+---
+slug: 'why-more-ai-replicas-do-not-immediately-fix-a-spike'
+title: 'Why More AI Replicas Do Not Immediately Fix a Spike'
+description: 'Trace demand through an autoscaling controller, provisioning, model startup, and readiness. Calculate the backlog accumulated before new capacity can help.'
+topic: 'ai-engineering'
+subtopics: ['Kubernetes', 'cloud AI', 'scalability', 'serving']
+tags: ['Architecture', 'Fundamentals']
+program: 'cloud-kubernetes-ai-security'
+difficulty: 'intermediate'
+prerequisites:
+  [
+    'Day 2: queue growth and admission',
+    'Basic understanding of a server replica',
+  ]
+learningOutcomes:
+  [
+    'Distinguish desired, starting, and ready capacity',
+    'Calculate a simplified startup backlog',
+    'Explain startup, readiness, and liveness responsibilities',
+  ]
+sources:
+  [
+    {
+      'role': 'supporting',
+      'kind': 'docs',
+      'title': 'Kubernetes: Horizontal Pod Autoscaling',
+      'url': 'https://kubernetes.io/docs/concepts/workloads/autoscaling/horizontal-pod-autoscale/',
+      'supports': 'Autoscaling as an intermittent control loop, metric inputs, replica targets, and readiness-related behavior.',
+    },
+    {
+      'role': 'supporting',
+      'kind': 'docs',
+      'title': 'Kubernetes: Liveness, readiness, and startup probes',
+      'url': 'https://kubernetes.io/docs/concepts/workloads/pods/probes/',
+      'supports': 'Distinct startup, readiness, and liveness responsibilities and how startup probes gate other probes.',
+    },
+  ]
+series: 'inside-ai-systems'
+seriesOrder: 5
+type: 'deep-dive'
+publishedAt: '2026-10-12'
+status: 'published'
+authors: ['thejobpoolconsultants']
+audience: ['Students learning AI systems engineering']
+relatedArticles:
+  [
+    'why-an-ai-agent-creates-the-same-ticket-twice',
+    'when-caching-makes-an-ai-answer-fast-and-wrong',
+  ]
+---
+
+import InsideAiArchitecture from '../../../components/InsideAiArchitecture.astro';
+
+## The practical problem
+
+The student assistant receives a burst. Its autoscaler changes the desired replica count from two to six. The dashboard appears reassuring, yet first-token latency keeps rising.
+
+The missing distinction is **desired versus ready**. A requested replica may be waiting for placement, downloading model artifacts, loading weights, initializing runtime state, or checking dependencies. Until those steps finish, it cannot help the waiting learners.
+
+This lesson shows a proposed capacity-control path. Kubernetes is a documented example of the mechanisms, but the diagram is not a complete cluster configuration.
+
+## Capacity is a lifecycle
+
+For teaching purposes, track four states: requested, provisioned, starting, and ready. In a real platform these states may be represented differently, and transitions may fail.
+
+A replica means an instance of the serving workload. It does not necessarily mean one independent accelerator: model parallelism and deployment configuration can change the hardware mapping. Likewise, replica counts alone do not establish available throughput.
+
+Measure the transition times and failure reasons. A gap between desired and ready replicas tells you that capacity is not catching up; it does not tell you whether the cause is scheduling, startup, quota, artifact access, or another dependency.
+
+## Follow the control path
+
+<InsideAiArchitecture day={5} />
+
+Load measurements inform the controller. The controller chooses a target under configured bounds. The platform provisions or places the workload. Startup prepares the model. A readiness gate determines whether the router may send live work to that instance.
+
+The serving system closes the feedback loop by measuring the work accepted and completed by the ready pool. A bounded queue and overload response remain necessary while capacity is pending.
+
+[Kubernetes describes the Horizontal Pod Autoscaler as an intermittent control loop](https://kubernetes.io/docs/concepts/workloads/autoscaling/horizontal-pod-autoscale/). It can use resource or other configured metrics. Selecting queue age, concurrency, or another serving signal also requires collecting that metric and making it available through the chosen infrastructure; a model deployment does not supply that integration automatically.
+
+## Work through the startup delay
+
+Use an intentionally simplified example. The ready pool can complete 8 requests per second. A burst offers 20. The controller notices immediately, but useful additional capacity takes 15 seconds to arrive.
+
+1. The shortfall is 12 requests per second.
+2. During startup, a fluid approximation adds 12 × 15 = **180 requests** of backlog.
+3. If newly ready capacity raises the aggregate rate to 24 and arrivals remain at 20, spare capacity is only 4.
+4. Draining that backlog then takes about **45 seconds**.
+
+These are invented rates with identical work, no cancellations, an unlimited queue, and fixed capacity. Real systems should cap accepted work; the calculation explains the pressure rather than recommending that backlog.
+
+Adding just enough capacity to match arrivals prevents further growth but does not drain existing backlog. You need spare capacity, lower demand, expiry, rejection, or some combination.
+
+## Choose a signal that reflects the problem
+
+Average processor utilization can be useful, but it may not reflect model-serving pressure. For this teaching workload, compare queue age, admitted concurrency, input/output lengths, ready capacity, and successful throughput.
+
+A queue-depth signal alone can also mislead. A queue of ten long-context requests may represent more work than a queue of fifty small ones. Calibrate the signal with representative request classes and observe whether scaling improves the user's latency objective.
+
+Maintain a maximum replica count to bound resource use, and define behavior at that ceiling. A controller cannot create unlimited hardware merely because demand remains high. Check quotas and placement constraints before relying on a target.
+
+## Startup, readiness, and liveness are different questions
+
+**Startup** asks whether initialization has completed. **Readiness** asks whether the instance should receive traffic. **Liveness** asks whether a container is unhealthy in a way that warrants restart.
+
+[Kubernetes documents these probe responsibilities and how a startup probe delays liveness and readiness checks until it succeeds](https://kubernetes.io/docs/concepts/workloads/pods/probes/). Probe behavior should match the service's actual lifecycle.
+
+For this assistant, a port being open is too weak a readiness condition if model loading continues afterward. Define a check that establishes the serving dependencies required for a request. Keep the check inexpensive and avoid using aggressive restarts as an overload policy.
+
+A failing shared dependency may make many replicas unready at once. Decide whether partial service is possible and which dependency failures justify removing an instance from routing.
+
+## Warm capacity and scale-down choices
+
+If a webinar is scheduled, prepare capacity before it ends. A warm minimum reduces dependence on startup during predictable demand, but consumes resources while idle.
+
+For unpredictable demand, compare earlier scaling with a conservative ready minimum. Avoid cycling capacity up and down on every small fluctuation. A stabilization policy trades slower scale-down for less churn; its values depend on the workload and the infrastructure.
+
+Scale-down must also account for active requests. Stop assigning new work to a draining worker, let appropriate work finish within a budget, and cancel or transfer work according to a documented contract. Removing a replica count is not the whole shutdown process.
+
+## Common mistakes and limitations
+
+Counting starting replicas as serving capacity understates overload. Scaling only after a large queue forms can produce help too late for interactive deadlines.
+
+Making liveness checks too aggressive during initialization can repeatedly restart a model that would otherwise finish loading. Readiness without meaningful checks can route traffic prematurely.
+
+A capacity model calibrated on short prompts may fail on longer contexts or outputs. Test the workload mix. This article does not provide production probe thresholds, autoscaler settings, or a guarantee that every hardware platform can provision additional resources within a chosen time.
+
+## Exercise and completion checkpoint
+
+Draw a timeline with four events: demand increase, controller decision, resources assigned, and readiness passed. Annotate the queue age at each point.
+
+Repeat the fluid example with capacity 10, arrivals 16, and startup 8 seconds. The backlog is **48 requests**. If capacity then becomes 20 while arrivals stay 16, the simplified drain time is **12 seconds**.
+
+The completion checkpoint is the arithmetic, a readiness contract, one scale-down rule, and a clear response when maximum capacity is reached. Identify the assumptions that need measurement before replacing the toy rates with a production plan.
+
+## One lesson to carry forward
+
+Count usable capacity and account for its arrival delay. Tomorrow, we examine a different speed optimization: a cache that can preserve an answer after its evidence changes.

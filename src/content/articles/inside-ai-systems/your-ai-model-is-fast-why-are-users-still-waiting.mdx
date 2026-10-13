@@ -1,0 +1,159 @@
+---
+slug: 'your-ai-model-is-fast-why-are-users-still-waiting'
+title: 'Your AI Model Is Fast. Why Are Users Still Waiting?'
+subtitle: 'Inference observability, response latency, and throughput under fluctuating demand'
+description: 'Trace a slow AI response from client to queue, prefill, decode, and delivery. Learn to investigate a traffic spike before choosing an intervention.'
+topic: 'ai-engineering'
+subtopics: ['inference', 'serving', 'latency', 'production architecture']
+tags: ['Architecture', 'Evaluation']
+program: 'ai-systems-performance'
+difficulty: 'beginner'
+prerequisites:
+  ['Experience using an AI assistant', 'Basic understanding of a web request']
+learningOutcomes:
+  [
+    'Distinguish queue wait, first-token latency, generation cadence, and completion latency',
+    'Use request-level traces to test a bottleneck hypothesis',
+    'Design a repeatable traffic-spike investigation',
+  ]
+sources:
+  [
+    {
+      'role': 'supporting',
+      'kind': 'docs',
+      'title': 'Baseten: Model metrics',
+      'url': 'https://docs.baseten.co/observability/metrics',
+      'supports': 'Platform response-time boundaries, time to first byte, replica state, and request-volume measurements.',
+    },
+    {
+      'role': 'supporting',
+      'kind': 'docs',
+      'title': 'OpenTelemetry: Traces',
+      'url': 'https://opentelemetry.io/docs/concepts/signals/traces/',
+      'supports': 'Spans, trace context, and tracing work across a distributed request path.',
+    },
+    {
+      'role': 'supporting',
+      'kind': 'docs',
+      'title': 'Prometheus: Instrumentation',
+      'url': 'https://prometheus.io/docs/practices/instrumentation/',
+      'supports': 'Metric types and why unbounded labels create excessive time-series cardinality.',
+    },
+  ]
+series: 'inside-ai-systems'
+seriesOrder: 1
+type: 'deep-dive'
+publishedAt: '2026-10-12'
+status: 'published'
+authors: ['thejobpoolconsultants']
+audience: ['Students learning AI systems engineering']
+relatedArticles: ['why-ai-requests-wait-bounded-queues-and-deadlines']
+---
+
+import InsideAiArchitecture from '../../../components/InsideAiArchitecture.astro';
+
+## The practical problem
+
+An AI student assistant responds smoothly during testing. Then a webinar ends, hundreds of learners open it, and responses slow down. The model has not changed. The traffic has.
+
+Before choosing faster hardware, answer a more useful question: **where is the request spending its time?** A request may spend several seconds waiting and only a fraction of that time executing its first model step. Improving computation will help little if the main delay occurs before computation begins.
+
+This lesson uses a fictional student assistant. The architecture is a proposed teaching design, and every numerical example below is invented for explanation. No provider benchmark or customer deployment is claimed.
+
+## Understand the measurements first
+
+**Inference** is running a trained model to produce output. The application also authenticates users, prepares context, routes work, and delivers results.
+
+| Measurement                | Question it answers                                                         |
+| -------------------------- | --------------------------------------------------------------------------- |
+| Client end-to-end latency  | How long until the client receives the complete response?                   |
+| Time to First Token (TTFT) | How long until the first generated token reaches this measurement boundary? |
+| Inter-Token Latency (ITL)  | What interval separates successive generated tokens?                        |
+| Request throughput         | How many requests complete per second?                                      |
+| Output-token throughput    | How many output tokens are generated per second across the system?          |
+| Queue wait                 | How long does admitted work wait for serving capacity?                      |
+| Errors and timeouts        | How often does a request fail to complete successfully?                     |
+
+Define the boundary beside every chart. A browser measurement can include retrieval, network delay, buffering, and rendering. A model-server measurement may exclude all of them.
+
+For a provider-specific example, [Baseten's metrics documentation](https://docs.baseten.co/observability/metrics) defines platform end-to-end response time as including cold starts, queueing, and inference while excluding the client network round trip. It distinguishes this from inference time and from Time to First Byte (TTFB). The first byte may be metadata rather than a generated token.
+
+## Follow the request through the architecture
+
+<InsideAiArchitecture day={1} />
+
+The gateway validates the request and creates or propagates a trace identifier. A router admits work into a bounded waiting queue. A ready replica processes the request; a stream carries the output back to the client.
+
+Within an autoregressive language-model replica, **prefill** processes input context and establishes state used for generation. **Decode** produces subsequent tokens. The exact split, scheduling, and overlap depend on the serving engine; this drawing represents responsibilities rather than a claim about a particular implementation.
+
+A simple sequential budget is:
+
+**Client completion time ≈ network and gateway + queue wait + preparation + prefill + decode + delivery.**
+
+Real stages can overlap, particularly generation and streaming. Measure intervals along the actual critical path rather than adding overlapping span durations. Collect server durations with a monotonic clock where possible, and avoid treating timestamps from unsynchronized machines as a precise interval.
+
+## Three signals, three questions
+
+**Metrics ask: is something changing?** Track offered load, completed load, latency distributions, queue age, errors, input/output lengths, and ready replicas. The 95th percentile (p95) is a latency at or below which approximately 95% of observations fall. Always state the time window and population.
+
+**Logs ask: what happened?** Record loading failures, cancellations, timeouts, deployment events, and request identifiers. Protect logs from unnecessary prompts, private document text, and credentials.
+
+**Traces ask: where did time go?** Follow a single request through context preparation, retrieval, queueing, model execution, and delivery. [OpenTelemetry explains how spans and trace context connect distributed work](https://opentelemetry.io/docs/concepts/signals/traces/). Instrument the queue explicitly: an application span that ends at enqueue does not tell you when serving started.
+
+Use request IDs in logs and traces, rather than as labels on every metric. [Prometheus documents the cost of large label cardinality](https://prometheus.io/docs/practices/instrumentation/). A label with a new value for every request creates a growing population of time series.
+
+## Work through a traffic spike
+
+These are **illustrative teaching values**, not measured results:
+
+| Observation                  | Normal load | Short burst |
+| ---------------------------- | ----------: | ----------: |
+| Incoming requests per second |           5 |          25 |
+| p95 queue wait               |       0.1 s |       2.8 s |
+| p95 client TTFT              |       0.7 s |       3.5 s |
+| Typical output length        |  200 tokens |  200 tokens |
+| Typical ITL                  |       30 ms |       31 ms |
+
+1. Establish that the same endpoint, version, and measurement window are being compared.
+2. Group requests by similar input and output lengths. A longer prompt can increase prefill work independently of queueing.
+3. Notice that waiting and first-token latency rose while generation cadence barely changed.
+4. Form a hypothesis: insufficient ready capacity or scheduling delay occurs before generation.
+5. Inspect several slow traces and readiness events. Seek counterexamples, including slow retrieval and client buffering.
+6. Change one setting and repeat the same offered workload.
+
+The table suggests a hypothesis; it does not establish causation. **Do not subtract p95 queue wait from p95 TTFT** to estimate processing time. The two percentiles may correspond to different requests. Compute intervals per request before summarizing them.
+
+## Match the intervention to the evidence
+
+| Evidence                              | Candidate change                       | What to recheck                          |
+| ------------------------------------- | -------------------------------------- | ---------------------------------------- |
+| Queue age rises during bursts         | More ready capacity or earlier scaling | Cost and successful throughput           |
+| Delay follows an idle period          | Maintain warm capacity                 | Startup latency and idle spend           |
+| Prefill grows with long context       | Remove irrelevant context              | Evidence quality and first-token latency |
+| Token delivery slows with concurrency | Adjust scheduling or batching          | Throughput and per-user latency          |
+| Long answers dominate completion time | Set an appropriate output limit        | Completeness and task success            |
+| Server is fast but browser is slow    | Inspect delivery and rendering         | Client timestamps and buffering          |
+
+Streaming lets a reader see useful output earlier. It does not inherently reduce the model's total work. Likewise, high aggregate token throughput can coexist with poor experiences for individual readers. Define success as useful, successful responses within an agreed latency objective.
+
+## Common mistakes and limitations
+
+Averages can conceal a slow tail. Averages of incompatible traffic populations can also move merely because the workload mix changed. Inspect distributions and comparable cohorts.
+
+Hardware utilization alone cannot identify the request bottleneck. A busy accelerator might be useful work, an inefficient workload, or contention. Low utilization might reflect upstream starvation.
+
+Sampling traces can miss rare failures. Collect enough slow and failed requests to investigate without storing unnecessary sensitive content. An autoscaling decision is also not instant capacity: new replicas must become ready.
+
+## A small exercise and completion checkpoint
+
+Without a GPU, draw a timeline for one fictional request: send at 0 ms, queue entry at 40 ms, queue exit at 240 ms, first token at the client at 500 ms, and final token at 2,000 ms.
+
+Calculate client TTFT, queue wait, and completion latency. The checkpoint is **500 ms, 200 ms, and 2,000 ms**, respectively. The remaining 300 ms before the first token cannot be assigned to prefill alone from these timestamps.
+
+Then add retrieval and delivery spans to explain what additional evidence is missing. For a real test environment, use fictional prompts, a fixed output cap, a steady arrival rate, and a short burst. Record offered traffic as well as completions so slow responses do not silently reduce the test's load.
+
+Your artifact is a request timeline, the architecture, a list of measured boundaries, and one bottleneck hypothesis with a proposed check.
+
+## One lesson to carry forward
+
+Separate **waiting, processing, generation, and delivery**, then change the stage supported by evidence. Tomorrow's lesson explains how bounded queues and deadlines keep a traffic spike from becoming a long outage.

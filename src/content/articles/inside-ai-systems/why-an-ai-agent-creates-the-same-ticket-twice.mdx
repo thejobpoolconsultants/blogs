@@ -1,0 +1,140 @@
+---
+slug: 'why-an-ai-agent-creates-the-same-ticket-twice'
+title: 'Why an AI Agent Creates the Same Ticket Twice'
+description: 'Follow a lost tool response through an agent, policy gate, action ledger, and idempotent service. Learn why a timeout cannot prove an action failed.'
+topic: 'agentic-ai'
+subtopics:
+  ['tools', 'permissions', 'policy controls', 'production architecture']
+tags: ['Agents', 'Architecture', 'Evaluation']
+program: 'generative-ai-agentic-systems'
+difficulty: 'intermediate'
+prerequisites:
+  [
+    'Basic API request/response concepts',
+    'Day 3: trust and permission boundaries',
+  ]
+learningOutcomes:
+  [
+    'Distinguish an unsuccessful response from an unsuccessful action',
+    'Explain operation IDs, retries, approval, and reconciliation',
+    'Test duplicate delivery and changed-intent cases',
+  ]
+sources:
+  [
+    {
+      'role': 'supporting',
+      'kind': 'docs',
+      'title': 'Amazon Builders’ Library: Making retries safe with idempotent APIs',
+      'url': 'https://aws.amazon.com/builders-library/making-retries-safe-with-idempotent-APIs/',
+      'supports': 'Caller-provided operation identifiers, atomic deduplication, equivalent responses, and parameter mismatch handling.',
+    },
+    {
+      'role': 'supporting',
+      'kind': 'docs',
+      'title': 'Amazon Builders’ Library: Timeouts, retries, and backoff with jitter',
+      'url': 'https://aws.amazon.com/builders-library/timeouts-retries-and-backoff-with-jitter/',
+      'supports': 'Timeouts, retry amplification, backoff, jitter, and the need to limit retry work.',
+    },
+  ]
+series: 'inside-ai-systems'
+seriesOrder: 4
+type: 'deep-dive'
+publishedAt: '2026-10-12'
+status: 'published'
+authors: ['thejobpoolconsultants']
+audience: ['Students learning AI systems engineering']
+relatedArticles:
+  [
+    'when-a-document-assistant-answers-without-evidence',
+    'why-more-ai-replicas-do-not-immediately-fix-a-spike',
+  ]
+---
+
+import InsideAiArchitecture from '../../../components/InsideAiArchitecture.astro';
+
+## The practical problem
+
+A learner asks the student assistant to create one support ticket about a cohort transfer. The tool service creates ticket T-104, but the network connection breaks before the assistant receives the response. The assistant retries and creates T-105.
+
+Both tool calls followed the model's intent to help. The failure sits in the action contract: the system could not distinguish “the request failed before creation” from “creation succeeded and the response was lost.”
+
+This lesson proposes an agent with controlled actions. It uses a fictional ticket service and does not claim that a particular tool provider supplies the required guarantees.
+
+## A timeout describes knowledge
+
+A timeout tells the caller it did not receive a response within its waiting budget. It does not necessarily reveal what the receiver did.
+
+After a timed-out write, the caller may face three cases: no action occurred, the action is still processing, or the action succeeded. Repeating the action blindly can be incorrect in the third case. Refusing every retry can leave the user stuck in the first.
+
+**Idempotency** means that repeating an operation under its defined contract does not produce additional intended effects. It is not the same as returning identical bytes forever, and it does not arise merely because a tool call has well-formed arguments.
+
+[The Amazon Builders' Library describes caller-provided identifiers and service-side handling for retry-safe APIs](https://aws.amazon.com/builders-library/making-retries-safe-with-idempotent-APIs/). Our action ledger and approval path below adapt that principle to this teaching scenario.
+
+## Follow the action through its architecture
+
+<InsideAiArchitecture day={4} />
+
+The model proposes a structured tool call; application code decides whether it may execute. The policy gate validates the tool, arguments, authenticated user, resource scope, and any required human approval.
+
+The action ledger preserves the intended operation and its stable identifier before dispatch. The ticket service must recognize repeated deliveries of that operation. Reconciliation resolves an uncertain outcome into a known ticket ID or an explicit unresolved state.
+
+A ledger on the agent side is useful evidence, but it cannot by itself make a remote service idempotent. If the service has no deduplication or query-by-operation-ID mechanism, the architecture must state that duplicate effects remain possible.
+
+## One action, two deliveries
+
+Follow this illustrative timeline:
+
+| Time   | Event                          | What the assistant knows    |
+| ------ | ------------------------------ | --------------------------- |
+| 0 ms   | User confirms one ticket       | One approved intent         |
+| 20 ms  | Ledger records operation A-17  | Dispatch is permitted       |
+| 50 ms  | Service receives A-17          | Outcome is pending          |
+| 90 ms  | Service commits T-104 for A-17 | Caller may still be waiting |
+| 100 ms | Reply is lost                  | Outcome is unknown          |
+| 600 ms | Client times out               | No result received          |
+| 900 ms | Retry delivers A-17 again      | Same intent, same ID        |
+| 930 ms | Service returns T-104          | Existing effect is resolved |
+
+The second delivery must reuse A-17. A fresh ID would tell the service it is a fresh operation. The stable identifier should be scoped to the authenticated caller or tenant and tied to a validated request fingerprint.
+
+If the learner changes the subject or requested destination, the application should represent a new intent. Reusing A-17 with different arguments must produce a conflict rather than silently substituting the new request for the old one.
+
+## Make the ledger a recoverable state machine
+
+Useful teaching states are proposed, approved, dispatched, succeeded, rejected, and outcome-unknown. Define legal transitions and who owns each.
+
+If the process crashes after approval but before dispatch, the next process can resume the recorded intent. If it crashes after dispatch, it must inspect or reconcile the outcome before assuming nothing happened. Persist the returned resource ID when success becomes known.
+
+Do not build this from a simple “check whether the ID exists, then write” sequence without concurrency control. Two workers can both pass the check. The service must reserve the operation ID and create the intended effect under a suitable atomic contract.
+
+A database transaction can coordinate changes in one database. It does not automatically extend to an external ticket API. A service with documented idempotency can solve part of that boundary; otherwise a durable outbox, reconciliation process, or human recovery path may be necessary. State the actual guarantee instead of promising universal exactly-once execution.
+
+## Keep permission and retry decisions separate
+
+Approval authorizes a particular action and scope. It does not authorize unlimited new actions after failures. Store the approved arguments or a stable fingerprint, and revalidate the relevant policy before executing a recovered operation.
+
+A retrieved document cannot approve a ticket on behalf of a learner. A model-produced tool name cannot grant access to a staff-only endpoint. The application owns both decisions.
+
+Limit total attempts and elapsed time. [AWS's timeout and retry guidance](https://aws.amazon.com/builders-library/timeouts-retries-and-backoff-with-jitter/) explains how uncontrolled retries can amplify failures. Avoid a nested design where the agent, tool wrapper, and transport each retry independently without a shared budget.
+
+## Common mistakes and limitations
+
+Generating a new operation ID for every transport attempt defeats deduplication. Deriving an ID only from request text can incorrectly merge two intentionally identical tickets created at different times.
+
+Ignoring retention windows is another failure: a very late retry may arrive after the service has forgotten the operation ID. Establish how long retries remain valid and what happens afterward.
+
+Marking “failed” immediately after a timeout misrepresents the caller's knowledge. “Outcome unknown; checking status” is more accurate and gives the user a recovery path.
+
+Exactly-once claims require carefully defined scope. A service may prevent a second ticket creation while still sending a notification twice. List every consequential effect and its own recovery contract.
+
+## Exercise and completion checkpoint
+
+Use an index card as the action ledger and another as the service's operation table. Deliver the same approved operation twice. Then repeat with the reply removed, with changed arguments, and with two concurrent deliveries.
+
+For each case, record the operation ID, ledger state, created ticket IDs, and the assistant's user-facing message. The expected teaching result is one ticket for repeated delivery under the assumed idempotent service, a conflict for changed arguments, and an explicit unknown outcome when the service cannot resolve status.
+
+The completion checkpoint is a transition table plus four failure cases. Mark which guarantees rely on the remote service. If the explanation relies only on the model “remembering not to repeat,” the design needs another control.
+
+## One lesson to carry forward
+
+A lost response creates uncertainty. Preserve intent, enforce permission, reuse the operation ID, and reconcile the outcome. Tomorrow, we return to infrastructure and learn why a requested replica is not yet useful capacity.

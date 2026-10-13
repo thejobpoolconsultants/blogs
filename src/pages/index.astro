@@ -16,6 +16,7 @@ import ArticleCard from '../components/ArticleCard.astro';
 import ArticleList from '../components/ArticleList.astro';
 import LearningPathCard from '../components/LearningPathCard.astro';
 import ProgramsSection from '../components/ProgramsSection.astro';
+import InsideAiSeries from '../components/InsideAiSeries.astro';
 import { publishedArticles } from '../utils/content';
 import { topics } from '../data/topics';
 import { learningPaths } from '../data/learning-paths';
@@ -53,6 +54,7 @@ const symbols = ['ƒ(x)', 'Σ', 'Aa', '◈', '↗', '⊞'];
     </p>
   </section>
   <FeaturedTransitionProgram />
+  <InsideAiSeries articles={articles} compact />
   <ProgramsSection />
   <div class="topic-strip meta">
     <span>The full picture</span>

@@ -7,7 +7,13 @@ import ProgramLab from '../../components/ProgramLab.astro';
 import ComponentInspector from '../../components/ComponentInspector.astro';
 import ServiceDependencies from '../../components/ServiceDependencies.astro';
 import ProjectBrief from '../../components/ProjectBrief.astro';
-import { specialistPrograms, programsWebsite } from '../../data/programs';
+import ArticleCard from '../../components/ArticleCard.astro';
+import { publishedArticles } from '../../utils/content';
+import {
+  specialistPrograms,
+  programsWebsite,
+  recommendProgram,
+} from '../../data/programs';
 import { discovery } from '../../data/program-discovery';
 import { url, siteConfig } from '../../utils/urls';
 import '../../styles/program-discovery.css';
@@ -22,6 +28,9 @@ export async function getStaticPaths() {
   }));
 }
 const { program, entry } = Astro.props;
+const programArticles = (await publishedArticles()).filter(
+  (article) => recommendProgram(article.data).id === program.id,
+);
 const info = discovery[program.icon];
 const { Content } = await render(entry);
 const diagram =
@@ -95,6 +104,36 @@ const graphic =
       </div>
       <ProgramArtwork kind={program.icon} priority />
     </header>
+    <section
+      id="articles"
+      class="detail-section"
+      aria-labelledby="program-articles-title"
+    >
+      <p class="eyebrow">Free educational reading</p>
+      <h2 id="program-articles-title">
+        Explore this program through articles.
+      </h2>
+      <p class="muted">
+        {programArticles.length} published{' '}
+        {programArticles.length === 1 ? 'article' : 'articles'} · Reading times
+        are calculated from the content.
+      </p>
+      {programArticles.length ? (
+        <div class="article-grid">
+          {programArticles.map((article) => (
+            <ArticleCard article={article} />
+          ))}
+        </div>
+      ) : (
+        <p>
+          Coming soon. Explore the teaching examples and exercises below while
+          full articles are prepared.
+        </p>
+      )}
+      <a class="text-link" href={url('articles/') + '?program=' + program.id}>
+        Browse and filter articles →
+      </a>
+    </section>
     <section class="detail-section" aria-labelledby="mechanism-title">
       <p class="eyebrow">Understand the work</p>
       <h2 id="mechanism-title">One example, step by step.</h2>

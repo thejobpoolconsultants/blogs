@@ -1,6 +1,8 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import ArticleList from '../../components/ArticleList.astro';
+import InsideAiSeries from '../../components/InsideAiSeries.astro';
+import { insideAiSeriesId } from '../../data/inside-ai-systems';
 import { series } from '../../data/series';
 import { publishedArticles } from '../../utils/content';
 import { topicById } from '../../data/topics';
@@ -36,10 +38,14 @@ const articles = (await publishedArticles())
       {articles.length} published · Read in the order below
     </span>
   </div>
-  <ArticleList
-    articles={articles}
-    empty="This collection is planned. No articles have been published in it yet."
-  />
+  {collection.id === insideAiSeriesId ? (
+    <InsideAiSeries articles={articles} />
+  ) : (
+    <ArticleList
+      articles={articles}
+      empty="This collection is planned. No articles have been published in it yet."
+    />
+  )}
   {articles[0] && (
     <a
       class="button primary"

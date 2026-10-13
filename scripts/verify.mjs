@@ -25,6 +25,9 @@ const pages = files.filter(
     !(
       path.dirname(path.relative('dist', f)) === 'diagrams' &&
       viewerPages.has(path.basename(f))
+    ) &&
+    !/^diagrams[\\/]inside-ai-systems[\\/]day-[1-7]\.html$/.test(
+      path.relative('dist', f),
     ),
 );
 const errors = [];

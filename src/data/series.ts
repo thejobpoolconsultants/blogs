@@ -1,5 +1,13 @@
 export const series = [
   [
+    'inside-ai-systems',
+    'Inside AI Systems — One Problem, One Architecture, One Lesson.',
+    'A daily educational reading series: investigate one practical problem, trace an architecture, and test what you learned. Start with seven complete lessons about an AI student assistant.',
+    'Basic familiarity with an AI assistant; no GPU required',
+    'Students and engineers learning how AI systems work',
+    'architectures',
+  ],
+  [
     'ml-first-principles',
     'Machine Learning from First Principles',
     'Understand what models learn, how they fail, and how to measure them.',

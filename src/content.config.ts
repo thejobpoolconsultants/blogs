@@ -4,6 +4,7 @@ import { glob } from 'astro/loaders';
 import { topics } from './data/topics';
 import { series } from './data/series';
 import { authors } from './data/authors';
+import { specialistPrograms } from './data/programs';
 import { tags } from './data/tags';
 import { articleTypes, isPaperBased } from './data/research-editorial';
 const articles = defineCollection({
@@ -37,6 +38,13 @@ const articles = defineCollection({
         .refine((v) => series.some((s) => s.id === v), 'Unknown series')
         .optional(),
       seriesOrder: z.number().int().positive().optional(),
+      program: z
+        .string()
+        .refine(
+          (value) => specialistPrograms.some((program) => program.id === value),
+          'Unknown program',
+        )
+        .optional(),
       difficulty: z.enum(['beginner', 'intermediate', 'advanced']),
       audience: z.array(z.string()).min(1),
       authors: z

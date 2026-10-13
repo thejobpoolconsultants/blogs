@@ -1,0 +1,178 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "Day 5: Why More AI Replicas Do Not Immediately Fix a Spike",
+    "output": ".archify/architecture-inside-ai-day-5-20261012-090000/day-5.html",
+    "quality_profile": "showcase",
+    "locale": "en"
+  },
+  "components": [
+    {
+      "id": "step-1",
+      "type": "external",
+      "label": "Load signals",
+      "sublabel": "Queue age and serving demand",
+      "pos": [
+        240,
+        120
+      ],
+      "size": [
+        180,
+        76
+      ]
+    },
+    {
+      "id": "step-2",
+      "type": "backend",
+      "label": "Scale controller",
+      "sublabel": "Request target replica count",
+      "pos": [
+        600,
+        120
+      ],
+      "size": [
+        180,
+        76
+      ]
+    },
+    {
+      "id": "step-3",
+      "type": "cloud",
+      "label": "Provisioning",
+      "sublabel": "Place workload on capacity",
+      "pos": [
+        960,
+        120
+      ],
+      "size": [
+        180,
+        76
+      ]
+    },
+    {
+      "id": "step-4",
+      "type": "backend",
+      "label": "Model startup",
+      "sublabel": "Load weights; initialize",
+      "pos": [
+        960,
+        340
+      ],
+      "size": [
+        180,
+        76
+      ]
+    },
+    {
+      "id": "step-5",
+      "type": "security",
+      "label": "Readiness gate",
+      "sublabel": "Admit only usable workers",
+      "pos": [
+        600,
+        340
+      ],
+      "size": [
+        180,
+        76
+      ]
+    },
+    {
+      "id": "step-6",
+      "type": "backend",
+      "label": "Ready pool",
+      "sublabel": "Router sends live requests",
+      "pos": [
+        240,
+        340
+      ],
+      "size": [
+        180,
+        76
+      ]
+    }
+  ],
+  "connections": [
+    {
+      "id": "flow-1",
+      "from": "step-1",
+      "to": "step-2",
+      "label": "observe",
+      "variant": "emphasis"
+    },
+    {
+      "id": "flow-2",
+      "from": "step-2",
+      "to": "step-3",
+      "label": "desired replicas",
+      "variant": "emphasis"
+    },
+    {
+      "id": "flow-3",
+      "from": "step-3",
+      "to": "step-4",
+      "label": "resources ready",
+      "variant": "security"
+    },
+    {
+      "id": "flow-4",
+      "from": "step-4",
+      "to": "step-5",
+      "label": "startup done",
+      "variant": "emphasis"
+    },
+    {
+      "id": "flow-5",
+      "from": "step-5",
+      "to": "step-6",
+      "label": "ready only",
+      "variant": "emphasis"
+    },
+    {
+      "id": "capacity-feedback",
+      "from": "step-6",
+      "to": "step-1",
+      "label": "measured demand",
+      "variant": "dashed",
+      "fromSide": "left",
+      "toSide": "left",
+      "via": [
+        [
+          80,
+          378
+        ],
+        [
+          80,
+          158
+        ]
+      ]
+    }
+  ],
+  "cards": [
+    {
+      "dot": "cyan",
+      "title": "The practical problem",
+      "items": [
+        "The autoscaler requests capacity while users are still waiting."
+      ]
+    },
+    {
+      "dot": "emerald",
+      "title": "Conditions and side paths",
+      "items": [
+        "This diagram shows the capacity-control path; requests remain in a bounded admission path.",
+        "The ready pool processes admitted work, whose measured demand feeds the controller again.",
+        "A warm minimum helps predictable bursts but carries idle cost. A capacity ceiling still needs an overload policy."
+      ]
+    },
+    {
+      "dot": "rose",
+      "title": "One lesson",
+      "items": [
+        "Requested capacity becomes useful only after startup and readiness.",
+        "Proposed teaching design; not a measured deployment or benchmark."
+      ]
+    }
+  ]
+}

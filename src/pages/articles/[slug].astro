@@ -13,6 +13,7 @@ import { publishedArticles, readingTime, dateLabel } from '../../utils/content';
 import { topicSequences, sectionPath } from '../../data/topic-sequences';
 import { topicById } from '../../data/topics';
 import { series } from '../../data/series';
+import { insideAiSeriesId } from '../../data/inside-ai-systems';
 import { authors } from '../../data/authors';
 import { tagSlug } from '../../data/tags';
 import { absoluteUrl, url, siteConfig } from '../../utils/urls';
@@ -141,6 +142,13 @@ const json = {
   </nav>
   <article data-pagefind-body data-paper-based={String(paperBased)}>
     <header class="article-header">
+      {collection?.id === insideAiSeriesId && (
+        <p class="eyebrow">
+          <a href={url('series/' + insideAiSeriesId + '/')}>
+            Inside AI Systems · Day {data.seriesOrder} of {siblings.length} →
+          </a>
+        </p>
+      )}
       <p class="eyebrow">
         {topic.title} / {articleTypeLabel(data.type)}
       </p>
